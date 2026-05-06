@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wolves OS — Sistema Operativo Interior</title>
+
+<!-- ============================================
+  WOLVES OS v2.0 — Entrega 2: Supabase conectado
+  
+  CONFIGURACIÓN: Reemplaza las 2 líneas de abajo
+  con tus credenciales reales de Supabase.
+  Settings → API en tu proyecto Supabase.
+============================================ -->
+<script>
+  const SUPABASE_URL = 'https://TU_PROJECT_URL.supabase.co'   // ← Reemplaza
+  const SUPABASE_ANON_KEY = 'TU_ANON_KEY_AQUI'                // ← Reemplaza
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#181818;--bg4:#1f1f1f;
+  --b:#1e1e1e;--b2:#282828;--b3:#333;
+  --red:#e8302a;--red2:#ff3d36;
+  --amber:#f5a623;--amber2:#ffbe4d;
+  --txt:#f0f0f0;--txt2:#6a6a6a;--txt3:#333;
+  --green:#22c55e;--blue:#3b82f6;--purple:#9b7fe8;
+  --cyan:#06b6d4;--pink:#ec4899;--violet:#a78bfa;
+}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── LOADING SCREEN ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:1000;transition:opacity .4s}
+#loading-screen.hidden{opacity:0;pointer-events:none}
+.loading-wolf{animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.loading-text{font-family:'Bebas Neue';font-size:12px;letter-spacing:4px;color:var(--txt3)}
+
+/* ── TOAST NOTIFICATIONS ── */
+#toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:10px 14px;font-size:11px;letter-spacing:.5px;min-width:200px;animation:slideIn .2s ease;display:flex;align-items:center;gap:8px}
+.toast.success{border-left:2px solid var(--green)}
+.toast.error{border-left:2px solid var(--red)}
+.toast.info{border-left:2px solid var(--amber)}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── AUTH SCREEN ── */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:2rem}
+.auth-wolf{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
+.auth-brand{font-family:'Bebas Neue';font-size:18px;letter-spacing:5px}
+.auth-brand-sub{font-size:8px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-top:2px}
+.auth-card{background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:2rem;width:100%;max-width:380px}
+.auth-headline{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:4px}
+.auth-sub{font-size:10px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;padding-bottom:1.2rem;border-bottom:1px solid var(--b)}
+.auth-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid var(--b)}
+.auth-tab{flex:1;padding:9px;text-align:center;font-size:10px;letter-spacing:2px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase}
+.auth-tab.active{color:var(--amber);border-bottom-color:var(--amber)}
+.field{margin-bottom:1rem}
+.field label{font-size:8px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;display:block;margin-bottom:5px}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--b);color:var(--txt);padding:9px 12px;font-size:12px;border-radius:2px;outline:none;transition:border .2s;font-family:'Inter'}
+.field input:focus{border-color:var(--amber)}
+.btn-primary{width:100%;background:var(--amber);color:#000;border:none;padding:11px;font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all .2s;margin-top:.5rem}
+.btn-primary:hover{background:var(--amber2)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.auth-sep{font-size:10px;color:var(--txt3);text-align:center;margin:1rem 0}
+.auth-disclaimer{font-size:9px;color:var(--txt3);text-align:center;margin-top:1rem;line-height:1.5}
+
+/* ── MAIN APP ── */
+#app{display:none;flex-direction:column;height:100vh}
+#app.visible{display:flex}
+
+/* TOPBAR */
+.topbar{height:56px;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.tb-div{width:1px;height:24px;background:var(--b2);margin:0 4px}
+.tb-mid{flex:1}
+.tb-scan-title{font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;line-height:1}
+.tb-scan-sub{font-size:9px;color:var(--txt2);letter-spacing:1px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:6px 11px;font-size:8px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:5px;text-transform:uppercase;white-space:nowrap;transition:all .15s}
+.btn-ghost:hover{color:var(--txt);border-color:var(--b3)}
+.btn-runscan{background:var(--red);border:none;color:#fff;padding:7px 14px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;transition:all .15s}
+.btn-runscan:hover{background:var(--red2)}
+.btn-runscan:disabled{opacity:.5;cursor:not-allowed}
+.user-chip{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--b2);border-radius:2px;cursor:pointer;position:relative}
+.user-chip:hover .user-menu{display:block}
+.user-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--b2);border-radius:3px;min-width:140px;z-index:100}
+.user-menu-item{padding:8px 12px;font-size:10px;letter-spacing:1px;color:var(--txt2);cursor:pointer;text-transform:uppercase;transition:all .15s}
+.user-menu-item:hover{background:var(--bg3);color:var(--txt)}
+.user-menu-item.danger{color:var(--red)}
+.u-av{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:10px;color:var(--amber)}
+.u-name{font-family:'Bebas Neue';font-size:12px;letter-spacing:1px;line-height:1}
+.u-sub{font-size:7px;color:var(--txt2)}
+
+/* BODY */
+.body-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
+
+/* SIDEBAR */
+.sidebar{width:155px;background:var(--bg2);border-right:1px solid var(--b);padding:12px 10px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+.sb-brand{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b)}
+.sb-wlogo{width:26px;height:26px;margin-bottom:5px}
+.sb-name{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.1}
+.sb-ver{font-size:6px;letter-spacing:2px;color:var(--txt3);margin-top:2px}
+.nav{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:2px;cursor:pointer;font-size:10px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;transition:all .15s;border-left:2px solid transparent}
+.nav:hover{background:var(--bg3);color:var(--txt)}
+.nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
+.nav-t{line-height:1;font-size:10px}
+.nav-s{font-size:6px;color:var(--txt3);letter-spacing:.3px;text-transform:none;margin-top:1px}
+.sb-bot{margin-top:auto}
+.sbox{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:9px;margin-bottom:7px}
+.sbox-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:7px}
+.sring-wrap{display:flex;justify-content:center;margin-bottom:5px}
+.sring{width:56px;height:56px;border-radius:50%;border:1px solid var(--b3);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
+.sring-arc{position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;border-top-color:var(--red);border-right-color:var(--red);transform:rotate(-20deg)}
+.sring-c{font-family:'Bebas Neue';font-size:20px;color:var(--red);line-height:1}
+.sring-d{font-size:6px;color:var(--txt3);letter-spacing:1px}
+.sring-st{font-size:8px;color:var(--txt2);text-align:center}
+.slink{font-size:7px;color:var(--red);text-align:center;display:block;margin-top:4px;cursor:pointer;letter-spacing:1px}
+.racha-box{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:9px}
+.r-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:3px}
+.r-n{font-family:'Bebas Neue';font-size:24px;color:var(--txt);line-height:1}
+.r-d{font-size:7px;color:var(--txt2);letter-spacing:1px}
+.dots{display:flex;gap:3px;margin-top:5px}
+.dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:5px;color:var(--txt3)}
+.dot.on{background:var(--red);border-color:var(--red);color:#fff;font-size:6px}
+.dlbls{display:flex;gap:3px;margin-top:2px}
+.dlbl{width:14px;font-size:5px;color:var(--txt3);text-align:center}
+.sb-tag{font-size:6px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-top:8px;line-height:1.7}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+
+/* VIEW SCAN */
+#view-scan{display:flex;flex-direction:column;gap:10px}
+.top3{display:grid;grid-template-columns:1fr 240px 200px;gap:10px}
+
+/* CIRCUITS */
+.circuits-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;display:flex;flex-direction:column}
+.cp-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;flex-shrink:0}
+.cp-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px}
+.cp-sub{font-size:7px;color:var(--txt2);letter-spacing:.5px;margin-top:1px}
+.cp-scale{font-size:6px;color:var(--txt3);letter-spacing:.5px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
+.cc{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:8px 9px}
+.cc-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.cc-ico{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.cc-id{font-size:7px;letter-spacing:1px;font-weight:600;line-height:1}
+.cc-nm{font-family:'Bebas Neue';font-size:13px;letter-spacing:1.5px;line-height:1}
+.cc-ds{font-size:6px;color:var(--txt2);margin-top:1px}
+.cc-v{font-family:'Bebas Neue';font-size:18px;min-width:14px;text-align:right;line-height:1}
+.sl-top{display:flex;justify-content:space-between;font-size:5px;color:var(--txt3);margin-bottom:2px}
+input[type=range]{width:100%;height:2px;-webkit-appearance:none;appearance:none;border-radius:1px;outline:none;border:none;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:11px;height:11px;border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
+.sl-nums{display:flex;justify-content:space-between;margin-top:2px}
+.sl-n{font-size:5px;color:var(--txt3);width:8px;text-align:center}
+
+/* RESULT POSTER */
+.result-poster{background:#000;border:1px solid var(--b);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.wolf-section{position:relative;flex:0 0 195px;overflow:hidden;background:#050505}
+.wolf-section img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.7) contrast(1.1)}
+.wolf-red-ov{position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(180,30,0,.3) 0%,transparent 65%)}
+.wolf-fade{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,#000)}
+.poster-body{padding:11px;flex:1;background:#000}
+.poster-lbl{font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:2px}
+.poster-state{font-family:'Bebas Neue';font-size:38px;line-height:1;letter-spacing:2px}
+.pcause-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:9px;margin-bottom:2px}
+.pcause{font-size:12px;font-weight:600}
+.pdesc{font-size:9px;color:rgba(255,255,255,.5);line-height:1.4;margin-top:2px}
+.pactions-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:9px;margin-bottom:5px}
+.paction{display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;font-size:9px;color:rgba(255,255,255,.6);line-height:1.4}
+.pan{width:17px;height:17px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;flex-shrink:0;background:rgba(255,255,255,.04)}
+.btn-hunt{width:100%;padding:9px;font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:9px;border:none;transition:all .2s}
+.btn-hunt:disabled{opacity:.5;cursor:not-allowed}
+.poster-link{font-size:8px;text-align:center;margin-top:5px;cursor:pointer;letter-spacing:1px;opacity:.55}
+
+/* RIGHT COL */
+.right-col{display:flex;flex-direction:column;gap:8px}
+.neural-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;flex:0 0 auto}
+.np-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.np-sub{font-size:7px;color:var(--txt2);margin-bottom:8px}
+.insight-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;flex:1}
+.ip-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:7px}
+.iq{display:flex;gap:5px;font-size:9px;color:var(--txt2);line-height:1.5}
+.iq-q{font-size:22px;color:var(--b3);line-height:1;flex-shrink:0;font-family:Georgia}
+.nw-box{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:8px;margin-top:8px}
+.nw-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:3px}
+.nw-time{font-family:'Bebas Neue';font-size:15px;color:var(--amber);letter-spacing:1px}
+.nw-sub{font-size:7px;color:var(--txt2);margin-top:1px}
+.ql-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin:8px 0 5px}
+.ql{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.qlb{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:6px 3px;text-align:center;cursor:pointer;transition:all .15s}
+.qlb:hover{border-color:var(--b2)}
+.qlb-i{font-size:11px;margin-bottom:2px}
+.qlb-l{font-size:6px;letter-spacing:1px;color:var(--txt2);text-transform:uppercase;display:block}
+
+/* BOTTOM ROW */
+.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px}
+.pnl-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.pnl-sub{font-size:7px;color:var(--txt2);margin-bottom:7px}
+.chart-area{height:90px}
+.chart-svg{width:100%;height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.leg-i{display:flex;align-items:center;gap:3px;font-size:6px;color:var(--txt2)}
+.leg-ln{width:9px;height:2px;border-radius:1px}
+
+/* HISTORY TABLE */
+.sch{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;padding-bottom:5px;border-bottom:1px solid var(--b);margin-bottom:3px}
+.sch-l{font-size:6px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
+.cvh{display:flex;gap:2px}
+.cvhi{width:15px;font-size:5px;color:var(--txt3);text-align:center}
+.sr{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--b)}
+.sr:last-child{border-bottom:none}
+.sr-t{color:var(--txt3);font-size:7px}
+.sr-s{font-family:'Bebas Neue';font-size:10px;letter-spacing:1px}
+.sr-s.r{color:var(--red)}.sr-s.a{color:var(--amber)}.sr-s.g{color:var(--green)}
+.sv-row{display:flex;gap:2px}
+.sv{width:15px;height:15px;background:var(--bg3);border:1px solid var(--b);border-radius:1px;font-size:6px;display:flex;align-items:center;justify-content:center;color:var(--txt2)}
+.empty-state{font-size:10px;color:var(--txt3);text-align:center;padding:1.5rem;letter-spacing:1px}
+.see-more{font-size:7px;color:var(--red);cursor:pointer;letter-spacing:1px;margin-top:6px;display:block}
+
+/* SAVING OVERLAY */
+.saving-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;border-radius:3px}
+.saving-overlay.show{display:flex}
+.saving-text{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite}
+
+/* ── VIEW HISTORY ── */
+#view-history{display:none;flex-direction:column;gap:10px}
+.hist-header{font-family:'Bebas Neue';font-size:28px;letter-spacing:2px}
+.hist-sub{font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px;margin-bottom:12px}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.hist-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;cursor:pointer;transition:all .15s}
+.hist-card:hover{border-color:var(--b3)}
+.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.hc-state{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px}
+.hc-time{font-size:8px;color:var(--txt3);letter-spacing:1px}
+.hc-bars{display:flex;align-items:flex-end;gap:3px;height:40px}
+.hc-bar{flex:1;border-radius:1px 1px 0 0;min-width:8px}
+.hc-labels{display:flex;gap:3px;margin-top:4px}
+.hc-lbl{flex:1;font-size:5px;color:var(--txt3);text-align:center;text-transform:uppercase}
+.hc-ai{font-size:9px;color:var(--txt2);line-height:1.4;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-style:italic}
+
+/* Wolf logo SVG */
+.wolf-svg path,.wolf-svg ellipse{stroke:white}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <svg class="loading-wolf" width="48" height="48" viewBox="0 0 100 110" fill="none">
+    <path d="M50 4 L22 16 L6 8 L18 36 L4 56 L22 49 L30 68 L42 60 L46 76 L50 82 L54 76 L58 60 L70 68 L78 49 L96 56 L82 36 L94 8 L78 16 Z" stroke="white" stroke-width="3.5" stroke-linejoin="round" fill="none"/>
+    <ellipse cx="38" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+    <ellipse cx="62" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+    <path d="M45 72 L50 82 L55 72" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </svg>
+  <div class="loading-text">Inicializando Wolves OS...</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-wolf">
+    <svg width="36" height="36" viewBox="0 0 100 110" fill="none" class="wolf-svg">
+      <path d="M50 4 L22 16 L6 8 L18 36 L4 56 L22 49 L30 68 L42 60 L46 76 L50 82 L54 76 L58 60 L70 68 L78 49 L96 56 L82 36 L94 8 L78 16 Z" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/>
+      <ellipse cx="38" cy="43" rx="5" ry="4" fill="white" opacity="0.85"/>
+      <ellipse cx="62" cy="43" rx="5" ry="4" fill="white" opacity="0.85"/>
+    </svg>
+    <div>
+      <div class="auth-brand">WOLVES TERRITORY</div>
+      <div class="auth-brand-sub">Wolves OS · Sistema Operativo Interior</div>
+    </div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-headline">Acceso al Sistema</div>
+    <div class="auth-sub">Tu diagnóstico operativo te espera</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Ingresar</div>
+      <div class="auth-tab" id="tab-reg" onclick="switchAuthTab('reg')">Registrarse</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="field"><label>Correo</label><input type="email" id="login-email" placeholder="tu@correo.com"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Ingresar al Sistema</button>
+      <div class="auth-sep">¿No tienes cuenta?</div>
+      <button class="btn-primary" style="background:transparent;border:1px solid var(--b2);color:var(--txt2)" onclick="switchAuthTab('reg')">Crear cuenta gratis</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-reg" style="display:none">
+      <div class="field"><label>Username</label><input type="text" id="reg-user" placeholder="AlphaWolf"></div>
+      <div class="field"><label>Correo</label><input type="email" id="reg-email" placeholder="tu@correo.com"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mín. 8 caracteres" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <button class="btn-primary" id="btn-reg" onclick="doRegister()">Crear Cuenta y Escanear</button>
+    </div>
+    <div class="auth-disclaimer">Al registrarte, tu diagnóstico queda guardado de forma privada.<br>Solo tú puedes verlo.</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <svg width="30" height="30" viewBox="0 0 100 110" fill="none" class="wolf-svg">
+      <path d="M50 4 L22 16 L6 8 L18 36 L4 56 L22 49 L30 68 L42 60 L46 76 L50 82 L54 76 L58 60 L70 68 L78 49 L96 56 L82 36 L94 8 L78 16 Z" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/>
+      <ellipse cx="38" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+      <ellipse cx="62" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+    </svg>
+    <div>
+      <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:4px">WOLVES TERRITORY</div>
+      <div style="font-size:7px;letter-spacing:3px;color:var(--txt3)">WOLVES OS</div>
+    </div>
+    <div class="tb-div"></div>
+    <div class="tb-mid">
+      <div class="tb-scan-title" id="tb-view-title">SCAN</div>
+      <div class="tb-scan-sub" id="tb-view-sub">Evalúa tu estado operativo actual</div>
+    </div>
+    <div class="tb-right">
+      <button class="btn-ghost" onclick="loadHistory()">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1"/><path d="M5 3v2l1.5 1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        Historial
+      </button>
+      <button class="btn-runscan" id="btn-runscan" onclick="saveScan()">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="white" stroke-width="1.2" stroke-linecap="round"/><path d="M8 5l1 0M8 5l-.7-.9M8 5l-.7.9" stroke="white" stroke-width="1" stroke-linecap="round"/></svg>
+        Guardar Scan
+      </button>
+      <div class="tb-div"></div>
+      <div class="user-chip">
+        <div class="u-av" id="user-av">W</div>
+        <div><div class="u-name" id="user-name">ALPHA</div><div class="u-sub">WOLVES</div></div>
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M2 3l2 2 2-2" stroke="#555" stroke-width="1" stroke-linecap="round"/></svg>
+        <div class="user-menu">
+          <div class="user-menu-item" onclick="showView('scan')">📡 Scan</div>
+          <div class="user-menu-item" onclick="loadHistory()">📊 Historial</div>
+          <div class="user-menu-item danger" onclick="doLogout()">⏻ Cerrar sesión</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body-wrap">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-brand">
+        <svg class="sb-wlogo wolf-svg" viewBox="0 0 100 110" fill="none">
+          <path d="M50 4 L22 16 L6 8 L18 36 L4 56 L22 49 L30 68 L42 60 L46 76 L50 82 L54 76 L58 60 L70 68 L78 49 L96 56 L82 36 L94 8 L78 16 Z" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/>
+          <ellipse cx="38" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+          <ellipse cx="62" cy="43" rx="5" ry="4" fill="white" opacity="0.8"/>
+        </svg>
+        <div class="sb-name">WOLVES<br>TERRITORY</div>
+        <div class="sb-ver">Wolves OS v2.0</div>
+      </div>
+      <div class="nav on" id="nav-scan" onclick="showView('scan')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M3 5.5h5M5.5 3v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div>
+      </div>
+      <div class="nav" id="nav-hunt">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 8.5l2-3 1.5 2L8 2.5l2 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <div><div class="nav-t">HUNT</div><div class="nav-s">Modo ejecución</div></div>
+      </div>
+      <div class="nav" id="nav-history" onclick="loadHistory()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="1.5" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5h4M3.5 6.5h2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div>
+      </div>
+      <div class="nav">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9l2-4.5 2 2.5L8 1.5l1.5 7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Próximamente</div></div>
+      </div>
+      <div class="nav">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="4" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 10c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <div><div class="nav-t">PROFILE</div><div class="nav-s">Cuenta & ajustes</div></div>
+      </div>
+
+      <div class="sb-bot">
+        <div class="sbox">
+          <div class="sbox-lbl">Estado Actual</div>
+          <div class="sring-wrap"><div class="sring"><div class="sring-arc"></div><div class="sring-c" id="sb-c">–</div><div class="sring-d">DOMINANTE</div></div></div>
+          <div class="sring-st" id="sb-st">Sin scan hoy</div>
+          <span class="slink" onclick="showView('scan')">Hacer scan →</span>
+        </div>
+        <div class="racha-box">
+          <div class="r-lbl">Racha</div>
+          <div style="display:flex;align-items:baseline;gap:3px"><div class="r-n">🔥 <span id="streak-num">0</span></div><div class="r-d">días</div></div>
+          <div style="font-size:6px;color:var(--txt3);margin-top:1px">Últimos 7 días</div>
+          <div class="dots" id="dots"></div>
+          <div class="dlbls" id="dlbls"></div>
+        </div>
+      </div>
+      <div class="sb-tag">WOLVES DON'T HOPE.<br>WOLVES OPERATE.</div>
+    </div>
+
+    <!-- VIEWS -->
+    <div class="main">
+
+      <!-- VIEW: SCAN -->
+      <div id="view-scan">
+        <div class="top3">
+          <!-- COL 1: CIRCUITS -->
+          <div class="circuits-panel">
+            <div class="cp-hdr">
+              <div>
+                <div class="cp-title">1. Evalúa tus 8 Circuitos</div>
+                <div class="cp-sub">Responde desde la honestidad. Sin filtro.</div>
+              </div>
+              <div class="cp-scale">Escala: 1 (bajo) → 5 (alto)</div>
+            </div>
+            <div class="cgrid" id="cgrid"></div>
+          </div>
+
+          <!-- COL 2: RESULT POSTER -->
+          <div class="result-poster" style="position:relative">
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.28);text-transform:uppercase;padding:9px 11px 0">2. Resultado — Tu diagnóstico operativo</div>
+            <div class="wolf-section">
+              <img src="https://images.unsplash.com/photo-1527153818091-1a9638521e2a?w=600&q=80&auto=format" alt="Wolf" onerror="this.style.display='none'">
+              <div class="wolf-red-ov"></div>
+              <div class="wolf-fade"></div>
+            </div>
+            <div class="poster-body">
+              <div class="poster-lbl">Estás operando desde</div>
+              <div class="poster-state" id="p-state" style="color:var(--amber)">–</div>
+              <div class="pcause-lbl">Causa Principal</div>
+              <div class="pcause" id="p-cause">–</div>
+              <div class="pdesc" id="p-desc">Ajusta los sliders para ver tu diagnóstico.</div>
+              <div class="pactions-lbl">Acción Inmediata</div>
+              <div class="paction"><div class="pan">1</div><div id="p-a1">–</div></div>
+              <div class="paction"><div class="pan">2</div><div id="p-a2">–</div></div>
+              <button class="btn-hunt" id="hunt-btn" style="background:var(--amber);color:#000" onclick="saveScan()">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="6" r="1.8" stroke="currentColor" stroke-width="1.5"/><path d="M6 1v1M6 10v1M1 6h1M10 6h1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                GUARDAR Y EJECUTAR
+              </button>
+              <div class="poster-link" id="p-link" style="color:var(--amber)" onclick="loadHistory()">Ver historial completo →</div>
+            </div>
+            <div class="saving-overlay" id="saving-overlay">
+              <div class="saving-text">Guardando scan...</div>
+            </div>
+          </div>
+
+          <!-- COL 3: NEURAL + INSIGHT -->
+          <div class="right-col">
+            <div class="neural-panel">
+              <div class="np-title">Mapa Neuronal</div>
+              <div class="np-sub">Tu red de circuitos actual</div>
+              <div id="radar-wrap" style="display:flex;justify-content:center"></div>
+            </div>
+            <div class="insight-panel">
+              <div class="ip-title">Insight Clave</div>
+              <div class="iq"><div class="iq-q">"</div><div id="insight-txt" style="font-size:9px;color:var(--txt2);line-height:1.5">Ajusta los circuitos para ver tu insight personalizado.</div></div>
+              <div class="nw-box">
+                <div class="nw-lbl">Próxima Ventana Óptima</div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#f5a623" stroke-width="1"/><path d="M5 2.5v2.5l1.5 1.5" stroke="#f5a623" stroke-width="1" stroke-linecap="round"/></svg>
+                  <div class="nw-time">MAÑANA 07:30 – 09:30</div>
+                </div>
+                <div class="nw-sub">Históricamente, tu mejor rendimiento.</div>
+              </div>
+              <div class="ql-lbl">Acceso Rápido</div>
+              <div class="ql">
+                <div class="qlb" onclick="showView('scan')"><div class="qlb-i">📡</div><span class="qlb-l">Scan</span></div>
+                <div class="qlb"><div class="qlb-i">⚡</div><span class="qlb-l">Protocols</span></div>
+                <div class="qlb" onclick="loadHistory()"><div class="qlb-i">📊</div><span class="qlb-l">History</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="bot-row">
+          <div class="panel">
+            <div class="pnl-title">Tendencia — Últimos 7 Días</div>
+            <div class="pnl-sub">Evolución por circuito</div>
+            <div class="chart-area"><svg class="chart-svg" id="trend-svg" viewBox="0 0 340 88" preserveAspectRatio="none"></svg></div>
+            <div class="leg" id="leg"></div>
+          </div>
+          <div class="panel">
+            <div class="pnl-title">Últimos Scans</div>
+            <div class="pnl-sub">Historial reciente</div>
+            <div class="sch">
+              <div class="sch-l">Hora</div><div class="sch-l">Estado</div>
+              <div class="cvh"><div class="cvhi">C1</div><div class="cvhi">C2</div><div class="cvhi">C3</div><div class="cvhi">C4</div><div class="cvhi">C5</div><div class="cvhi">C6</div><div class="cvhi">C7</div><div class="cvhi">C8</div></div>
+            </div>
+            <div id="recent-scans"><div class="empty-state">Sin scans aún.<br>Haz tu primer diagnóstico.</div></div>
+            <span class="see-more" onclick="loadHistory()">Ver historial completo →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: HISTORY -->
+      <div id="view-history" style="display:none;flex-direction:column;gap:10px">
+        <div>
+          <div class="hist-header">HISTORIAL</div>
+          <div class="hist-sub">Todos tus diagnósticos · <span id="hist-count">0</span> scans registrados</div>
+        </div>
+        <div class="hist-grid" id="hist-grid">
+          <div class="empty-state">Cargando historial...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// SUPABASE INIT
+// ══════════════════════════════════════════
+const { createClient } = supabase
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const CS = [
+  {id:'c1',nm:'BASE',     ds:'Estabilidad vs riesgo',    lo:'Inestable',    hi:'Sólido',        col:'#e8302a', ico:'🛡️', col2:'c1_base'},
+  {id:'c2',nm:'CONTROL',  ds:'Liderar vs reaccionar',    lo:'Reacciono',    hi:'Lidero',        col:'#f5a623', ico:'👑', col2:'c2_control'},
+  {id:'c3',nm:'CLARITY',  ds:'Enfoque vs ruido mental',  lo:'Ruido',        hi:'Claro',         col:'#22c55e', ico:'🧠', col2:'c3_clarity'},
+  {id:'c4',nm:'SOCIAL',   ds:'Alineado vs aprobación',   lo:'Aprobación',   hi:'Alineado',      col:'#3b82f6', ico:'👥', col2:'c4_social'},
+  {id:'c5',nm:'BODY',     ds:'Conexión vs desconexión',  lo:'Desconectado', hi:'Conectado',     col:'#9b7fe8', ico:'♥', col2:'c5_body'},
+  {id:'c6',nm:'FLEX',     ds:'Adaptable vs rígido',      lo:'Rígido',       hi:'Adaptable',     col:'#06b6d4', ico:'∞', col2:'c6_flex'},
+  {id:'c7',nm:'PURPOSE',  ds:'Dirección vs vacío',       lo:'Vacío',        hi:'Con dirección', col:'#ec4899', ico:'◎', col2:'c7_purpose'},
+  {id:'c8',nm:'VISION',   ds:'Expansión vs apagado',     lo:'Apagado',      hi:'Expansión',     col:'#a78bfa', ico:'∗', col2:'c8_vision'},
+]
+let V = {c1:3, c2:3, c3:3, c4:3, c5:3, c6:3, c7:3, c8:3}
+let currentUser = null
+let currentProfile = null
+let allScans = []
+
+// ══════════════════════════════════════════
+// STATE ENGINE
+// ══════════════════════════════════════════
+function getState(v) {
+  if (v.c1 < 3) return {st:'INESTABLE.',   cv:'C1 bajo — base frágil',      cd:'Tu seguridad está comprometida. Estabiliza antes de ejecutar.', a1:'Elimina decisiones no urgentes hoy.', a2:'Busca un espacio de calma ahora.',         col:'#ef4444', dom:'c1', cls:'r', ins:'Tu base (C1) es el cimiento. Sin ella, todo lo demás falla. Trabaja aquí primero.'}
+  if (v.c2>=4 && v.c4>=4) return {st:'REACCIÓN.',     cv:'C2 alto + C4 alto',           cd:'Dependencia del entorno. Necesitas recuperar el control interno.', a1:'Elimina estímulos externos (5 min).', a2:'Define 1 decisión y ejecútala ahora.',  col:'#f5a623', dom:'c2', cls:'r', ins:'Sueles entrar en sobreanálisis (C3) cuando tu base (C1) está baja. Trabaja primero en tu base.'}
+  if (v.c3>=4 && v.c1<3)  return {st:'SOBREANÁLISIS.',cv:'C3 alto + C1 bajo',            cd:'Bloqueo mental por base inestable. Primero la seguridad.',            a1:'Para de pensar. Actúa en lo físico.',  a2:'Define tu mínimo viable del día.',      col:'#f5a623', dom:'c3', cls:'a', ins:'Pensar demasiado es evitar actuar. Tu C1 bajo es la raíz real del bloqueo.'}
+  if (v.c7>=4 && v.c8>=4) return {st:'PROPÓSITO.',    cv:'C7 + C8 activados',            cd:'Modo expansión y legado activo. Estás en tu frecuencia más alta.',   a1:'Documenta tu visión de hoy.',          a2:'Conecta con alguien de tu misión.',     col:'#9b7fe8', dom:'c7', cls:'g', ins:'Raro y valioso. Estás en modo construcción de legado. No desperdicies esta ventana.'}
+  const avg = Object.values(v).reduce((a,b)=>a+b)/8
+  if (avg >= 4) return {st:'ESTADO LOBO.', cv:'Todos los circuitos en alto',  cd:'Modo élite activo. Aprovecha esta ventana para ejecutar.',          a1:'Ataca tu objetivo principal ahora.',   a2:'Registra este estado para replicarlo.', col:'#22c55e', dom:'c1', cls:'g', ins:'Peak state activado. Úsalo para decisiones importantes. No lo desperdicies en distracciones.'}
+  if (v.c1>=3 && v.c2>=3) return {st:'EJECUTABLE.',   cv:'Base + Control activos',       cd:'Estás listo para operar. Toma posición.',                           a1:'Inicia la tarea más importante.',     a2:'Apaga distracciones 90 minutos.',       col:'#22c55e', dom:'c2', cls:'g', ins:'Tienes lo esencial encendido. No es el peak, pero es suficiente para operar.'}
+  return {st:'EN PROCESO.',  cv:'Circuitos en calibración',    cd:'Identifica el circuito más bajo y trabájalo primero.',               a1:'Haz el check-in de todos los circuitos.',a2:'Define 1 acción para el circuito más bajo.', col:'#f5a623', dom:'c3', cls:'a', ins:'Un circuito bajo arrastra a todos los demás. Identifícalo y enfócate ahí primero.'}
+}
+
+// ══════════════════════════════════════════
+// UI BUILDERS
+// ══════════════════════════════════════════
+function buildCircuits() {
+  const g = document.getElementById('cgrid'); g.innerHTML = ''
+  CS.forEach((c, i) => {
+    const v = V[c.id], pct = Math.round((v-1)/4*100)
+    const d = document.createElement('div'); d.className = 'cc'
+    d.innerHTML = `
+      <div class="cc-top">
+        <div class="cc-ico" style="border-color:${c.col}44;color:${c.col}">${c.ico}</div>
+        <div style="flex:1;min-width:0">
+          <div class="cc-id" style="color:${c.col}">C${i+1}&nbsp;&nbsp;${c.nm}</div>
+          <div class="cc-ds">${c.ds}</div>
+        </div>
+        <div class="cc-v" id="v-${c.id}" style="color:${c.col}">${v}</div>
+      </div>
+      <div class="sl-top"><span>${c.lo}</span><span>${c.hi}</span></div>
+      <input type="range" min="1" max="5" step="1" value="${v}"
+        style="background:linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)"
+        oninput="slide('${c.id}',this)">
+      <div class="sl-nums"><div class="sl-n">1</div><div class="sl-n">2</div><div class="sl-n">3</div><div class="sl-n">4</div><div class="sl-n">5</div></div>`
+    g.appendChild(d)
+  })
+}
+
+function slide(id, el) {
+  const v = parseInt(el.value); V[id] = v
+  const c = CS.find(x => x.id === id)
+  const pct = Math.round((v-1)/4*100)
+  el.style.background = `linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)`
+  document.getElementById('v-'+id).textContent = v
+  updateResult(); updateRadar()
+}
+
+function updateResult() {
+  const s = getState(V)
+  document.getElementById('p-state').textContent = s.st
+  document.getElementById('p-state').style.color = s.col
+  document.getElementById('p-cause').textContent = s.cv
+  document.getElementById('p-cause').style.color = s.col
+  document.getElementById('p-desc').textContent = s.cd
+  document.getElementById('p-a1').textContent = s.a1
+  document.getElementById('p-a2').textContent = s.a2
+  document.getElementById('insight-txt').textContent = s.ins
+  document.getElementById('p-link').style.color = s.col
+  const huntBtn = document.getElementById('hunt-btn')
+  huntBtn.style.background = s.col
+  huntBtn.style.color = (s.col === '#22c55e' || s.col === '#f5a623') ? '#000' : '#fff'
+  const idx = CS.findIndex(c => c.id === s.dom)
+  document.getElementById('sb-c').textContent = 'C'+(idx+1)
+  document.getElementById('sb-st').textContent = s.st.replace('.','')
+  document.getElementById('sb-c').style.color = s.col
+}
+
+function buildRadar(vals, sz) {
+  const cx=sz/2, cy=sz/2, r=sz/2-14
+  const keys = CS.map(c=>c.id), n = keys.length
+  const pt = (i,val) => { const a=(i/n)*Math.PI*2-Math.PI/2, rv=(val/5)*r; return [+(cx+rv*Math.cos(a)).toFixed(1),+(cy+rv*Math.sin(a)).toFixed(1)] }
+  const ptL = i => { const a=(i/n)*Math.PI*2-Math.PI/2; return [+(cx+(r+12)*Math.cos(a)).toFixed(1),+(cy+(r+12)*Math.sin(a)).toFixed(1)] }
+  const s = getState(vals)
+  let svg = `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="overflow:visible">`
+  for(let g=1;g<=5;g++) { const pts=keys.map((_,i)=>pt(i,g).join(',')).join(' '); svg+=`<polygon points="${pts}" fill="none" stroke="#1e1e1e" stroke-width="${g===5?.8:.4}"/>` }
+  keys.forEach((_,i)=>{ const[x,y]=pt(i,5); svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#1e1e1e" stroke-width="0.5"/>` })
+  svg += `<polygon points="${keys.map((k,i)=>pt(i,vals[k]).join(',')).join(' ')}" fill="${s.col}22" stroke="${s.col}" stroke-width="1.5"/>`
+  keys.forEach((k,i)=>{ const[x,y]=pt(i,vals[k]); const[lx,ly]=ptL(i); svg+=`<circle cx="${x}" cy="${y}" r="2.5" fill="${CS[i].col}"/><text x="${lx}" y="${ly+3}" font-size="7" fill="#6a6a6a" text-anchor="middle" font-family="Inter">C${i+1}</text>` })
+  return svg + '</svg>'
+}
+function updateRadar() { document.getElementById('radar-wrap').innerHTML = buildRadar(V, 155) }
+
+function buildDots(scansLast7) {
+  const days = ['L','M','M','J','V','S','D']
+  const today = new Date()
+  const done = days.map((_, i) => {
+    const d = new Date(today); d.setDate(today.getDate() - (6-i))
+    const dateStr = d.toISOString().split('T')[0]
+    return scansLast7.some(s => s.created_at && s.created_at.startsWith(dateStr)) ? 1 : 0
+  })
+  document.getElementById('dots').innerHTML = days.map((d,i)=>`<div class="dot ${done[i]?'on':''}">${done[i]?'✓':''}</div>`).join('')
+  document.getElementById('dlbls').innerHTML = days.map(d=>`<div class="dlbl">${d}</div>`).join('')
+}
+
+function buildTrendFromScans(scans) {
+  const svg = document.getElementById('trend-svg')
+  if (!scans || scans.length === 0) { svg.innerHTML = ''; document.getElementById('leg').innerHTML = ''; return }
+  const W=340, H=84, pL=18, pR=6, pT=5, pB=16
+  // last 7 days
+  const days7 = []
+  const today = new Date()
+  for(let i=6;i>=0;i--) { const d=new Date(today); d.setDate(today.getDate()-i); days7.push(d.toISOString().split('T')[0]) }
+  const dayLabels = ['L','M','M','J','V','S','HOY']
+  // for each day get avg scan values
+  const trendData = days7.map((dateStr, di) => {
+    const dayScans = scans.filter(s => s.created_at && s.created_at.startsWith(dateStr))
+    if (dayScans.length === 0) return null
+    const last = dayScans[0]
+    return { d: dayLabels[di], v: CS.map(c => last[c.col2] || 3) }
+  })
+  const hasSomeData = trendData.some(x => x !== null)
+  if (!hasSomeData) { svg.innerHTML = ''; return }
+  // fill gaps with previous value
+  let prev = null
+  const filled = trendData.map(x => { if(x) { prev=x; return x } return prev ? {...prev} : null })
+  const valid = filled.filter(Boolean)
+  if (valid.length < 2) return
+  const xS = (W-pL-pR)/(valid.length-1)
+  let out = ''
+  for(let g=1;g<=5;g++) { const y=pT+(1-(g-1)/4)*(H-pT-pB); out+=`<line x1="${pL}" y1="${y.toFixed(1)}" x2="${W-pR}" y2="${y.toFixed(1)}" stroke="#181818" stroke-width="0.7"/><text x="${pL-3}" y="${(y+3).toFixed(1)}" font-size="6" fill="#333" text-anchor="end" font-family="Inter">${g}</text>` }
+  valid.forEach((t,xi)=>{ const x=pL+xi*xS; out+=`<text x="${x.toFixed(1)}" y="${H}" font-size="7" fill="#6a6a6a" text-anchor="middle" font-family="Inter">${t.d}</text>` })
+  CS.forEach((c,ci)=>{
+    const pts = valid.map((t,xi)=>{ const x=pL+xi*xS; const y=pT+(1-(t.v[ci]-1)/4)*(H-pT-pB); return `${x.toFixed(1)},${y.toFixed(1)}` })
+    out += `<polyline points="${pts.join(' ')}" fill="none" stroke="${c.col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.88"/>`
+    valid.forEach((t,xi)=>{ const x=pL+xi*xS; const y=pT+(1-(t.v[ci]-1)/4)*(H-pT-pB); out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="${c.col}"/>` })
+  })
+  svg.innerHTML = out
+  document.getElementById('leg').innerHTML = CS.map((c,i)=>`<div class="leg-i"><div class="leg-ln" style="background:${c.col}"></div>C${i+1} ${c.nm}</div>`).join('')
+}
+
+function renderRecentScans(scans) {
+  const el = document.getElementById('recent-scans')
+  if (!scans || scans.length === 0) { el.innerHTML = '<div class="empty-state">Sin scans aún.<br>Haz tu primer diagnóstico.</div>'; return }
+  el.innerHTML = scans.slice(0,4).map(s => {
+    const t = new Date(s.created_at)
+    const timeStr = t.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})
+    const cls = s.operative_state?.includes('LOBO')||s.operative_state?.includes('EJECUTABLE') ? 'g' : s.operative_state?.includes('SOBREANA') ? 'a' : 'r'
+    return `<div class="sr">
+      <div class="sr-t">${timeStr}</div>
+      <div class="sr-s ${cls}">${s.operative_state || '–'}</div>
+      <div class="sv-row">${CS.map(c=>`<div class="sv">${s[c.col2]||'–'}</div>`).join('')}</div>
+    </div>`
+  }).join('')
+}
+
+// ══════════════════════════════════════════
+// SUPABASE: AUTH
+// ══════════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim()
+  const pass = document.getElementById('login-pass').value
+  if (!email || !pass) return toast('Completa todos los campos', 'error')
+  const btn = document.getElementById('btn-login')
+  btn.disabled = true; btn.textContent = 'Ingresando...'
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass })
+  btn.disabled = false; btn.textContent = 'Ingresar al Sistema'
+  if (error) toast(error.message, 'error')
+}
+
+async function doRegister() {
+  const username = document.getElementById('reg-user').value.trim()
+  const email = document.getElementById('reg-email').value.trim()
+  const pass = document.getElementById('reg-pass').value
+  if (!username || !email || !pass) return toast('Completa todos los campos', 'error')
+  if (pass.length < 8) return toast('La contraseña debe tener mínimo 8 caracteres', 'error')
+  const btn = document.getElementById('btn-reg')
+  btn.disabled = true; btn.textContent = 'Creando cuenta...'
+  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { username } } })
+  btn.disabled = false; btn.textContent = 'Crear Cuenta y Escanear'
+  if (error) toast(error.message, 'error')
+  else toast('¡Cuenta creada! Revisa tu correo para confirmar.', 'success')
+}
+
+async function doLogout() {
+  await sb.auth.signOut()
+  currentUser = null; currentProfile = null; allScans = []
+  showAuth()
+}
+
+// ══════════════════════════════════════════
+// SUPABASE: DATA
+// ══════════════════════════════════════════
+async function saveScan() {
+  if (!currentUser) return toast('Inicia sesión para guardar', 'error')
+  const s = getState(V)
+  document.getElementById('saving-overlay').classList.add('show')
+  document.getElementById('btn-runscan').disabled = true
+
+  const { data, error } = await sb.from('scans').insert({
+    user_id:          currentUser.id,
+    c1_base:          V.c1, c2_control:  V.c2, c3_clarity: V.c3, c4_social:  V.c4,
+    c5_body:          V.c5, c6_flex:     V.c6, c7_purpose: V.c7, c8_vision:  V.c8,
+    dominant_circuit: s.dom,
+    operative_state:  s.st.replace('.',''),
+    state_color:      s.col,
+  }).select()
+
+  document.getElementById('saving-overlay').classList.remove('show')
+  document.getElementById('btn-runscan').disabled = false
+
+  if (error) { toast('Error al guardar: '+error.message, 'error'); return }
+  toast('✓ Scan guardado correctamente', 'success')
+  allScans.unshift(data[0])
+  renderRecentScans(allScans)
+  buildTrendFromScans(allScans)
+  buildDots(allScans)
+  await updateStreak()
+}
+
+async function loadUserScans() {
+  if (!currentUser) return
+  const { data, error } = await sb.from('scans')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(50)
+  if (!error && data) {
+    allScans = data
+    renderRecentScans(data)
+    buildTrendFromScans(data)
+    buildDots(data)
+  }
+}
+
+async function updateStreak() {
+  const { data } = await sb.rpc('get_streak', { p_user_id: currentUser.id })
+  if (data !== null) document.getElementById('streak-num').textContent = data
+}
+
+async function loadHistory() {
+  showView('history')
+  const { data, error } = await sb.from('scans')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+  if (error) { toast('Error al cargar historial', 'error'); return }
+  document.getElementById('hist-count').textContent = data.length
+  const grid = document.getElementById('hist-grid')
+  if (data.length === 0) { grid.innerHTML = '<div class="empty-state">No tienes scans aún. Haz tu primer diagnóstico.</div>'; return }
+  grid.innerHTML = data.map(s => {
+    const t = new Date(s.created_at)
+    const dateStr = t.toLocaleDateString('es-CO',{day:'2-digit',month:'short'}) + ' ' + t.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})
+    const vals = CS.map(c => s[c.col2] || 0)
+    const bars = vals.map((v,i)=>`<div class="hc-bar" style="height:${v/5*36}px;background:${CS[i].col}88"></div>`).join('')
+    const cls = s.operative_state?.includes('LOBO')||s.operative_state?.includes('EJECUTABLE') ? 'g' : s.operative_state?.includes('SOBREANA') ? 'a' : 'r'
+    return `<div class="hist-card">
+      <div class="hc-top">
+        <div class="hc-state sr-s ${cls}">${s.operative_state || '–'}</div>
+        <div class="hc-time">${dateStr}</div>
+      </div>
+      <div class="hc-bars">${bars}</div>
+      <div class="hc-labels">${CS.map(c=>`<div class="hc-lbl">${c.nm.slice(0,3)}</div>`).join('')}</div>
+      ${s.ai_diagnosis ? `<div class="hc-ai">${s.ai_diagnosis}</div>` : ''}
+    </div>`
+  }).join('')
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showView(v) {
+  document.getElementById('view-scan').style.display = v==='scan' ? 'flex' : 'none'
+  document.getElementById('view-history').style.display = v==='history' ? 'flex' : 'none'
+  document.getElementById('nav-scan').className = 'nav'+(v==='scan'?' on':'')
+  document.getElementById('nav-history').className = 'nav'+(v==='history'?' on':'')
+  document.getElementById('tb-view-title').textContent = v==='scan' ? 'SCAN' : 'HISTORY'
+  document.getElementById('tb-view-sub').textContent = v==='scan' ? 'Evalúa tu estado operativo actual' : 'Tu historial de diagnósticos'
+}
+
+function showAuth() {
+  document.getElementById('auth-screen').style.display = 'flex'
+  document.getElementById('app').style.display = 'none'
+  document.getElementById('app').classList.remove('visible')
+}
+
+function showApp(profile) {
+  document.getElementById('auth-screen').style.display = 'none'
+  document.getElementById('app').style.display = 'flex'
+  const initials = (profile?.username || 'W').slice(0,2).toUpperCase()
+  document.getElementById('user-av').textContent = initials
+  document.getElementById('user-name').textContent = (profile?.username || 'ALPHA').toUpperCase()
+}
+
+function switchAuthTab(t) {
+  document.getElementById('tab-login').className = 'auth-tab'+(t==='login'?' active':'')
+  document.getElementById('tab-reg').className = 'auth-tab'+(t==='reg'?' active':'')
+  document.getElementById('form-login').style.display = t==='login' ? 'block' : 'none'
+  document.getElementById('form-reg').style.display = t==='reg' ? 'block' : 'none'
+}
+
+function toast(msg, type='info') {
+  const el = document.createElement('div')
+  el.className = `toast ${type}`
+  el.textContent = msg
+  document.getElementById('toast-container').appendChild(el)
+  setTimeout(() => el.remove(), 3500)
+}
+
+// ══════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════
+async function boot() {
+  // Init UI
+  buildCircuits(); updateResult(); updateRadar()
+
+  // Check session
+  const { data: { session } } = await sb.auth.getSession()
+
+  if (session) {
+    currentUser = session.user
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single()
+    currentProfile = profile
+    showApp(profile)
+    await loadUserScans()
+    await updateStreak()
+  } else {
+    showAuth()
+  }
+
+  // Hide loader
+  document.getElementById('loading-screen').classList.add('hidden')
+
+  // Listen for auth changes
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single()
+      currentProfile = profile
+      showApp(profile)
+      await loadUserScans()
+      await updateStreak()
+    } else if (event === 'SIGNED_OUT') {
+      showAuth()
+    }
+  })
+}
+
+boot()
+</script>
+</body>
+</html>
