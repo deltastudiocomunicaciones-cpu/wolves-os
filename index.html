@@ -118,7 +118,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .cc-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
 .cc-ico{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;cursor:pointer;transition:all .2s;position:relative}
 .cc-ico:hover{transform:scale(1.15)}
-.cc-ico.playing{box-shadow:0 0 0 2px currentColor}
+.cc-ico.playing{animation:iconPulse .6s ease-in-out infinite}
 @keyframes iconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
 .cc-id{font-size:7px;letter-spacing:1px;font-weight:600;line-height:1}
 .cc-ds{font-size:6px;color:var(--txt2);margin-top:1px}
@@ -214,15 +214,37 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .hc-lbl{flex:1;font-size:5px;color:var(--txt3);text-align:center;text-transform:uppercase}
 .hc-ai{font-size:9px;color:var(--txt2);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-style:italic}
 
+
+/* ── HUNT VIEW ── */
+.mission-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;transition:all .2s;position:relative;overflow:hidden}
+.mission-card.active{border-color:var(--amber);background:rgba(245,166,35,.05)}
+.mission-card.done{border-color:var(--green);background:rgba(34,197,94,.05);opacity:.7}
+.mission-card.locked{opacity:.4;pointer-events:none}
+.mission-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mission-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:14px;flex-shrink:0;border:1px solid var(--b2)}
+.mission-info{flex:1}
+.mission-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:1.5px;line-height:1}
+.mission-circuit{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:1px}
+.mission-desc{font-size:10px;color:var(--txt2);line-height:1.5;margin-bottom:10px}
+.mission-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mission-duration{font-size:8px;color:var(--txt3);letter-spacing:1px;display:flex;align-items:center;gap:4px}
+.mission-timer{font-family:'Bebas Neue';font-size:22px;color:var(--amber);letter-spacing:2px;min-width:60px;text-align:right}
+.mission-timer.running{color:var(--red)}
+.mission-timer.done{color:var(--green)}
+.btn-mission{border:none;padding:6px 14px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-start{background:var(--amber);color:#000}
+.btn-start:hover{background:var(--amber2)}
+.btn-done{background:var(--green);color:#000}
+.btn-pause{background:var(--bg3);color:var(--txt2);border:1px solid var(--b2)}
+.mission-progress-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--amber);transition:width 1s linear}
+
 /* ── BOTTOM NAV (mobile only) ── */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,0.97);border-top:1px solid var(--b2);z-index:200;align-items:center;justify-content:space-around;padding:0 4px;backdrop-filter:blur(12px)}
-.mnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 8px;cursor:pointer;border-radius:8px;transition:all .2s;flex:1;min-width:0}
-.mnav-item:active{background:rgba(255,255,255,.05)}
-.mnav-item.on{background:rgba(232,48,42,.08)}
-.mnav-item.on .mnav-icon{opacity:1}
-.mnav-item.on .mnav-lbl{color:var(--red);font-weight:600}
-.mnav-icon{font-size:20px;opacity:.4;transition:all .2s;line-height:1}
-.mnav-lbl{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--b);z-index:200;align-items:center;justify-content:space-around;padding:0 8px}
+.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;cursor:pointer;border-radius:4px;transition:all .15s;flex:1}
+.mnav-item.on .mnav-icon{color:var(--red)}
+.mnav-item.on .mnav-lbl{color:var(--red)}
+.mnav-icon{font-size:18px;color:var(--txt3);transition:all .15s}
+.mnav-lbl{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .15s}
 
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:768px){
@@ -232,7 +254,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 
   /* App takes full height minus bottom nav */
   #app{height:100vh}
-  .body-wrap{padding-bottom:64px}
+  .body-wrap{padding-bottom:60px}
   .main{padding:12px 12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
   /* Topbar: simplified */
@@ -369,7 +391,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       </div>
       <div class="nav on" id="nav-scan" onclick="showView('scan')"><div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div></div>
       <div class="nav" id="nav-history" onclick="loadHistory()"><div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div></div>
-      <div class="nav"><div><div class="nav-t">HUNT</div><div class="nav-s">Próximamente</div></div></div>
+      <div class="nav" id="nav-hunt" onclick="showView('hunt')"><div><div class="nav-t">HUNT</div><div class="nav-s">Modo ejecución</div></div></div>
       <div class="nav"><div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Próximamente</div></div></div>
       <div class="sb-bot">
         <div class="sbox">
@@ -469,6 +491,68 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
         </div>
       </div>
 
+
+      <!-- VIEW: HUNT -->
+      <div id="view-hunt" style="display:none;flex-direction:column;gap:14px">
+        <!-- HUNT HEADER -->
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px" id="hunt-title">HUNT MODE</div>
+            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px" id="hunt-sub">Plan de acción personalizado · Basado en tu último scan</div>
+          </div>
+          <button onclick="generateHuntPlan()" id="hunt-gen-btn" style="background:var(--red);border:none;color:#fff;padding:8px 16px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;transition:all .2s">
+            🎯 Generar Plan
+          </button>
+        </div>
+
+        <!-- NO SCAN WARNING -->
+        <div id="hunt-no-scan" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
+          <div style="font-size:32px;margin-bottom:8px">📡</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;margin-bottom:6px">Primero haz tu Scan</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:1rem">HUNT necesita tu diagnóstico del día para generar el plan correcto.</div>
+          <button onclick="showView('scan')" style="background:var(--amber);border:none;color:#000;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px">Ir al Scan →</button>
+        </div>
+
+        <!-- HUNT LOADING -->
+        <div id="hunt-loading" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
+          <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite;margin-bottom:8px">Analizando circuitos...</div>
+          <div style="font-size:8px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase">IA construyendo tu plan de caza</div>
+        </div>
+
+        <!-- HUNT PLAN -->
+        <div id="hunt-plan" style="display:none;flex-direction:column;gap:12px">
+          <!-- Estado actual -->
+          <div style="background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;display:flex;align-items:center;gap:12px">
+            <div style="flex:1">
+              <div style="font-size:7px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:3px">Operando desde</div>
+              <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;line-height:1" id="hunt-state-label">–</div>
+              <div style="font-size:9px;color:var(--txt2);margin-top:4px" id="hunt-contexto">–</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:7px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:3px">Progreso</div>
+              <div style="font-family:'Bebas Neue';font-size:32px;color:var(--green)" id="hunt-progress-label">0/3</div>
+              <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">misiones</div>
+            </div>
+          </div>
+
+          <!-- Barra de progreso -->
+          <div style="background:var(--bg3);border-radius:2px;height:3px;overflow:hidden">
+            <div id="hunt-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .5s ease;border-radius:2px"></div>
+          </div>
+
+          <!-- Misiones -->
+          <div id="hunt-missions" style="display:flex;flex-direction:column;gap:8px"></div>
+
+          <!-- Completado -->
+          <div id="hunt-completed" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.05));border:1px solid rgba(34,197,94,.3);border-radius:3px;padding:1.5rem;text-align:center">
+            <div style="font-size:32px;margin-bottom:8px">🐺</div>
+            <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--green);margin-bottom:6px">HUNT COMPLETADO</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.5" id="hunt-cierre">–</div>
+            <button onclick="generateHuntPlan()" style="background:var(--red);border:none;color:#fff;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;margin-top:1rem">Nueva Caza →</button>
+          </div>
+        </div>
+      </div>
+
       <!-- VIEW: HISTORY -->
       <div id="view-history" style="display:none;flex-direction:column;gap:10px">
         <div>
@@ -490,7 +574,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       <div class="mnav-icon">📊</div>
       <div class="mnav-lbl">History</div>
     </div>
-    <div class="mnav-item" id="mnav-hunt">
+    <div class="mnav-item" id="mnav-hunt" onclick="showView('hunt')">
       <div class="mnav-icon">🎯</div>
       <div class="mnav-lbl">Hunt</div>
     </div>
@@ -859,14 +943,18 @@ async function loadHistory() {
 function showView(v) {
   document.getElementById('view-scan').style.display=v==='scan'?'flex':'none'
   document.getElementById('view-history').style.display=v==='history'?'flex':'none'
+  document.getElementById('view-hunt').style.display=v==='hunt'?'flex':'none'
   // Desktop nav
   document.getElementById('nav-scan').className='nav'+(v==='scan'?' on':'')
   document.getElementById('nav-history').className='nav'+(v==='history'?' on':'')
   // Mobile nav
   document.getElementById('mnav-scan').className='mnav-item'+(v==='scan'?' on':'')
   document.getElementById('mnav-history').className='mnav-item'+(v==='history'?' on':'')
-  document.getElementById('tb-view-title').textContent=v==='scan'?'SCAN':'HISTORY'
-  document.getElementById('tb-view-sub').textContent=v==='scan'?'Evalúa tu estado operativo actual':'Tu historial de diagnósticos'
+  document.getElementById('mnav-hunt').className='mnav-item'+(v==='hunt'?' on':'')
+  const titles = {scan:'SCAN',history:'HISTORY',hunt:'HUNT'}
+  const subs = {scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA'}
+  document.getElementById('tb-view-title').textContent=titles[v]||v.toUpperCase()
+  document.getElementById('tb-view-sub').textContent=subs[v]||''
 }
 
 function switchAuthTab(t) {
@@ -880,6 +968,220 @@ function toast(msg,type='info') {
   const el=document.createElement('div');el.className=`toast ${type}`;el.textContent=msg
   document.getElementById('toast-container').appendChild(el)
   setTimeout(()=>el.remove(),3500)
+}
+
+
+// ── HUNT SYSTEM ──
+let huntPlan = null
+let huntMissions = []
+let activeTimer = null
+let timerInterval = null
+
+async function generateHuntPlan() {
+  if (!currentUser) return toast('Inicia sesión para usar HUNT', 'error')
+  if (!allScans || allScans.length === 0) {
+    document.getElementById('hunt-no-scan').style.display = 'block'
+    document.getElementById('hunt-plan').style.display = 'none'
+    document.getElementById('hunt-loading').style.display = 'none'
+    return
+  }
+
+  // Get last scan values
+  const lastScan = allScans[0]
+  const scanVals = {
+    c1: lastScan.c1_base, c2: lastScan.c2_control, c3: lastScan.c3_clarity,
+    c4: lastScan.c4_social, c5: lastScan.c5_body, c6: lastScan.c6_flex,
+    c7: lastScan.c7_purpose, c8: lastScan.c8_vision
+  }
+  const scanState = { st: lastScan.operative_state || 'EN PROCESO', dom: lastScan.dominant_circuit || 'c1' }
+
+  document.getElementById('hunt-no-scan').style.display = 'none'
+  document.getElementById('hunt-plan').style.display = 'none'
+  document.getElementById('hunt-loading').style.display = 'block'
+  document.getElementById('hunt-gen-btn').disabled = true
+
+  try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 12000)
+    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: 'hunt', vals: scanVals, state: scanState }),
+      signal: controller.signal
+    })
+    clearTimeout(timeout)
+    const data = await res.json()
+    huntPlan = data.plan
+
+    if (!huntPlan) {
+      // Fallback plan if AI fails
+      huntPlan = {
+        mision_title: 'MODO CAZA ACTIVO',
+        contexto: 'Tres misiones para elevar tus circuitos más bajos.',
+        misiones: [
+          { id:1, titulo:'Estabilizar Base', descripcion:'5 minutos de respiración profunda. Pies en el piso, sin pantallas.', circuito:'C1', duracion_min:5, tipo:'fisica' },
+          { id:2, titulo:'Tomar Posición', descripcion:'Define 1 decisión pendiente y ejecuta el primer paso ahora.', circuito:'C2', duracion_min:25, tipo:'mental' },
+          { id:3, titulo:'Diseñar el Sistema', descripcion:'Escribe las 3 prioridades de esta semana con fecha límite.', circuito:'C3', duracion_min:20, tipo:'estrategica' }
+        ],
+        cierre: 'Wolves don't hope. Wolves operate. Misión cumplida.'
+      }
+    }
+
+    renderHuntPlan(scanState)
+  } catch(e) {
+    toast('Error generando plan. Usando plan base.', 'info')
+    huntPlan = {
+      mision_title: 'PLAN BASE',
+      contexto: 'Ejecuta desde donde estás.',
+      misiones: [
+        { id:1, titulo:'Anclar el Cuerpo', descripcion:'Sal 10 minutos. Camina. Sin teléfono.', circuito:'C1', duracion_min:10, tipo:'fisica' },
+        { id:2, titulo:'Una Decisión', descripcion:'Decide algo que llevas posponiendo. Ahora.', circuito:'C2', duracion_min:15, tipo:'mental' },
+        { id:3, titulo:'Enfoque Total', descripcion:'Trabaja 25 minutos en tu tarea más importante sin interrupciones.', circuito:'C3', duracion_min:25, tipo:'estrategica' }
+      ],
+      cierre: 'Completaste la caza. El lobo ejecuta.'
+    }
+    renderHuntPlan(scanState)
+  }
+
+  document.getElementById('hunt-loading').style.display = 'none'
+  document.getElementById('hunt-gen-btn').disabled = false
+}
+
+function renderHuntPlan(scanState) {
+  const s = getState(V)
+  huntMissions = huntPlan.misiones.map(m => ({ ...m, status: 'pending', timeLeft: m.duracion_min * 60, started: false }))
+
+  document.getElementById('hunt-title').textContent = huntPlan.mision_title
+  document.getElementById('hunt-state-label').textContent = scanState.st + '.'
+  document.getElementById('hunt-state-label').style.color = s.col
+  document.getElementById('hunt-contexto').textContent = huntPlan.contexto
+  document.getElementById('hunt-progress-label').textContent = '0/3'
+  document.getElementById('hunt-progress-bar').style.width = '0%'
+  document.getElementById('hunt-completed').style.display = 'none'
+  document.getElementById('hunt-plan').style.display = 'flex'
+
+  renderMissions()
+}
+
+const TIPO_COLORS = { fisica: '#e8302a', mental: '#f5a623', estrategica: '#22c55e' }
+const TIPO_ICONS = { fisica: '💪', mental: '🧠', estrategica: '🎯' }
+
+function renderMissions() {
+  const container = document.getElementById('hunt-missions')
+  container.innerHTML = ''
+  const completedCount = huntMissions.filter(m => m.status === 'done').length
+
+  huntMissions.forEach((m, i) => {
+    const color = TIPO_COLORS[m.tipo] || 'var(--amber)'
+    const icon = TIPO_ICONS[m.tipo] || '⚡'
+    const mins = Math.floor(m.timeLeft / 60)
+    const secs = m.timeLeft % 60
+    const timeStr = `${mins}:${secs.toString().padStart(2,'0')}`
+    const isActive = m.status === 'active'
+    const isDone = m.status === 'done'
+    const isLocked = i > 0 && huntMissions[i-1].status !== 'done' && huntMissions[i-1].status !== 'active' && !isDone
+
+    const card = document.createElement('div')
+    card.className = `mission-card ${isActive?'active':''} ${isDone?'done':''} ${isLocked?'locked':''}`
+    card.id = `mission-${m.id}`
+
+    const progressPct = isDone ? 100 : isActive ? Math.round((1 - m.timeLeft/(m.duracion_min*60))*100) : 0
+
+    card.innerHTML = `
+      <div class="mission-header">
+        <div class="mission-num" style="background:${isDone?'rgba(34,197,94,.15)':isActive?color+'22':'var(--bg3)'};border-color:${isDone?'var(--green)':isActive?color:'var(--b2)'};color:${isDone?'var(--green)':isActive?color:'var(--txt3)'}">
+          ${isDone ? '✓' : i+1}
+        </div>
+        <div class="mission-info">
+          <div class="mission-title" style="color:${isDone?'var(--green)':isActive?color:'var(--txt)'}">${m.titulo}</div>
+          <div class="mission-circuit">${icon} ${m.circuito} · ${m.tipo}</div>
+        </div>
+        <div class="mission-timer ${isActive?'running':''} ${isDone?'done':''}">${isDone?'✓':timeStr}</div>
+      </div>
+      <div class="mission-desc">${m.descripcion}</div>
+      <div class="mission-footer">
+        <div class="mission-duration">⏱ ${m.duracion_min} min estimados</div>
+        ${isDone ? '<div style="font-size:9px;color:var(--green);font-weight:600">✓ Completada</div>' :
+          isActive ? `<div style="display:flex;gap:6px">
+            <button class="btn-mission btn-pause" onclick="pauseMission(${m.id})">⏸ Pausa</button>
+            <button class="btn-mission btn-done" onclick="completeMission(${m.id})">✓ Hecha</button>
+          </div>` :
+          `<button class="btn-mission btn-start" onclick="startMission(${m.id})" ${isLocked?'disabled':''}>▶ Iniciar</button>`
+        }
+      </div>
+      <div class="mission-progress-bar" id="mpbar-${m.id}" style="width:${progressPct}%;background:${isDone?'var(--green)':color}"></div>`
+
+    container.appendChild(card)
+  })
+}
+
+function startMission(id) {
+  if (activeTimer !== null) {
+    pauseMission(activeTimer)
+  }
+  const m = huntMissions.find(x => x.id === id)
+  if (!m) return
+  m.status = 'active'
+  m.started = true
+  activeTimer = id
+
+  timerInterval = setInterval(() => {
+    const mission = huntMissions.find(x => x.id === id)
+    if (!mission || mission.status !== 'active') { clearInterval(timerInterval); return }
+    mission.timeLeft = Math.max(0, mission.timeLeft - 1)
+    updateTimerDisplay(id)
+    if (mission.timeLeft === 0) {
+      clearInterval(timerInterval)
+      toast(`⏰ Tiempo de misión ${id} completado`, 'info')
+    }
+  }, 1000)
+
+  renderMissions()
+}
+
+function pauseMission(id) {
+  const m = huntMissions.find(x => x.id === id)
+  if (!m) return
+  m.status = 'pending'
+  activeTimer = null
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
+  renderMissions()
+}
+
+function completeMission(id) {
+  const m = huntMissions.find(x => x.id === id)
+  if (!m) return
+  m.status = 'done'
+  activeTimer = null
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
+
+  const completedCount = huntMissions.filter(x => x.status === 'done').length
+  document.getElementById('hunt-progress-label').textContent = `${completedCount}/3`
+  document.getElementById('hunt-progress-bar').style.width = `${(completedCount/3)*100}%`
+
+  if (completedCount === 3) {
+    setTimeout(() => {
+      document.getElementById('hunt-completed').style.display = 'block'
+      document.getElementById('hunt-cierre').textContent = huntPlan.cierre
+      document.getElementById('hunt-missions').style.display = 'none'
+    }, 500)
+    toast('🐺 ¡Hunt completado! Wolves operate.', 'success')
+  }
+
+  renderMissions()
+}
+
+function updateTimerDisplay(id) {
+  const m = huntMissions.find(x => x.id === id)
+  if (!m) return
+  const mins = Math.floor(m.timeLeft / 60)
+  const secs = m.timeLeft % 60
+  const timeStr = `${mins}:${secs.toString().padStart(2,'0')}`
+  const timerEl = document.querySelector(`#mission-${id} .mission-timer`)
+  if (timerEl) timerEl.textContent = timeStr
+  const pct = Math.round((1 - m.timeLeft/(m.duracion_min*60))*100)
+  const pbar = document.getElementById(`mpbar-${id}`)
+  if (pbar) pbar.style.width = pct + '%'
 }
 
 // ── BOOT ──
