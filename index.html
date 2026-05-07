@@ -15,6 +15,7 @@
 <script>
   const SUPABASE_URL = 'https://uhvdtcduqiwoegwedwdp.supabase.co'
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodmR0Y2R1cWl3b2Vnd2Vkd2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMjYxNDgsImV4cCI6MjA5MzYwMjE0OH0.MSMnn4QsuCx2luW0BL5_Q8JyUHo_VyoYY2tKQ7MnSdM'
+  const ANTHROPIC_KEY = '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'
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -439,7 +440,10 @@ input[type=range]::-moz-range-thumb{width:11px;height:11px;border-radius:50%;cur
               <div class="poster-link" id="p-link" style="color:var(--amber)" onclick="loadHistory()">Ver historial completo →</div>
             </div>
             <div class="saving-overlay" id="saving-overlay">
-              <div class="saving-text">Guardando scan...</div>
+              <div style="text-align:center">
+                <div class="saving-text" id="saving-text">Analizando circuitos...</div>
+                <div style="font-size:8px;color:var(--txt3);letter-spacing:2px;margin-top:6px;text-transform:uppercase">IA generando tu diagnóstico</div>
+              </div>
             </div>
           </div>
 
@@ -716,11 +720,36 @@ async function doLogout() {
 // ══════════════════════════════════════════
 // SUPABASE: DATA
 // ══════════════════════════════════════════
+// ── CLAUDE API: Generar diagnóstico narrativo ──
+async function generateAIDiagnosis(vals, state) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ vals, state: { st: state.st.replace('.',''), dom: state.dom } })
+    })
+    const d = await res.json()
+    return d.diagnosis || null
+  } catch(e) {
+    console.warn('Edge Function no disponible:', e)
+    return null
+  }
+}
+
 async function saveScan() {
   if (!currentUser) return toast('Inicia sesión para guardar', 'error')
   const s = getState(V)
   document.getElementById('saving-overlay').classList.add('show')
+  document.getElementById('saving-text').textContent = 'Analizando circuitos...'
   document.getElementById('btn-runscan').disabled = true
+
+  // Generar diagnóstico IA en paralelo al guardar
+  const aiDiagnosis = await generateAIDiagnosis(V, s)
+
+  document.getElementById('saving-text').textContent = 'Guardando scan...'
 
   const { data, error } = await sb.from('scans').insert({
     user_id:          currentUser.id,
@@ -729,13 +758,21 @@ async function saveScan() {
     dominant_circuit: s.dom,
     operative_state:  s.st.replace('.',''),
     state_color:      s.col,
+    ai_diagnosis:     aiDiagnosis,
   }).select()
 
   document.getElementById('saving-overlay').classList.remove('show')
   document.getElementById('btn-runscan').disabled = false
 
   if (error) { toast('Error al guardar: '+error.message, 'error'); return }
-  toast('✓ Scan guardado correctamente', 'success')
+  toast('✓ Scan guardado · Diagnóstico IA generado', 'success')
+
+  // Mostrar diagnóstico IA en el insight panel
+  if (aiDiagnosis) {
+    document.getElementById('insight-txt').textContent = aiDiagnosis
+    document.getElementById('insight-txt').style.color = 'var(--txt)'
+  }
+
   allScans.unshift(data[0])
   renderRecentScans(allScans)
   buildTrendFromScans(allScans)
