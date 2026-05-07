@@ -721,7 +721,7 @@ async function doLogout() {
 // SUPABASE: DATA
 // ══════════════════════════════════════════
 // ── CLAUDE API: Generar diagnóstico narrativo ──
-async function generateAIDiagnosis(vals, state) {
+async function generateAIDiagnose(vals, state) {
   try {
     const res = await fetch(SUPABASE_URL + '/functions/v1/diagnóstico', {
       method: 'POST',
@@ -747,7 +747,7 @@ async function saveScan() {
   document.getElementById('btn-runscan').disabled = true
 
   // Generar diagnóstico IA en paralelo al guardar
-  const aiDiagnosis = await generateAIDiagnosis(V, s)
+ const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
 
   document.getElementById('saving-text').textContent = 'Guardando scan...'
 
