@@ -721,9 +721,9 @@ async function doLogout() {
 // SUPABASE: DATA
 // ══════════════════════════════════════════
 // ── CLAUDE API: Generar diagnóstico narrativo ──
-async function generateAIDiagnose(vals, state) {
+async function generateAIDiagnosis(vals, state) {
   try {
-    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnóstico', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -746,8 +746,7 @@ async function saveScan() {
   document.getElementById('saving-text').textContent = 'Analizando circuitos...'
   document.getElementById('btn-runscan').disabled = true
 
-  // Generar diagnóstico IA en paralelo al guardar
- const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
+  const aiDiagnosis = await generateAIDiagnosis(V, s)
 
   document.getElementById('saving-text').textContent = 'Guardando scan...'
 
@@ -767,7 +766,6 @@ async function saveScan() {
   if (error) { toast('Error al guardar: '+error.message, 'error'); return }
   toast('✓ Scan guardado · Diagnóstico IA generado', 'success')
 
-  // Mostrar diagnóstico IA en el insight panel
   if (aiDiagnosis) {
     document.getElementById('insight-txt').textContent = aiDiagnosis
     document.getElementById('insight-txt').style.color = 'var(--txt)'
