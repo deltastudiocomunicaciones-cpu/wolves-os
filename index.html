@@ -215,12 +215,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .hc-ai{font-size:9px;color:var(--txt2);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-style:italic}
 
 /* ── BOTTOM NAV (mobile only) ── */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--b);z-index:200;align-items:center;justify-content:space-around;padding:0 8px}
-.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;cursor:pointer;border-radius:4px;transition:all .15s;flex:1}
-.mnav-item.on .mnav-icon{color:var(--red)}
-.mnav-item.on .mnav-lbl{color:var(--red)}
-.mnav-icon{font-size:18px;color:var(--txt3);transition:all .15s}
-.mnav-lbl{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .15s}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,0.97);border-top:1px solid var(--b2);z-index:200;align-items:center;justify-content:space-around;padding:0 4px;backdrop-filter:blur(12px)}
+.mnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 8px;cursor:pointer;border-radius:8px;transition:all .2s;flex:1;min-width:0}
+.mnav-item:active{background:rgba(255,255,255,.05)}
+.mnav-item.on{background:rgba(232,48,42,.08)}
+.mnav-item.on .mnav-icon{opacity:1}
+.mnav-item.on .mnav-lbl{color:var(--red);font-weight:600}
+.mnav-icon{font-size:20px;opacity:.4;transition:all .2s;line-height:1}
+.mnav-lbl{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .2s;white-space:nowrap}
 
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:768px){
@@ -230,7 +232,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 
   /* App takes full height minus bottom nav */
   #app{height:100vh}
-  .body-wrap{padding-bottom:60px}
+  .body-wrap{padding-bottom:64px}
   .main{padding:12px 12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
   /* Topbar: simplified */
