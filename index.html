@@ -723,7 +723,7 @@ async function doLogout() {
 // ── CLAUDE API: Generar diagnóstico narrativo ──
 async function generateAIDiagnosis(vals, state) {
   try {
-    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnostico', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
