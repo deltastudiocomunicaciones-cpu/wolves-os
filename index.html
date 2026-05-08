@@ -9,273 +9,324 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVodmR0Y2R1cWl3b2Vnd2Vkd2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMjYxNDgsImV4cCI6MjA5MzYwMjE0OH0.MSMnn4QsuCx2luW0BL5_Q8JyUHo_VyoYY2tKQ7MnSdM'
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--bg4:#1f1f1f;--b:#1e1e1e;--b2:#282828;--b3:#333;--red:#e8302a;--red2:#ff3d36;--amber:#f5a623;--amber2:#ffbe4d;--txt:#f0f0f0;--txt2:#6a6a6a;--txt3:#333;--green:#22c55e;--blue:#3b82f6;--purple:#9b7fe8;--cyan:#06b6d4;--pink:#ec4899;--violet:#a78bfa}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#181818;--bg4:#1f1f1f;
+  --b:#1e1e1e;--b2:#2a2a2a;--b3:#3a3a3a;
+  --red:#e8302a;--red2:#ff3d36;
+  --amber:#f5a623;--amber2:#ffbe4d;
+  --txt:#f0f0f0;--txt2:#888;--txt3:#444;
+  --green:#22c55e;--blue:#3b82f6;--purple:#9b7fe8;
+  --cyan:#06b6d4;--pink:#ec4899;--violet:#a78bfa;
+  --r:4px;--rs:2px;
+}
 body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
-#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:1000;transition:opacity .4s}
+
+/* LOADING */
+#loading-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .6s ease}
 #loading-screen.hidden{opacity:0;pointer-events:none}
-.loading-wolf{animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.loading-text{font-family:'Bebas Neue';font-size:12px;letter-spacing:4px;color:var(--txt3)}
-#toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:280px}
-.toast{background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:10px 14px;font-size:11px;letter-spacing:.5px;min-width:200px;animation:slideIn .2s ease}
+#loading-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.loading-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:1}
+.loading-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px}
+.loading-logo{width:80px;height:80px;object-fit:contain;animation:logoPulse 2s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(232,48,42,.5))}
+@keyframes logoPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+.loading-brand{font-family:'Bebas Neue';font-size:22px;letter-spacing:8px;color:#fff;text-align:center}
+.loading-sub{font-size:9px;letter-spacing:4px;color:var(--txt3);text-transform:uppercase;text-align:center}
+.loading-bar{width:120px;height:1px;background:var(--b2);border-radius:1px;overflow:hidden;margin-top:6px}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:1px;animation:loadFill 2.2s ease-in-out infinite}
+@keyframes loadFill{0%{width:0%}70%{width:100%}100%{width:100%;opacity:0}}
+
+/* TOAST */
+#toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
+.toast{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 14px;font-size:11px;letter-spacing:.3px;animation:slideIn .2s ease}
 .toast.success{border-left:2px solid var(--green)}.toast.error{border-left:2px solid var(--red)}.toast.info{border-left:2px solid var(--amber)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* AUTH */
 #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:2rem}
-.auth-wolf{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
-.auth-brand{font-family:'Bebas Neue';font-size:18px;letter-spacing:5px}
-.auth-brand-sub{font-size:8px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-top:2px}
-.auth-card{background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:2rem;width:100%;max-width:380px}
-.auth-headline{font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:4px}
+.auth-wolf{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem}
+.auth-brand{font-family:'Bebas Neue';font-size:20px;letter-spacing:6px}
+.auth-brand-sub{font-size:8px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-top:3px}
+.auth-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:2rem;width:100%;max-width:380px;box-shadow:0 24px 48px rgba(0,0,0,.5)}
+.auth-headline{font-family:'Bebas Neue';font-size:34px;letter-spacing:2px;margin-bottom:4px}
 .auth-sub{font-size:10px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;padding-bottom:1.2rem;border-bottom:1px solid var(--b)}
 .auth-tabs{display:flex;margin-bottom:1.5rem;border-bottom:1px solid var(--b)}
-.auth-tab{flex:1;padding:9px;text-align:center;font-size:10px;letter-spacing:2px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:10px;letter-spacing:2px;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;font-weight:600}
 .auth-tab.active{color:var(--amber);border-bottom-color:var(--amber)}
 .field{margin-bottom:1rem}
-.field label{font-size:8px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;display:block;margin-bottom:5px}
-.field input{width:100%;background:var(--bg3);border:1px solid var(--b);color:var(--txt);padding:9px 12px;font-size:14px;border-radius:2px;outline:none;transition:border .2s;font-family:'Inter'}
-.field input:focus{border-color:var(--amber)}
-.btn-primary{width:100%;background:var(--amber);color:#000;border:none;padding:12px;font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all .2s;margin-top:.5rem}
-.btn-primary:hover{background:var(--amber2)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.field label{font-size:8px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;display:block;margin-bottom:6px;font-weight:600}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--b);color:var(--txt);padding:10px 13px;font-size:13px;border-radius:var(--rs);outline:none;transition:border .2s,box-shadow .2s;font-family:'Inter'}
+.field input:focus{border-color:var(--amber);box-shadow:0 0 0 2px rgba(245,166,35,.1)}
+.btn-primary{width:100%;background:var(--amber);color:#000;border:none;padding:13px;font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:var(--rs);transition:all .2s;margin-top:.5rem;font-weight:700}
+.btn-primary:hover{background:var(--amber2);transform:translateY(-1px)}.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .auth-sep{font-size:10px;color:var(--txt3);text-align:center;margin:1rem 0}
-.auth-disclaimer{font-size:9px;color:var(--txt3);text-align:center;margin-top:1rem;line-height:1.5}
+.auth-disclaimer{font-size:9px;color:var(--txt3);text-align:center;margin-top:1rem;line-height:1.6}
+
+/* APP */
 #app{display:none;flex-direction:column;height:100vh}
-.topbar{height:56px;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
-.tb-div{width:1px;height:24px;background:var(--b2);margin:0 4px}
+.topbar{height:58px;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.tb-div{width:1px;height:26px;background:var(--b);margin:0 4px}
 .tb-mid{flex:1}
-.tb-scan-title{font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;line-height:1}
-.tb-scan-sub{font-size:9px;color:var(--txt2);letter-spacing:1px}
+.tb-scan-title{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;line-height:1}
+.tb-scan-sub{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-top:1px}
 .tb-right{display:flex;align-items:center;gap:8px}
-.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:6px 11px;font-size:8px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:5px;text-transform:uppercase;white-space:nowrap;transition:all .15s}
+.btn-ghost{background:transparent;border:1px solid var(--b);color:var(--txt3);padding:6px 12px;font-size:8px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);display:flex;align-items:center;gap:5px;text-transform:uppercase;white-space:nowrap;transition:all .15s;font-weight:600}
 .btn-ghost:hover{color:var(--txt);border-color:var(--b3)}
-.btn-runscan{background:var(--red);border:none;color:#fff;padding:7px 14px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;transition:all .15s}
+.btn-runscan{background:var(--red);border:none;color:#fff;padding:8px 16px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);display:flex;align-items:center;gap:6px;transition:all .15s}
 .btn-runscan:hover{background:var(--red2)}.btn-runscan:disabled{opacity:.5;cursor:not-allowed}
-.user-chip{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--b2);border-radius:2px;cursor:pointer;position:relative}
-.user-chip:hover .user-menu{display:block}
-.user-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--b2);border-radius:3px;min-width:140px;z-index:100}
-.user-menu-item{padding:8px 12px;font-size:10px;letter-spacing:1px;color:var(--txt2);cursor:pointer;text-transform:uppercase;transition:all .15s}
+.user-chip{display:flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid var(--b);border-radius:var(--rs);cursor:pointer;position:relative;transition:border .15s}
+.user-chip:hover{border-color:var(--b3)}.user-chip:hover .user-menu{display:block}
+.user-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);min-width:160px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.5);overflow:hidden}
+.user-menu-item{padding:10px 14px;font-size:10px;letter-spacing:1px;color:var(--txt2);cursor:pointer;text-transform:uppercase;transition:all .15s;display:flex;align-items:center;gap:8px;font-weight:500}
 .user-menu-item:hover{background:var(--bg3);color:var(--txt)}.user-menu-item.danger:hover{color:var(--red)}
-.u-av{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:10px;color:var(--amber)}
-.u-name{font-family:'Bebas Neue';font-size:12px;letter-spacing:1px;line-height:1}.u-sub{font-size:7px;color:var(--txt2)}
-/* AUDIO TOOLTIP — single global, no flicker */
-.audio-tooltip{position:fixed;background:var(--bg2);border:1px solid var(--b2);border-radius:4px;padding:12px 14px;width:230px;z-index:9999;font-size:9px;color:var(--txt2);line-height:1.5;box-shadow:0 8px 32px rgba(0,0,0,.85);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s}
-.audio-tooltip.show{opacity:1;visibility:visible}
-.audio-tooltip-title{font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--txt);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.audio-play-btn{background:var(--red);border:none;color:#fff;padding:6px 10px;font-family:'Bebas Neue';font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:2px;margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:4px;transition:background .15s}
-.audio-play-btn:hover{background:var(--red2)}
-.audio-close{cursor:pointer;color:var(--txt3);font-size:16px;line-height:1;padding:2px 6px}
-.audio-close:hover{color:var(--txt)}
+.u-av{width:26px;height:26px;border-radius:50%;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:11px;color:var(--amber)}
+.u-name{font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;line-height:1}.u-sub{font-size:7px;color:var(--txt3);letter-spacing:.5px}
 
 /* HAMBURGER */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:1px solid var(--b2);border-radius:3px;background:transparent;flex-shrink:0}
-.hamburger span{display:block;width:18px;height:2px;background:var(--txt2);border-radius:1px;transition:all .3s}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:1px solid var(--b);border-radius:var(--rs);background:transparent;flex-shrink:0;transition:border .15s}
+.hamburger:hover{border-color:var(--b3)}
+.hamburger span{display:block;width:18px;height:2px;background:var(--txt3);border-radius:1px;transition:all .3s}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
 .hamburger.open span:nth-child(2){opacity:0;transform:translateX(-4px)}
 .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
 
-/* MOBILE DRAWER */
+/* DRAWER */
 .mobile-drawer{display:none;position:fixed;inset:0;z-index:500}
 .mobile-drawer.open{display:block}
-.drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
-.drawer-panel{position:absolute;left:0;top:0;bottom:0;width:230px;background:var(--bg2);border-right:1px solid var(--b);padding:20px 14px;display:flex;flex-direction:column;gap:2px;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px)}
+.drawer-panel{position:absolute;left:0;top:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--b);padding:22px 16px;display:flex;flex-direction:column;gap:2px;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
 .mobile-drawer.open .drawer-panel{transform:translateX(0)}
-.drawer-brand{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
-.drawer-nav{display:flex;align-items:center;gap:10px;padding:12px 10px;border-radius:3px;cursor:pointer;font-size:11px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;transition:all .15s;border-left:2px solid transparent}
-.drawer-nav:hover{background:var(--bg3);color:var(--txt)}
-.drawer-nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
-.drawer-nav-icon{font-size:18px;flex-shrink:0}
-.drawer-nav-title{font-size:12px;font-family:'Bebas Neue';letter-spacing:1px;line-height:1}
-.drawer-nav-sub{font-size:7px;color:var(--txt3);margin-top:1px;letter-spacing:.3px;text-transform:none}
-.drawer-status{margin-top:auto;padding-top:14px;border-top:1px solid var(--b)}
-.drawer-logout{width:100%;background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:9px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s;margin-top:8px}
+.drawer-brand{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px}
+.drawer-brand-text{font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;line-height:1.2}
+.drawer-brand-ver{font-size:7px;letter-spacing:2px;color:var(--txt3);margin-top:3px}
+.drawer-nav{display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:var(--rs);cursor:pointer;color:var(--txt2);transition:all .15s;border-left:2px solid transparent}
+.drawer-nav:hover{background:var(--bg3);color:var(--txt)}.drawer-nav.on{background:rgba(232,48,42,.08);color:var(--red);border-left-color:var(--red)}
+.drawer-nav-icon{width:20px;text-align:center;flex-shrink:0}
+.drawer-nav-title{font-size:12px;font-family:'Bebas Neue';letter-spacing:1.5px;line-height:1}
+.drawer-nav-sub{font-size:7px;color:var(--txt3);margin-top:2px;letter-spacing:.3px}
+.drawer-status{margin-top:auto;padding-top:16px;border-top:1px solid var(--b)}
+.drawer-state-box{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:12px;text-align:center;margin-bottom:10px}
+.drawer-tagline{font-size:7px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;text-align:center;line-height:1.9;margin-bottom:10px}
+.drawer-logout{width:100%;background:transparent;border:1px solid var(--b);color:var(--txt3);padding:10px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
 .drawer-logout:hover{border-color:var(--red);color:var(--red)}
 
+/* BODY */
 .body-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
-.sidebar{width:155px;background:var(--bg2);border-right:1px solid var(--b);padding:12px 10px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
-.sb-brand{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b)}
-.sb-name{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.1}
-.sb-ver{font-size:6px;letter-spacing:2px;color:var(--txt3);margin-top:2px}
-.nav{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:2px;cursor:pointer;font-size:10px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;transition:all .15s;border-left:2px solid transparent}
-.nav:hover{background:var(--bg3);color:var(--txt)}.nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
-.nav-t{line-height:1;font-size:10px}.nav-s{font-size:6px;color:var(--txt3);letter-spacing:.3px;text-transform:none;margin-top:1px}
+.sidebar{width:162px;background:var(--bg2);border-right:1px solid var(--b);padding:14px 12px;display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.sb-brand{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.sb-name{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.2;margin-top:6px}
+.sb-ver{font-size:7px;letter-spacing:2px;color:var(--txt3);margin-top:3px}
+.nav{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;color:var(--txt3);transition:all .15s;border-left:2px solid transparent}
+.nav:hover{background:var(--bg3);color:var(--txt)}.nav.on{background:rgba(232,48,42,.08);color:var(--red);border-left-color:var(--red)}
+.nav-icon{width:16px;text-align:center;flex-shrink:0;opacity:.5}.nav.on .nav-icon{opacity:1}
+.nav-t{font-family:'Bebas Neue';font-size:12px;letter-spacing:1.5px;line-height:1}
+.nav-s{font-size:7px;color:var(--txt3);letter-spacing:.3px;text-transform:none;margin-top:2px}
 .sb-bot{margin-top:auto}
-.sbox{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:9px;margin-bottom:7px}
-.sbox-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:7px}
-.sring-wrap{display:flex;justify-content:center;margin-bottom:5px}
-.sring{width:56px;height:56px;border-radius:50%;border:1px solid var(--b3);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
+.sbox{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:10px;margin-bottom:8px}
+.sbox-lbl{font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.sring-wrap{display:flex;justify-content:center;margin-bottom:6px}
+.sring{width:60px;height:60px;border-radius:50%;border:1px solid var(--b3);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative}
 .sring-arc{position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;border-top-color:var(--red);border-right-color:var(--red);transform:rotate(-20deg)}
-.sring-c{font-family:'Bebas Neue';font-size:20px;color:var(--red);line-height:1}
+.sring-c{font-family:'Bebas Neue';font-size:22px;color:var(--red);line-height:1}
 .sring-d{font-size:6px;color:var(--txt3);letter-spacing:1px}
-.sring-st{font-size:8px;color:var(--txt2);text-align:center}
-.slink{font-size:7px;color:var(--red);text-align:center;display:block;margin-top:4px;cursor:pointer;letter-spacing:1px}
-.racha-box{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:9px}
-.r-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:3px}
-.r-n{font-family:'Bebas Neue';font-size:24px;color:var(--txt);line-height:1}
-.r-d{font-size:7px;color:var(--txt2);letter-spacing:1px}
-.dots{display:flex;gap:3px;margin-top:5px}
-.dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:5px;color:var(--txt3)}
-.dot.on{background:var(--red);border-color:var(--red);color:#fff;font-size:6px}
-.dlbls{display:flex;gap:3px;margin-top:2px}.dlbl{width:14px;font-size:5px;color:var(--txt3);text-align:center}
-.sb-tag{font-size:6px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-top:8px;line-height:1.7}
-.main{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
-#view-scan{display:flex;flex-direction:column;gap:10px}
-.top3{display:grid;grid-template-columns:1fr 240px 200px;gap:10px}
-.circuits-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;display:flex;flex-direction:column}
-.cp-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;flex-shrink:0}
-.cp-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px}
-.cp-sub{font-size:7px;color:var(--txt2);letter-spacing:.5px;margin-top:1px}
-.cp-scale{font-size:6px;color:var(--txt3);letter-spacing:.5px}
-.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
-.cc{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:8px 9px}
-.cc-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.cc-ico{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;cursor:pointer;transition:box-shadow .2s,transform .15s}
-.cc-ico:hover{transform:scale(1.12)}
-.cc-ico.playing{box-shadow:0 0 0 2px currentColor}
-.cc-id{font-size:7px;letter-spacing:1px;font-weight:600;line-height:1}
-.cc-ds{font-size:6px;color:var(--txt2);margin-top:1px}
-.cc-v{font-family:'Bebas Neue';font-size:18px;min-width:14px;text-align:right;line-height:1}
-.sl-top{display:flex;justify-content:space-between;font-size:5px;color:var(--txt3);margin-bottom:2px}
+.sring-st{font-size:8px;color:var(--txt2);text-align:center;font-weight:500}
+.slink{font-size:7px;color:var(--red);text-align:center;display:block;margin-top:5px;cursor:pointer;letter-spacing:1px}
+.racha-box{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:10px}
+.r-lbl{font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.r-n{font-family:'Bebas Neue';font-size:26px;color:var(--txt);line-height:1}
+.r-d{font-size:8px;color:var(--txt2);letter-spacing:1px}
+.dots{display:flex;gap:3px;margin-top:6px}
+.dot{width:15px;height:15px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:5px;color:var(--txt3);transition:all .2s}
+.dot.on{background:var(--red);border-color:var(--red);color:#fff}
+.dlbls{display:flex;gap:3px;margin-top:3px}.dlbl{width:15px;font-size:5px;color:var(--txt3);text-align:center}
+.sb-tag{font-size:7px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-top:10px;line-height:1.9}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+#view-scan{display:flex;flex-direction:column;gap:12px}
+.top3{display:grid;grid-template-columns:1fr 240px 200px;gap:12px}
+
+/* CIRCUITS */
+.circuits-panel{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:14px;display:flex;flex-direction:column}
+.cp-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-shrink:0}
+.cp-title{font-family:'Bebas Neue';font-size:18px;letter-spacing:2px}
+.cp-sub{font-size:8px;color:var(--txt2);letter-spacing:.5px;margin-top:2px}
+.cp-scale{font-size:7px;color:var(--txt3);letter-spacing:.5px;font-weight:600}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1}
+.cc{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:10px 11px;transition:border .15s}
+.cc:hover{border-color:var(--b3)}
+.cc-top{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.cc-ico{width:26px;height:26px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;cursor:pointer;transition:box-shadow .2s,transform .15s}
+.cc-ico:hover{transform:scale(1.1)}.cc-ico.playing{box-shadow:0 0 0 2px currentColor}
+.cc-id{font-size:8px;letter-spacing:1px;font-weight:700;line-height:1}
+.cc-ds{font-size:6px;color:var(--txt3);margin-top:2px}
+.cc-v{font-family:'Bebas Neue';font-size:20px;min-width:16px;text-align:right;line-height:1}
+.sl-top{display:flex;justify-content:space-between;font-size:6px;color:var(--txt3);margin-bottom:3px;font-weight:500}
 input[type=range]{width:100%;height:3px;-webkit-appearance:none;appearance:none;border-radius:2px;outline:none;border:none;cursor:pointer;display:block}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
-.sl-nums{display:flex;justify-content:space-between;margin-top:2px}
-.sl-n{font-size:5px;color:var(--txt3);width:8px;text-align:center}
-.result-poster{background:#000;border:1px solid var(--b);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;position:relative}
-.wolf-section{position:relative;flex:0 0 195px;overflow:hidden;background:#050505}
-.wolf-section img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.7) contrast(1.1)}
-.wolf-red-ov{position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(180,30,0,.3) 0%,transparent 65%)}
-.wolf-fade{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,#000)}
-.poster-body{padding:11px;flex:1;background:#000}
-.poster-lbl{font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:2px}
-.poster-state{font-family:'Bebas Neue';font-size:38px;line-height:1;letter-spacing:2px}
-.pcause-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:9px;margin-bottom:2px}
-.pcause{font-size:12px;font-weight:600}
-.pdesc{font-size:9px;color:rgba(255,255,255,.5);line-height:1.4;margin-top:2px}
-.pactions-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:9px;margin-bottom:5px}
-.paction{display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;font-size:9px;color:rgba(255,255,255,.6);line-height:1.4}
-.pan{width:17px;height:17px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;flex-shrink:0;background:rgba(255,255,255,.04)}
-.btn-hunt{width:100%;padding:9px;font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:9px;border:none;transition:all .2s}
-.poster-link{font-size:8px;text-align:center;margin-top:5px;cursor:pointer;letter-spacing:1px;opacity:.55}
-.right-col{display:flex;flex-direction:column;gap:8px}
-.neural-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;flex:0 0 auto}
-.np-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:2px}
-.np-sub{font-size:7px;color:var(--txt2);margin-bottom:8px}
-.insight-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;flex:1}
-.ip-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:7px}
-.iq{display:flex;gap:5px;font-size:9px;color:var(--txt2);line-height:1.5}
-.iq-q{font-size:22px;color:var(--b3);line-height:1;flex-shrink:0;font-family:Georgia}
-.nw-box{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:8px;margin-top:8px}
-.nw-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:3px}
-.nw-time{font-family:'Bebas Neue';font-size:15px;color:var(--amber);letter-spacing:1px}
-.nw-sub{font-size:7px;color:var(--txt2);margin-top:1px}
-.ql-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin:8px 0 5px}
-.ql{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-.qlb{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:6px 3px;text-align:center;cursor:pointer;transition:all .15s}
-.qlb:hover{border-color:var(--b2)}.qlb-i{font-size:11px;margin-bottom:2px}
-.qlb-l{font-size:6px;letter-spacing:1px;color:var(--txt2);text-transform:uppercase;display:block}
-.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px}
-.pnl-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:2px}
-.pnl-sub{font-size:7px;color:var(--txt2);margin-bottom:7px}
+.sl-nums{display:flex;justify-content:space-between;margin-top:3px}
+.sl-n{font-size:6px;color:var(--txt3);width:8px;text-align:center}
+
+/* AUDIO TOOLTIP */
+.audio-tooltip{position:fixed;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);padding:14px 16px;width:240px;z-index:9999;font-size:9px;color:var(--txt2);line-height:1.6;box-shadow:0 12px 40px rgba(0,0,0,.9);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s}
+.audio-tooltip.show{opacity:1;visibility:visible}
+.audio-tooltip-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--txt);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.audio-play-btn{background:var(--red);border:none;color:#fff;padding:8px 12px;font-family:'Bebas Neue';font-size:11px;letter-spacing:1px;cursor:pointer;border-radius:var(--rs);margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.audio-play-btn:hover{background:var(--red2)}
+.audio-close{cursor:pointer;color:var(--txt3);font-size:18px;line-height:1;padding:2px 4px;transition:color .15s}
+.audio-close:hover{color:var(--txt)}
+
+/* RESULT POSTER */
+.result-poster{background:#000;border:1px solid var(--b);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.wolf-section{position:relative;flex:0 0 200px;overflow:hidden;background:#050505}
+.wolf-section img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.65) contrast(1.15)}
+.wolf-red-ov{position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(180,30,0,.35) 0%,transparent 65%)}
+.wolf-fade{position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(transparent,#000)}
+.poster-body{padding:13px;flex:1;background:#000}
+.poster-lbl{font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:3px;font-weight:600}
+.poster-state{font-family:'Bebas Neue';font-size:40px;line-height:1;letter-spacing:2px}
+.pcause-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.22);text-transform:uppercase;margin-top:10px;margin-bottom:3px;font-weight:600}
+.pcause{font-size:12px;font-weight:700}
+.pdesc{font-size:9px;color:rgba(255,255,255,.42);line-height:1.5;margin-top:3px}
+.pactions-lbl{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.22);text-transform:uppercase;margin-top:10px;margin-bottom:6px;font-weight:600}
+.paction{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:9px;color:rgba(255,255,255,.52);line-height:1.5}
+.pan{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,.04)}
+.btn-hunt{width:100%;padding:10px;font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;border:none;transition:all .2s}
+.btn-hunt:hover{opacity:.9;transform:translateY(-1px)}
+.poster-link{font-size:8px;text-align:center;margin-top:6px;cursor:pointer;letter-spacing:1px;opacity:.4;transition:opacity .15s}
+.poster-link:hover{opacity:.7}
+.right-col{display:flex;flex-direction:column;gap:10px}
+.neural-panel{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:13px;flex:0 0 auto}
+.np-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;margin-bottom:2px}
+.np-sub{font-size:8px;color:var(--txt3);margin-bottom:10px}
+.insight-panel{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:13px;flex:1}
+.ip-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;margin-bottom:8px}
+.iq{display:flex;gap:6px;color:var(--txt2);line-height:1.6}
+.iq-q{font-size:24px;color:var(--b3);line-height:.9;flex-shrink:0;font-family:Georgia}
+.nw-box{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:10px;margin-top:10px}
+.nw-lbl{font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.nw-time{font-family:'Bebas Neue';font-size:16px;color:var(--amber);letter-spacing:1px}
+.nw-sub{font-size:7px;color:var(--txt2);margin-top:2px}
+.ql-lbl{font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin:10px 0 6px;font-weight:600}
+.ql{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.qlb{background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s}
+.qlb:hover{border-color:var(--b3);background:var(--bg4)}.qlb-i{margin-bottom:3px}
+.qlb-l{font-size:7px;letter-spacing:1px;color:var(--txt2);text-transform:uppercase;display:block;font-weight:600}
+
+/* BOT ROW */
+.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:13px}
+.pnl-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;margin-bottom:2px}
+.pnl-sub{font-size:8px;color:var(--txt3);margin-bottom:9px}
 .chart-area{height:90px}.chart-svg{width:100%;height:100%}
-.leg{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-.leg-i{display:flex;align-items:center;gap:3px;font-size:6px;color:var(--txt2)}
-.leg-ln{width:9px;height:2px;border-radius:1px}
-.sch{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;padding-bottom:5px;border-bottom:1px solid var(--b);margin-bottom:3px}
-.sch-l{font-size:6px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.leg-i{display:flex;align-items:center;gap:3px;font-size:7px;color:var(--txt2)}
+.leg-ln{width:10px;height:2px;border-radius:1px}
+.sch{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;padding-bottom:6px;border-bottom:1px solid var(--b);margin-bottom:4px}
+.sch-l{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;font-weight:600}
 .cvh{display:flex;gap:2px}.cvhi{width:15px;font-size:5px;color:var(--txt3);text-align:center}
-.sr{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--b)}
-.sr:last-child{border-bottom:none}.sr-t{color:var(--txt3);font-size:7px}
+.sr{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;align-items:center;padding:6px 0;border-bottom:1px solid var(--b)}
+.sr:last-child{border-bottom:none}.sr-t{color:var(--txt3);font-size:8px}
 .sr-s{font-family:'Bebas Neue';font-size:10px;letter-spacing:1px}
 .sr-s.r{color:var(--red)}.sr-s.a{color:var(--amber)}.sr-s.g{color:var(--green)}
 .sv-row{display:flex;gap:2px}
-.sv{width:15px;height:15px;background:var(--bg3);border:1px solid var(--b);border-radius:1px;font-size:6px;display:flex;align-items:center;justify-content:center;color:var(--txt2)}
-.empty-state{font-size:10px;color:var(--txt3);text-align:center;padding:1.5rem;letter-spacing:1px}
-.see-more{font-size:7px;color:var(--red);cursor:pointer;letter-spacing:1px;margin-top:6px;display:block}
-.saving-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:50;border-radius:3px;flex-direction:column;gap:8px}
+.sv{width:16px;height:16px;background:var(--bg3);border:1px solid var(--b);border-radius:1px;font-size:6px;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-weight:600}
+.empty-state{font-size:11px;color:var(--txt3);text-align:center;padding:2rem;letter-spacing:1px;line-height:1.8}
+.see-more{font-size:8px;color:var(--red);cursor:pointer;letter-spacing:1px;margin-top:8px;display:block;font-weight:600}
+.saving-overlay{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:50;border-radius:var(--r);flex-direction:column;gap:10px;backdrop-filter:blur(4px)}
 .saving-overlay.show{display:flex}
-.saving-text{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite}
-.saving-sub{font-size:8px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase}
-#view-history{display:none;flex-direction:column;gap:10px}
-.hist-header{font-family:'Bebas Neue';font-size:28px;letter-spacing:2px}
-.hist-sub{font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px;margin-bottom:12px}
-.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.hist-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;cursor:pointer;transition:all .15s}
-.hist-card:hover{border-color:var(--b3)}
-.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.saving-text{font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite}
+.saving-sub{font-size:9px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+
+/* HISTORY */
+#view-history{display:none;flex-direction:column;gap:12px}
+.hist-header{font-family:'Bebas Neue';font-size:30px;letter-spacing:2px}
+.hist-sub{font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:3px;margin-bottom:14px;font-weight:500}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.hist-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .15s}
+.hist-card:hover{border-color:var(--b3);transform:translateY(-1px)}
+.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .hc-state{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px}
-.hc-time{font-size:8px;color:var(--txt3);letter-spacing:1px}
-.hc-bars{display:flex;align-items:flex-end;gap:3px;height:40px}
-.hc-bar{flex:1;border-radius:1px 1px 0 0;min-width:8px}
-.hc-labels{display:flex;gap:3px;margin-top:4px}
-.hc-lbl{flex:1;font-size:5px;color:var(--txt3);text-align:center;text-transform:uppercase}
-.hc-ai{font-size:9px;color:var(--txt2);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-style:italic}
-.mission-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;transition:all .2s;position:relative;overflow:hidden}
-.mission-card.active{border-color:var(--amber);background:rgba(245,166,35,.05)}
-.mission-card.done{border-color:var(--green);background:rgba(34,197,94,.05);opacity:.7}
-.mission-card.locked{opacity:.4;pointer-events:none}
-.mission-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.mission-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:14px;flex-shrink:0;border:1px solid var(--b2)}
+.hc-time{font-size:8px;color:var(--txt3);letter-spacing:1px;font-weight:500}
+.hc-bars{display:flex;align-items:flex-end;gap:3px;height:42px}
+.hc-bar{flex:1;border-radius:2px 2px 0 0;min-width:8px}
+.hc-labels{display:flex;gap:3px;margin-top:5px}
+.hc-lbl{flex:1;font-size:6px;color:var(--txt3);text-align:center;text-transform:uppercase;font-weight:600}
+.hc-ai{font-size:9px;color:var(--txt2);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--b);font-style:italic}
+
+/* HUNT */
+.mission-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:14px;transition:all .2s;position:relative;overflow:hidden}
+.mission-card.active{border-color:rgba(245,166,35,.5);background:rgba(245,166,35,.04)}
+.mission-card.done{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.03);opacity:.75}
+.mission-card.locked{opacity:.32;pointer-events:none}
+.mission-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.mission-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:16px;flex-shrink:0;border:1px solid}
 .mission-info{flex:1}
-.mission-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:1.5px;line-height:1}
-.mission-circuit{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:1px}
-.mission-desc{font-size:10px;color:var(--txt2);line-height:1.5;margin-bottom:10px}
+.mission-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:1.5px;line-height:1}
+.mission-circuit{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:2px;font-weight:600}
+.mission-desc{font-size:10px;color:var(--txt2);line-height:1.6;margin-bottom:12px}
 .mission-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.mission-duration{font-size:8px;color:var(--txt3);letter-spacing:1px;display:flex;align-items:center;gap:4px}
-.mission-timer{font-family:'Bebas Neue';font-size:22px;color:var(--amber);letter-spacing:2px;min-width:60px;text-align:right}
+.mission-duration{font-size:8px;color:var(--txt3);letter-spacing:1px;display:flex;align-items:center;gap:4px;font-weight:500}
+.mission-timer{font-family:'Bebas Neue';font-size:28px;color:var(--amber);letter-spacing:2px;min-width:70px;text-align:right;line-height:1}
 .mission-timer.running{color:var(--red)}.mission-timer.done{color:var(--green)}
-.btn-mission{border:none;padding:6px 14px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-mission{border:none;padding:8px 16px;font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s}
 .btn-start{background:var(--amber);color:#000}.btn-start:hover{background:var(--amber2)}
 .btn-done{background:var(--green);color:#000}
 .btn-pause{background:var(--bg3);color:var(--txt2);border:1px solid var(--b2)}
-.mission-progress-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--amber);transition:width 1s linear}
-.proto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.proto-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.mission-progress-bar{position:absolute;bottom:0;left:0;height:2px;transition:width 1s linear;border-radius:0 2px 2px 0}
+
+/* PROTOCOLS */
+.proto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.proto-card{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .proto-card:hover{border-color:var(--b3);transform:translateY(-1px)}
-.proto-card.active-proto{border-color:var(--red);background:rgba(232,48,42,.04)}
-.proto-card.active-proto::before{content:'ACTIVO';position:absolute;top:10px;right:10px;font-family:'Bebas Neue';font-size:8px;letter-spacing:2px;color:var(--red);background:rgba(232,48,42,.15);padding:2px 6px;border-radius:2px}
-.proto-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.proto-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid}
-.proto-name{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;line-height:1}
-.proto-circuit{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:2px}
-.proto-desc{font-size:9px;color:var(--txt2);line-height:1.5;margin-bottom:10px}
-.proto-actions{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
-.proto-action{display:flex;align-items:flex-start;gap:7px;font-size:9px;color:var(--txt2);line-height:1.4;padding:5px 7px;background:var(--bg3);border-radius:2px}
-.proto-action-num{font-family:'Bebas Neue';font-size:12px;flex-shrink:0;line-height:1.2}
-.proto-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--b)}
-.proto-collection{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
-.proto-collection span{font-weight:600}.proto-duration{font-size:7px;color:var(--txt3);letter-spacing:1px}
-.proto-expand{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--b)}
+.proto-card.active-proto{border-color:rgba(232,48,42,.35);background:rgba(232,48,42,.02)}
+.proto-card.active-proto::before{content:'ACTIVO';position:absolute;top:12px;right:12px;font-family:'Bebas Neue';font-size:8px;letter-spacing:2px;color:var(--red);background:rgba(232,48,42,.1);padding:3px 8px;border-radius:var(--rs)}
+.proto-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.proto-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1px solid}
+.proto-name{font-family:'Bebas Neue';font-size:17px;letter-spacing:2px;line-height:1}
+.proto-circuit{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:3px;font-weight:600}
+.proto-desc{font-size:9px;color:var(--txt2);line-height:1.6;margin-bottom:12px}
+.proto-actions{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.proto-action{display:flex;align-items:flex-start;gap:8px;font-size:9px;color:var(--txt2);line-height:1.5;padding:7px 10px;background:var(--bg3);border-radius:var(--rs);border-left:2px solid transparent}
+.proto-action-num{font-family:'Bebas Neue';font-size:13px;flex-shrink:0;line-height:1.3}
+.proto-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--b)}
+.proto-collection{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;font-weight:500}
+.proto-collection span{font-weight:700}.proto-duration{font-size:8px;color:var(--txt3);letter-spacing:1px;font-weight:500}
+.proto-expand{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--b)}
 .proto-card.expanded .proto-expand{display:block}
-.proto-leary{font-size:8px;color:var(--txt2);line-height:1.5;font-style:italic;padding:8px;background:var(--bg3);border-radius:2px;border-left:2px solid}
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,.97);border-top:1px solid var(--b2);z-index:200;align-items:center;justify-content:space-around;padding:0 4px;backdrop-filter:blur(12px)}
-.mnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 8px;cursor:pointer;border-radius:8px;transition:all .2s;flex:1;min-width:0}
-.mnav-item:active{background:rgba(255,255,255,.05)}
-.mnav-item.on{background:rgba(232,48,42,.08)}
-.mnav-item.on .mnav-lbl{color:var(--red);font-weight:600}
-.mnav-item.on .mnav-icon{opacity:1}
-.mnav-icon{font-size:20px;opacity:.4;transition:all .2s;line-height:1}
-.mnav-lbl{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.proto-leary{font-size:9px;color:var(--txt2);line-height:1.6;font-style:italic;padding:10px 12px;background:var(--bg3);border-radius:var(--rs);border-left:2px solid}
+
+/* BOTTOM NAV */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:66px;background:rgba(8,8,8,.98);border-top:1px solid var(--b);z-index:200;align-items:center;justify-content:space-around;padding:0 6px;backdrop-filter:blur(16px)}
+.mnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 10px;cursor:pointer;border-radius:10px;transition:all .2s;flex:1;min-width:0}
+.mnav-item:active{background:rgba(255,255,255,.04)}.mnav-item.on{background:rgba(232,48,42,.08)}
+.mnav-item.on .mnav-lbl{color:var(--red);font-weight:700}.mnav-item.on .mnav-icon{opacity:1;color:var(--red)}
+.mnav-icon{opacity:.32;transition:all .2s;line-height:1;color:var(--txt)}
+.mnav-lbl{font-size:7px;letter-spacing:.5px;color:var(--txt3);text-transform:uppercase;transition:all .2s;white-space:nowrap;font-weight:600}
+
+/* MOBILE */
 @media(max-width:768px){
   .sidebar{display:none}.mobile-nav{display:flex}.hamburger{display:flex}
-  #app{height:100vh}.body-wrap{padding-bottom:64px}
+  #app{height:100vh}.body-wrap{padding-bottom:66px}
   .main{padding:12px 12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .topbar{padding:0 10px;gap:8px}
+  .topbar{padding:0 12px;gap:8px;height:54px}
   .tb-div{display:none}.btn-ghost{display:none}.tb-scan-sub{display:none}
-  .tb-scan-title{font-size:18px}.btn-runscan{padding:6px 10px;font-size:11px}.u-sub{display:none}
-  .top3{grid-template-columns:1fr;gap:12px}
+  .tb-scan-title{font-size:20px}.btn-runscan{padding:7px 12px;font-size:12px}.u-sub{display:none}
+  .top3{grid-template-columns:1fr;gap:14px}
   .cgrid{grid-template-columns:1fr}
-  .cc{padding:12px}.cc-ico{width:28px;height:28px;font-size:13px}.cc-id{font-size:9px}
+  .cc{padding:13px}.cc-ico{width:30px;height:30px;font-size:14px}.cc-id{font-size:9px}
   input[type=range]{height:4px}
-  input[type=range]::-webkit-slider-thumb{width:18px;height:18px}
-  input[type=range]::-moz-range-thumb{width:18px;height:18px}
+  input[type=range]::-webkit-slider-thumb{width:20px;height:20px}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px}
   .sl-n{font-size:7px;width:10px}
-  .wolf-section{flex:0 0 220px}.poster-state{font-size:44px}
-  .right-col{flex-direction:row;flex-wrap:wrap;gap:8px}
+  .wolf-section{flex:0 0 230px}.poster-state{font-size:46px}
+  .right-col{flex-direction:row;flex-wrap:wrap;gap:10px}
   .neural-panel{flex:1;min-width:140px}.insight-panel{flex:1;min-width:200px}
-  .bot-row{grid-template-columns:1fr;gap:12px}
+  .bot-row{grid-template-columns:1fr;gap:14px}
   .hist-grid{grid-template-columns:1fr}.proto-grid{grid-template-columns:1fr}
   #toast-container{left:12px;right:12px;max-width:none}.toast{min-width:unset;width:100%}
 }
@@ -283,28 +334,37 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 </style>
 </head>
 <body>
-<!-- GLOBAL AUDIO TOOLTIP — appended to body, never moves -->
+
 <div id="audio-tooltip-global" class="audio-tooltip">
   <div class="audio-tooltip-title">
     <span id="att-title">–</span>
     <span class="audio-close" onclick="closeTooltip()">×</span>
   </div>
-  <div id="att-desc" style="font-size:8px;line-height:1.5;color:var(--txt2)"></div>
+  <div id="att-desc" style="font-size:9px;line-height:1.6;color:var(--txt2)"></div>
   <button class="audio-play-btn" id="att-play-btn" onclick="playCurrentAudio()">▶ Escuchar explicación</button>
 </div>
 
 <div id="loading-screen">
-  <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:90px;height:90px;object-fit:contain;margin-bottom:5px" class="loading-wolf">
-  <div class="loading-text">Inicializando Wolves OS...</div>
+  <video id="loading-video" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/dgxazkaia/video/upload/v1778273980/WolvesVideo_mx4j7e.mp4" type="video/mp4">
+  </video>
+  <div class="loading-overlay"></div>
+  <div class="loading-content">
+    <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" class="loading-logo">
+    <div class="loading-brand">WOLVES TERRITORY</div>
+    <div class="loading-sub">Sistema Operativo Interior</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
 </div>
 <div id="toast-container"></div>
+
 <div id="auth-screen" style="display:none">
   <div class="auth-wolf">
-    <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:50px;height:50px;object-fit:contain">
+    <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:44px;height:44px;object-fit:contain">
     <div><div class="auth-brand">WOLVES TERRITORY</div><div class="auth-brand-sub">Wolves OS · Sistema Operativo Interior</div></div>
   </div>
   <div class="auth-card">
-    <div style="text-align:center;margin-bottom:1.2rem"><img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:50px;height:50px;object-fit:contain"></div>
+    <div style="text-align:center;margin-bottom:1.4rem"><img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:44px;height:44px;object-fit:contain"></div>
     <div class="auth-headline">Acceso al Sistema</div>
     <div class="auth-sub">Tu diagnóstico operativo te espera</div>
     <div class="auth-tabs">
@@ -316,7 +376,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn-primary" id="btn-login" onclick="doLogin()">Ingresar al Sistema</button>
       <div class="auth-sep">¿No tienes cuenta?</div>
-      <button class="btn-primary" style="background:transparent;border:1px solid var(--b2);color:var(--txt2)" onclick="switchAuthTab('reg')">Crear cuenta gratis</button>
+      <button class="btn-primary" style="background:transparent;border:1px solid var(--b);color:var(--txt2)" onclick="switchAuthTab('reg')">Crear cuenta gratis</button>
     </div>
     <div id="form-reg" style="display:none">
       <div class="field"><label>Username</label><input type="text" id="reg-user" placeholder="AlphaWolf" autocomplete="username"></div>
@@ -327,41 +387,38 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
     <div class="auth-disclaimer">Tu diagnóstico queda guardado de forma privada. Solo tú puedes verlo.</div>
   </div>
 </div>
-<!-- MOBILE DRAWER -->
+
 <div class="mobile-drawer" id="mobile-drawer">
   <div class="drawer-overlay" onclick="closeDrawer()"></div>
   <div class="drawer-panel">
     <div class="drawer-brand">
-      <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:34px;height:34px;object-fit:contain">
-      <div>
-        <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.1">WOLVES<br>TERRITORY</div>
-        <div style="font-size:6px;letter-spacing:2px;color:var(--txt3);margin-top:2px">WOLVES OS v2.0</div>
-      </div>
+      <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:36px;height:36px;object-fit:contain">
+      <div><div class="drawer-brand-text">WOLVES<br>TERRITORY</div><div class="drawer-brand-ver">WOLVES OS v2.0</div></div>
     </div>
     <div class="drawer-nav on" id="dnav-scan" onclick="showView('scan');closeDrawer()">
-      <div class="drawer-nav-icon">📡</div>
+      <div class="drawer-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div>
       <div><div class="drawer-nav-title">SCAN</div><div class="drawer-nav-sub">Estado actual</div></div>
     </div>
     <div class="drawer-nav" id="dnav-hunt" onclick="showView('hunt');closeDrawer()">
-      <div class="drawer-nav-icon">🎯</div>
+      <div class="drawer-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
       <div><div class="drawer-nav-title">HUNT</div><div class="drawer-nav-sub">Modo ejecución</div></div>
     </div>
     <div class="drawer-nav" id="dnav-protocols" onclick="showView('protocols');closeDrawer()">
-      <div class="drawer-nav-icon">⚡</div>
+      <div class="drawer-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
       <div><div class="drawer-nav-title">PROTOCOLS</div><div class="drawer-nav-sub">Rutinas de activación</div></div>
     </div>
     <div class="drawer-nav" id="dnav-history" onclick="loadHistory();closeDrawer()">
-      <div class="drawer-nav-icon">📊</div>
+      <div class="drawer-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <div><div class="drawer-nav-title">HISTORY</div><div class="drawer-nav-sub">Historial & insights</div></div>
     </div>
     <div class="drawer-status">
-      <div style="background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:10px;text-align:center;margin-bottom:8px">
-        <div style="font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px">Estado Actual</div>
-        <div style="font-family:'Bebas Neue';font-size:24px;color:var(--red)" id="drawer-state">–</div>
-        <div style="font-size:8px;color:var(--txt2);margin-top:2px" id="drawer-state-lbl">Sin scan hoy</div>
+      <div class="drawer-state-box">
+        <div style="font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:5px;font-weight:600">Estado Actual</div>
+        <div style="font-family:'Bebas Neue';font-size:26px;color:var(--red)" id="drawer-state">–</div>
+        <div style="font-size:9px;color:var(--txt2);margin-top:3px;font-weight:500" id="drawer-state-lbl">Sin scan hoy</div>
       </div>
-      <div style="font-size:6px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;line-height:1.7;margin-bottom:8px">WOLVES DON'T HOPE.<br>WOLVES OPERATE.</div>
-      <button class="drawer-logout" onclick="doLogout();closeDrawer()">⏻ Cerrar Sesión</button>
+      <div class="drawer-tagline">WOLVES DON'T HOPE.<br>WOLVES OPERATE.</div>
+      <button class="drawer-logout" onclick="doLogout();closeDrawer()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Cerrar Sesión</button>
     </div>
   </div>
 </div>
@@ -369,10 +426,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 <div id="app">
   <div class="topbar">
     <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
-    <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:32px;height:32px;object-fit:contain;flex-shrink:0">
+    <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:30px;height:30px;object-fit:contain;flex-shrink:0">
     <div style="flex-shrink:0">
-      <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:4px">WOLVES TERRITORY</div>
-      <div style="font-size:7px;letter-spacing:3px;color:var(--txt3)">WOLVES OS</div>
+      <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:4px;line-height:1">WOLVES TERRITORY</div>
+      <div style="font-size:7px;letter-spacing:3px;color:var(--txt3);margin-top:1px">WOLVES OS</div>
     </div>
     <div class="tb-div"></div>
     <div class="tb-mid">
@@ -385,11 +442,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       <div class="tb-div"></div>
       <div class="user-chip">
         <div class="u-av" id="user-av">W</div>
-        <div><div class="u-name" id="user-name">ALPHA</div><div class="u-sub">WOLVES</div></div>
+        <div><div class="u-name" id="user-name">ALPHA</div><div class="u-sub">WOLVES OS</div></div>
         <div class="user-menu">
-          <div class="user-menu-item" onclick="showView('scan')">📡 Scan</div>
-          <div class="user-menu-item" onclick="loadHistory()">📊 Historial</div>
-          <div class="user-menu-item danger" onclick="doLogout()">⏻ Cerrar sesión</div>
+          <div class="user-menu-item" onclick="showView('scan')">Scan</div>
+          <div class="user-menu-item" onclick="loadHistory()">Historial</div>
+          <div class="user-menu-item danger" onclick="doLogout()">Cerrar sesión</div>
         </div>
       </div>
     </div>
@@ -397,13 +454,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
   <div class="body-wrap">
     <div class="sidebar">
       <div class="sb-brand">
-        <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:36px;height:36px;object-fit:contain;margin-bottom:5px">
+        <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:32px;height:32px;object-fit:contain">
         <div class="sb-name">WOLVES<br>TERRITORY</div><div class="sb-ver">Wolves OS v2.0</div>
       </div>
-      <div class="nav on" id="nav-scan" onclick="showView('scan')"><div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div></div>
-      <div class="nav" id="nav-history" onclick="loadHistory()"><div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div></div>
-      <div class="nav" id="nav-hunt" onclick="showView('hunt')"><div><div class="nav-t">HUNT</div><div class="nav-s">Modo ejecución</div></div></div>
-      <div class="nav" id="nav-protocols" onclick="showView('protocols')"><div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Rutinas de activación</div></div></div>
+      <div class="nav on" id="nav-scan" onclick="showView('scan')"><div class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div><div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div></div>
+      <div class="nav" id="nav-history" onclick="loadHistory()"><div class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 14 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div></div>
+      <div class="nav" id="nav-hunt" onclick="showView('hunt')"><div class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="nav-t">HUNT</div><div class="nav-s">Modo ejecución</div></div></div>
+      <div class="nav" id="nav-protocols" onclick="showView('protocols')"><div class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Rutinas de activación</div></div></div>
       <div class="sb-bot">
         <div class="sbox">
           <div class="sbox-lbl">Estado Actual</div>
@@ -413,7 +470,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
         </div>
         <div class="racha-box">
           <div class="r-lbl">Racha</div>
-          <div style="display:flex;align-items:baseline;gap:3px"><div class="r-n">🔥 <span id="streak-num">0</span></div><div class="r-d">días</div></div>
+          <div style="display:flex;align-items:baseline;gap:4px"><div class="r-n">🔥 <span id="streak-num">0</span></div><div class="r-d">días</div></div>
           <div class="dots" id="dots"></div><div class="dlbls" id="dlbls"></div>
         </div>
       </div>
@@ -424,13 +481,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
         <div class="top3">
           <div class="circuits-panel">
             <div class="cp-hdr">
-              <div><div class="cp-title">1. Evalúa tus 8 Circuitos</div><div class="cp-sub">Toca el ícono para escuchar la explicación. Sin filtro.</div></div>
-              <div class="cp-scale">1 (bajo) → 5 (alto)</div>
+              <div><div class="cp-title">1. Evalúa tus 8 Circuitos</div><div class="cp-sub">Toca el ícono para escuchar la explicación · Sin filtro</div></div>
+              <div class="cp-scale">1 bajo → 5 alto</div>
             </div>
             <div class="cgrid" id="cgrid"></div>
           </div>
           <div class="result-poster" style="position:relative">
-            <div style="font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.28);text-transform:uppercase;padding:9px 11px 0">2. Resultado — Tu diagnóstico operativo</div>
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.18);text-transform:uppercase;padding:10px 13px 0;font-weight:600">2. Resultado — Diagnóstico operativo</div>
             <div class="wolf-section">
               <img src="https://i.imgur.com/wWymgI6.jpeg" alt="Wolf" onerror="this.style.display='none'">
               <div class="wolf-red-ov"></div><div class="wolf-fade"></div>
@@ -459,7 +516,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
             </div>
             <div class="insight-panel">
               <div class="ip-title">Insight Clave</div>
-              <div class="iq"><div class="iq-q">"</div><div id="insight-txt" style="font-size:9px;color:var(--txt2);line-height:1.5">Toca un ícono de circuito para escuchar su explicación.</div></div>
+              <div class="iq"><div class="iq-q">"</div><div id="insight-txt" style="font-size:9px;color:var(--txt2);line-height:1.6">Toca un ícono para escuchar la explicación del circuito.</div></div>
               <div class="nw-box">
                 <div class="nw-lbl">Próxima Ventana Óptima</div>
                 <div class="nw-time">MAÑANA 07:30 – 09:30</div>
@@ -467,9 +524,9 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
               </div>
               <div class="ql-lbl">Acceso Rápido</div>
               <div class="ql">
-                <div class="qlb" onclick="showView('scan')"><div class="qlb-i">📡</div><span class="qlb-l">Scan</span></div>
-                <div class="qlb" onclick="showView('protocols')"><div class="qlb-i">⚡</div><span class="qlb-l">Protocols</span></div>
-                <div class="qlb" onclick="loadHistory()"><div class="qlb-i">📊</div><span class="qlb-l">History</span></div>
+                <div class="qlb" onclick="showView('scan')"><div class="qlb-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div><span class="qlb-l">Scan</span></div>
+                <div class="qlb" onclick="showView('protocols')"><div class="qlb-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><span class="qlb-l">Protocols</span></div>
+                <div class="qlb" onclick="loadHistory()"><div class="qlb-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 14 12 15 21 9 3 6 12 2 12"/></svg></div><span class="qlb-l">History</span></div>
               </div>
             </div>
           </div>
@@ -491,69 +548,71 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
           </div>
         </div>
       </div>
-      <div id="view-hunt" style="display:none;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div id="view-hunt" style="display:none;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
           <div>
-            <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px" id="hunt-title">HUNT MODE</div>
-            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px">Plan de acción personalizado · Basado en tu último scan</div>
+            <div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:2px" id="hunt-title">HUNT MODE</div>
+            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:3px;font-weight:500">Plan de acción personalizado · Basado en tu último scan</div>
           </div>
-          <button onclick="generateHuntPlan()" id="hunt-gen-btn" style="background:var(--red);border:none;color:#fff;padding:8px 16px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px">🎯 Generar Plan</button>
+          <button onclick="generateHuntPlan()" id="hunt-gen-btn" style="background:var(--red);border:none;color:#fff;padding:10px 18px;font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);display:flex;align-items:center;gap:7px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Generar Plan
+          </button>
         </div>
-        <div id="hunt-no-scan" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
-          <div style="font-size:32px;margin-bottom:8px">📡</div>
-          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;margin-bottom:6px">Primero haz tu Scan</div>
-          <div style="font-size:10px;color:var(--txt2);margin-bottom:1rem">HUNT necesita tu diagnóstico del día para generar el plan correcto.</div>
-          <button onclick="showView('scan')" style="background:var(--amber);border:none;color:#000;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px">Ir al Scan →</button>
+        <div id="hunt-no-scan" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:2.5rem;text-align:center">
+          <div style="margin-bottom:14px;opacity:.4"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div>
+          <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;margin-bottom:8px">Primero haz tu Scan</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:1.2rem;line-height:1.6">HUNT necesita tu diagnóstico del día para generar el plan correcto.</div>
+          <button onclick="showView('scan')" style="background:var(--amber);border:none;color:#000;padding:10px 24px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs)">Ir al Scan →</button>
         </div>
-        <div id="hunt-loading" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
-          <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite;margin-bottom:8px">Analizando circuitos...</div>
-          <div style="font-size:8px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase">IA construyendo tu plan de caza</div>
+        <div id="hunt-loading" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:2.5rem;text-align:center">
+          <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite;margin-bottom:10px">Analizando circuitos...</div>
+          <div style="font-size:9px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;font-weight:600">IA construyendo tu plan de caza</div>
         </div>
-        <div id="hunt-plan" style="display:none;flex-direction:column;gap:12px">
-          <div style="background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;display:flex;align-items:center;gap:12px">
+        <div id="hunt-plan" style="display:none;flex-direction:column;gap:14px">
+          <div style="background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:14px">
             <div style="flex:1">
-              <div style="font-size:7px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:3px">Operando desde</div>
-              <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;line-height:1" id="hunt-state-label">–</div>
-              <div style="font-size:9px;color:var(--txt2);margin-top:4px" id="hunt-contexto">–</div>
+              <div style="font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;font-weight:600">Operando desde</div>
+              <div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:2px;line-height:1" id="hunt-state-label">–</div>
+              <div style="font-size:9px;color:var(--txt2);margin-top:5px" id="hunt-contexto">–</div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:7px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:3px">Progreso</div>
-              <div style="font-family:'Bebas Neue';font-size:32px;color:var(--green)" id="hunt-progress-label">0/3</div>
-              <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">misiones</div>
+              <div style="font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;font-weight:600">Progreso</div>
+              <div style="font-family:'Bebas Neue';font-size:36px;color:var(--green);line-height:1" id="hunt-progress-label">0/3</div>
+              <div style="font-size:8px;color:var(--txt3);letter-spacing:1px;margin-top:2px;font-weight:500">misiones</div>
             </div>
           </div>
-          <div style="background:var(--bg3);border-radius:2px;height:3px;overflow:hidden">
+          <div style="background:var(--bg3);border-radius:2px;height:2px;overflow:hidden">
             <div id="hunt-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .5s ease;border-radius:2px"></div>
           </div>
-          <div id="hunt-missions" style="display:flex;flex-direction:column;gap:8px"></div>
-          <div id="hunt-completed" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.05));border:1px solid rgba(34,197,94,.3);border-radius:3px;padding:1.5rem;text-align:center">
-            <div style="font-size:32px;margin-bottom:8px">🐺</div>
-            <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--green);margin-bottom:6px">HUNT COMPLETADO</div>
-            <div style="font-size:11px;color:var(--txt2);line-height:1.5" id="hunt-cierre">–</div>
-            <button onclick="generateHuntPlan()" style="background:var(--red);border:none;color:#fff;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;margin-top:1rem">Nueva Caza →</button>
+          <div id="hunt-missions" style="display:flex;flex-direction:column;gap:10px"></div>
+          <div id="hunt-completed" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.03));border:1px solid rgba(34,197,94,.22);border-radius:var(--r);padding:2rem;text-align:center">
+            <div style="font-size:42px;margin-bottom:12px">🐺</div>
+            <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;color:var(--green);margin-bottom:8px">HUNT COMPLETADO</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.6" id="hunt-cierre">–</div>
+            <button onclick="generateHuntPlan()" style="background:var(--red);border:none;color:#fff;padding:10px 24px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);margin-top:1.2rem">Nueva Caza →</button>
           </div>
         </div>
       </div>
-      <div id="view-protocols" style="display:none;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div id="view-protocols" style="display:none;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
           <div>
-            <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px">PROTOCOLS</div>
-            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px">Rutinas de activación por circuito · Teoría de Timothy Leary</div>
+            <div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:2px">PROTOCOLS</div>
+            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:3px;font-weight:500">Rutinas de activación por circuito · Teoría de Timothy Leary</div>
           </div>
-          <div id="proto-ai-rec" style="display:none;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:3px;padding:8px 12px;max-width:320px">
-            <div style="font-size:7px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin-bottom:3px">IA Recomienda</div>
-            <div style="font-size:9px;color:var(--txt2);line-height:1.5" id="proto-ai-text">–</div>
+          <div id="proto-ai-rec" style="display:none;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.18);border-radius:var(--r);padding:10px 14px;max-width:320px">
+            <div style="font-size:8px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin-bottom:4px;font-weight:700">IA Recomienda</div>
+            <div style="font-size:9px;color:var(--txt2);line-height:1.6" id="proto-ai-text">–</div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="proto-filter on" id="pf-all" onclick="filterProtos('all')" style="background:rgba(232,48,42,.1);border:1px solid var(--red);color:var(--red);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">TODOS</button>
-          <button class="proto-filter" id="pf-active" onclick="filterProtos('active')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">ACTIVOS</button>
-          <button class="proto-filter" id="pf-fisica" onclick="filterProtos('fisica')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">FÍSICOS</button>
-          <button class="proto-filter" id="pf-mental" onclick="filterProtos('mental')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">MENTALES</button>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="proto-filter on" id="pf-all" onclick="filterProtos('all')" style="background:rgba(232,48,42,.1);border:1px solid var(--red);color:var(--red);padding:6px 14px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s">TODOS</button>
+          <button class="proto-filter" id="pf-active" onclick="filterProtos('active')" style="background:transparent;border:1px solid var(--b);color:var(--txt3);padding:6px 14px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s">ACTIVOS</button>
+          <button class="proto-filter" id="pf-fisica" onclick="filterProtos('fisica')" style="background:transparent;border:1px solid var(--b);color:var(--txt3);padding:6px 14px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s">FÍSICOS</button>
+          <button class="proto-filter" id="pf-mental" onclick="filterProtos('mental')" style="background:transparent;border:1px solid var(--b);color:var(--txt3);padding:6px 14px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:var(--rs);transition:all .2s">MENTALES</button>
         </div>
         <div class="proto-grid" id="proto-grid"></div>
       </div>
-      <div id="view-history" style="display:none;flex-direction:column;gap:10px">
+      <div id="view-history" style="display:none;flex-direction:column;gap:12px">
         <div>
           <div class="hist-header">HISTORIAL</div>
           <div class="hist-sub">Todos tus diagnósticos · <span id="hist-count">0</span> scans registrados</div>
@@ -563,14 +622,16 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
     </div>
   </div>
   <div class="mobile-nav">
-    <div class="mnav-item on" id="mnav-scan" onclick="showView('scan')"><div class="mnav-icon">📡</div><div class="mnav-lbl">Scan</div></div>
-    <div class="mnav-item" id="mnav-hunt" onclick="showView('hunt')"><div class="mnav-icon">🎯</div><div class="mnav-lbl">Hunt</div></div>
-    <div class="mnav-item" id="mnav-protocols" onclick="showView('protocols')"><div class="mnav-icon">⚡</div><div class="mnav-lbl">Protocols</div></div>
-    <div class="mnav-item" id="mnav-history" onclick="loadHistory()"><div class="mnav-icon">📊</div><div class="mnav-lbl">History</div></div>
-    <div class="mnav-item" id="mnav-menu" onclick="toggleDrawer()"><div class="mnav-icon">☰</div><div class="mnav-lbl">Menú</div></div>
+    <div class="mnav-item on" id="mnav-scan" onclick="showView('scan')"><div class="mnav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div><div class="mnav-lbl">Scan</div></div>
+    <div class="mnav-item" id="mnav-hunt" onclick="showView('hunt')"><div class="mnav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="mnav-lbl">Hunt</div></div>
+    <div class="mnav-item" id="mnav-protocols" onclick="showView('protocols')"><div class="mnav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="mnav-lbl">Protocols</div></div>
+    <div class="mnav-item" id="mnav-history" onclick="loadHistory()"><div class="mnav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="mnav-lbl">History</div></div>
+    <div class="mnav-item" id="mnav-menu" onclick="toggleDrawer()"><div class="mnav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div><div class="mnav-lbl">Menú</div></div>
   </div>
 </div>
+
 <script>
+
 const { createClient } = supabase
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 const CS = [
@@ -585,101 +646,52 @@ const CS = [
 ]
 let V={c1:3,c2:3,c3:3,c4:3,c5:3,c6:3,c7:3,c8:3}
 let currentUser=null,currentProfile=null,allScans=[]
-// ── AUDIO SYSTEM — single global tooltip, zero flicker ──
-let currentAudio = null
-let currentAudioCid = null
+let currentAudio=null,currentAudioCid=null
 
-function toggleCircuitAudio(cid, icoEl) {
-  const tooltip = document.getElementById('audio-tooltip-global')
-  const isOpen = tooltip.classList.contains('show')
-  const isSame = currentAudioCid === cid
-
-  if (isOpen && isSame) { closeTooltip(); return }
-
+function toggleCircuitAudio(cid,icoEl){
+  const tip=document.getElementById('audio-tooltip-global')
+  if(tip.classList.contains('show')&&currentAudioCid===cid){closeTooltip();return}
   stopAudio()
-  document.querySelectorAll('.cc-ico.playing').forEach(el => el.classList.remove('playing'))
-  icoEl.classList.add('playing')
-  currentAudioCid = cid
-
-  const c = CS.find(x => x.id === cid)
-  document.getElementById('att-title').textContent = c.ico + ' C' + (CS.indexOf(c)+1) + ' ' + c.nm
-  document.getElementById('att-desc').textContent = c.audioDesc
-  document.getElementById('att-play-btn').textContent = '▶ Escuchar explicación'
-
-  // Smart positioning — never cut off
-  const rect = icoEl.getBoundingClientRect()
-  const tw = 230, th = 165, mg = 10
-
-  let left = rect.left + rect.width / 2 - tw / 2
-  left = Math.max(mg, Math.min(left, window.innerWidth - tw - mg))
-
-  // Prefer above; if not enough space, open below
-  let top
-  if (rect.top - th - mg > 56) {
-    top = rect.top - th - mg
-  } else {
-    top = rect.bottom + mg
-  }
-  // Never overlap bottom nav or go offscreen
-  const maxTop = window.innerHeight - th - 70
-  top = Math.max(56, Math.min(top, maxTop))
-
-  tooltip.style.left = left + 'px'
-  tooltip.style.top = top + 'px'
-  tooltip.classList.add('show')
+  document.querySelectorAll('.cc-ico.playing').forEach(el=>el.classList.remove('playing'))
+  icoEl.classList.add('playing');currentAudioCid=cid
+  const c=CS.find(x=>x.id===cid)
+  document.getElementById('att-title').textContent=c.ico+' C'+(CS.indexOf(c)+1)+' '+c.nm
+  document.getElementById('att-desc').textContent=c.audioDesc
+  document.getElementById('att-play-btn').textContent='▶ Escuchar explicación'
+  const rect=icoEl.getBoundingClientRect(),tw=240,th=170,mg=10
+  let left=Math.max(mg,Math.min(rect.left+rect.width/2-tw/2,window.innerWidth-tw-mg))
+  let top=rect.top-th-mg>56?rect.top-th-mg:rect.bottom+mg
+  top=Math.max(56,Math.min(top,window.innerHeight-th-70))
+  tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('show')
 }
-
-function closeTooltip() {
+function closeTooltip(){
   document.getElementById('audio-tooltip-global').classList.remove('show')
-  document.querySelectorAll('.cc-ico.playing').forEach(el => el.classList.remove('playing'))
-  stopAudio()
-  currentAudioCid = null
+  document.querySelectorAll('.cc-ico.playing').forEach(el=>el.classList.remove('playing'))
+  stopAudio();currentAudioCid=null
 }
-
-function stopAudio() {
-  if (currentAudio) { currentAudio.pause(); currentAudio = null }
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+function stopAudio(){
+  if(currentAudio){currentAudio.pause();currentAudio=null}
+  if('speechSynthesis' in window)window.speechSynthesis.cancel()
 }
-
-function playCurrentAudio() {
-  if (!currentAudioCid) return
-  const c = CS.find(x => x.id === currentAudioCid)
-  const btn = document.getElementById('att-play-btn')
+function playCurrentAudio(){
+  if(!currentAudioCid)return
+  const c=CS.find(x=>x.id===currentAudioCid),btn=document.getElementById('att-play-btn')
   stopAudio()
-  const audio = new Audio(c.audioFile)
-  audio.oncanplay = () => {
-    currentAudio = audio; audio.play()
-    btn.textContent = '⏸ Reproduciendo...'
-    audio.onended = () => { btn.textContent = '▶ Escuchar explicación'; currentAudio = null }
-  }
-  audio.onerror = () => {
-    if ('speechSynthesis' in window) {
-      const u = new SpeechSynthesisUtterance(c.audioDesc)
-      u.lang = 'es-ES'; u.rate = 0.9
-      btn.textContent = '⏸ Reproduciendo...'
-      u.onend = () => { btn.textContent = '▶ Escuchar explicación' }
-      window.speechSynthesis.speak(u)
-    }
-  }
+  const audio=new Audio(c.audioFile)
+  audio.oncanplay=()=>{currentAudio=audio;audio.play();btn.textContent='⏸ Reproduciendo...';audio.onended=()=>{btn.textContent='▶ Escuchar explicación';currentAudio=null}}
+  audio.onerror=()=>{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(c.audioDesc);u.lang='es-ES';u.rate=0.9;btn.textContent='⏸ Reproduciendo...';u.onend=()=>{btn.textContent='▶ Escuchar explicación'};window.speechSynthesis.speak(u)}}
   audio.load()
 }
-
-// Close on outside click
-document.addEventListener('click', e => {
-  const tip = document.getElementById('audio-tooltip-global')
-  if (tip.classList.contains('show') && !tip.contains(e.target) && !e.target.classList.contains('cc-ico')) {
-    closeTooltip()
-  }
+document.addEventListener('click',e=>{
+  const tip=document.getElementById('audio-tooltip-global')
+  if(tip.classList.contains('show')&&!tip.contains(e.target)&&!e.target.closest('.cc-ico'))closeTooltip()
 })
 
-// ── HAMBURGER / DRAWER ──
-function toggleDrawer() {
-  const d = document.getElementById('mobile-drawer')
-  const b = document.getElementById('hamburger-btn')
-  if (d.classList.contains('open')) { d.classList.remove('open'); b.classList.remove('open') }
-  else { d.classList.add('open'); b.classList.add('open') }
+function toggleDrawer(){
+  const d=document.getElementById('mobile-drawer'),b=document.getElementById('hamburger-btn')
+  d.classList.toggle('open');b.classList.toggle('open')
 }
-function closeDrawer() {
+function closeDrawer(){
   document.getElementById('mobile-drawer').classList.remove('open')
   document.getElementById('hamburger-btn').classList.remove('open')
 }
@@ -694,20 +706,20 @@ function getState(v){
   if(v.c1>=3&&v.c2>=3)return{st:'EJECUTABLE.',cv:'Base + Control activos',cd:'Estás listo para operar. Toma posición.',a1:'Inicia la tarea más importante.',a2:'Apaga distracciones 90 minutos.',col:'#22c55e',dom:'c2',cls:'g',ins:'Tienes lo esencial encendido. Es suficiente para operar bien.'}
   return{st:'EN PROCESO.',cv:'Circuitos en calibración',cd:'Identifica el circuito más bajo y trabájalo primero.',a1:'Haz el check-in de todos los circuitos.',a2:'Define 1 acción para el circuito más bajo.',col:'#f5a623',dom:'c3',cls:'a',ins:'Un circuito bajo arrastra a todos los demás. Enfócate ahí primero.'}
 }
+
 function buildCircuits(){
   const g=document.getElementById('cgrid');g.innerHTML=''
   CS.forEach((c,i)=>{
     const v=V[c.id],pct=Math.round((v-1)/4*100)
     const d=document.createElement('div');d.className='cc'
-    d.innerHTML=`<div class="cc-top"><div class="cc-ico" style="border-color:${c.col}44;color:${c.col}" onclick="toggleCircuitAudio('${c.id}',this)" title="Toca para escuchar">${c.ico}</div><div style="flex:1;min-width:0"><div class="cc-id" style="color:${c.col}">C${i+1} ${c.nm}</div><div class="cc-ds">${c.ds}</div></div><div class="cc-v" id="v-${c.id}" style="color:${c.col}">${v}</div></div><div class="sl-top"><span>${c.lo}</span><span>${c.hi}</span></div><input type="range" min="1" max="5" step="1" value="${v}" style="background:linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)" oninput="slide('${c.id}',this)"><div class="sl-nums"><div class="sl-n">1</div><div class="sl-n">2</div><div class="sl-n">3</div><div class="sl-n">4</div><div class="sl-n">5</div></div>`
+    d.innerHTML=`<div class="cc-top"><div class="cc-ico" style="border-color:${c.col}44;color:${c.col}" onclick="toggleCircuitAudio('${c.id}',this)" title="Toca para escuchar">${c.ico}</div><div style="flex:1;min-width:0"><div class="cc-id" style="color:${c.col}">C${i+1} ${c.nm}</div><div class="cc-ds">${c.ds}</div></div><div class="cc-v" id="v-${c.id}" style="color:${c.col}">${v}</div></div><div class="sl-top"><span>${c.lo}</span><span>${c.hi}</span></div><input type="range" min="1" max="5" step="1" value="${v}" style="background:linear-gradient(90deg,${c.col} ${pct}%,#1a1a1a ${pct}%)" oninput="slide('${c.id}',this)"><div class="sl-nums"><div class="sl-n">1</div><div class="sl-n">2</div><div class="sl-n">3</div><div class="sl-n">4</div><div class="sl-n">5</div></div>`
     g.appendChild(d)
   })
 }
 function slide(id,el){
   const v=parseInt(el.value);V[id]=v
-  const c=CS.find(x=>x.id===id)
-  const pct=Math.round((v-1)/4*100)
-  el.style.background=`linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)`
+  const c=CS.find(x=>x.id===id),pct=Math.round((v-1)/4*100)
+  el.style.background=`linear-gradient(90deg,${c.col} ${pct}%,#1a1a1a ${pct}%)`
   document.getElementById('v-'+id).textContent=v
   updateResult();updateRadar()
 }
@@ -717,10 +729,8 @@ function updateResult(){
   document.getElementById('p-cause').textContent=s.cv;document.getElementById('p-cause').style.color=s.col
   document.getElementById('p-desc').textContent=s.cd
   document.getElementById('p-a1').textContent=s.a1;document.getElementById('p-a2').textContent=s.a2
-  document.getElementById('insight-txt').textContent=s.ins
-  document.getElementById('p-link').style.color=s.col
-  const hb=document.getElementById('hunt-btn')
-  hb.style.background=s.col;hb.style.color=(s.col==='#22c55e'||s.col==='#f5a623')?'#000':'#fff'
+  document.getElementById('insight-txt').textContent=s.ins;document.getElementById('p-link').style.color=s.col
+  const hb=document.getElementById('hunt-btn');hb.style.background=s.col;hb.style.color=(s.col==='#22c55e'||s.col==='#f5a623')?'#000':'#fff'
   const idx=CS.findIndex(c=>c.id===s.dom)
   document.getElementById('sb-c').textContent='C'+(idx+1);document.getElementById('sb-c').style.color=s.col
   document.getElementById('sb-st').textContent=s.st.replace('.','')
@@ -730,13 +740,13 @@ function updateResult(){
 function buildRadar(vals,sz){
   const cx=sz/2,cy=sz/2,r=sz/2-14,keys=CS.map(c=>c.id),n=keys.length
   const pt=(i,val)=>{const a=(i/n)*Math.PI*2-Math.PI/2,rv=(val/5)*r;return[+(cx+rv*Math.cos(a)).toFixed(1),+(cy+rv*Math.sin(a)).toFixed(1)]}
-  const ptL=i=>{const a=(i/n)*Math.PI*2-Math.PI/2;return[+(cx+(r+12)*Math.cos(a)).toFixed(1),+(cy+(r+12)*Math.sin(a)).toFixed(1)]}
+  const ptL=i=>{const a=(i/n)*Math.PI*2-Math.PI/2;return[+(cx+(r+13)*Math.cos(a)).toFixed(1),+(cy+(r+13)*Math.sin(a)).toFixed(1)]}
   const s=getState(vals)
   let svg=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="overflow:visible">`
-  for(let g=1;g<=5;g++){const pts=keys.map((_,i)=>pt(i,g).join(',')).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#1e1e1e" stroke-width="${g===5?.8:.4}"/>`}
-  keys.forEach((_,i)=>{const[x,y]=pt(i,5);svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#1e1e1e" stroke-width="0.5"/>`})
-  svg+=`<polygon points="${keys.map((k,i)=>pt(i,vals[k]).join(',')).join(' ')}" fill="${s.col}22" stroke="${s.col}" stroke-width="1.5"/>`
-  keys.forEach((k,i)=>{const[x,y]=pt(i,vals[k]);const[lx,ly]=ptL(i);svg+=`<circle cx="${x}" cy="${y}" r="2.5" fill="${CS[i].col}"/><text x="${lx}" y="${ly+3}" font-size="7" fill="#6a6a6a" text-anchor="middle" font-family="Inter">C${i+1}</text>`})
+  for(let g=1;g<=5;g++){const pts=keys.map((_,i)=>pt(i,g).join(',')).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#222" stroke-width="${g===5?.8:.4}"/>`}
+  keys.forEach((_,i)=>{const[x,y]=pt(i,5);svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#222" stroke-width="0.5"/>`})
+  svg+=`<polygon points="${keys.map((k,i)=>pt(i,vals[k]).join(',')).join(' ')}" fill="${s.col}18" stroke="${s.col}" stroke-width="1.5"/>`
+  keys.forEach((k,i)=>{const[x,y]=pt(i,vals[k]);const[lx,ly]=ptL(i);svg+=`<circle cx="${x}" cy="${y}" r="3" fill="${CS[i].col}"/><text x="${lx}" y="${ly+3}" font-size="7" fill="#555" text-anchor="middle" font-family="Inter" font-weight="600">C${i+1}</text>`})
   return svg+'</svg>'
 }
 function updateRadar(){document.getElementById('radar-wrap').innerHTML=buildRadar(V,155)}
@@ -756,16 +766,15 @@ function buildTrendFromScans(scans){
   if(!trendData.some(x=>x)){svg.innerHTML='';return}
   let prev=null
   const filled=trendData.map(x=>{if(x){prev=x;return x}return prev?{...prev}:null})
-  const valid=filled.filter(Boolean)
-  if(valid.length<2)return
+  const valid=filled.filter(Boolean);if(valid.length<2)return
   const xS=(W-pL-pR)/(valid.length-1)
   let out=''
-  for(let g=1;g<=5;g++){const y=pT+(1-(g-1)/4)*(H-pT-pB);out+=`<line x1="${pL}" y1="${y.toFixed(1)}" x2="${W-pR}" y2="${y.toFixed(1)}" stroke="#181818" stroke-width="0.7"/><text x="${pL-3}" y="${(y+3).toFixed(1)}" font-size="6" fill="#333" text-anchor="end" font-family="Inter">${g}</text>`}
-  valid.forEach((t,xi)=>{const x=pL+xi*xS;out+=`<text x="${x.toFixed(1)}" y="${H}" font-size="7" fill="#6a6a6a" text-anchor="middle" font-family="Inter">${t.d}</text>`})
+  for(let g=1;g<=5;g++){const y=pT+(1-(g-1)/4)*(H-pT-pB);out+=`<line x1="${pL}" y1="${y.toFixed(1)}" x2="${W-pR}" y2="${y.toFixed(1)}" stroke="#1a1a1a" stroke-width="0.8"/><text x="${pL-3}" y="${(y+3).toFixed(1)}" font-size="6" fill="#3a3a3a" text-anchor="end" font-family="Inter" font-weight="600">${g}</text>`}
+  valid.forEach((t,xi)=>{const x=pL+xi*xS;out+=`<text x="${x.toFixed(1)}" y="${H}" font-size="7" fill="#555" text-anchor="middle" font-family="Inter" font-weight="600">${t.d}</text>`})
   CS.forEach((c,ci)=>{
     const pts=valid.map((t,xi)=>{const x=pL+xi*xS;const y=pT+(1-(t.v[ci]-1)/4)*(H-pT-pB);return`${x.toFixed(1)},${y.toFixed(1)}`})
-    out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${c.col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.88"/>`
-    valid.forEach((t,xi)=>{const x=pL+xi*xS;const y=pT+(1-(t.v[ci]-1)/4)*(H-pT-pB);out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="${c.col}"/>`})
+    out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${c.col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`
+    valid.forEach((t,xi)=>{const x=pL+xi*xS;const y=pT+(1-(t.v[ci]-1)/4)*(H-pT-pB);out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="${c.col}"/>`})
   })
   svg.innerHTML=out
   document.getElementById('leg').innerHTML=CS.map((c,i)=>`<div class="leg-i"><div class="leg-ln" style="background:${c.col}"></div>C${i+1} ${c.nm}</div>`).join('')
@@ -798,8 +807,7 @@ async function doRegister(){
   else toast('Cuenta creada. Revisa tu correo si no entras automáticamente.','success')
 }
 async function doLogout(){
-  toast('Cerrando sesión...','info')
-  await sb.auth.signOut()
+  toast('Cerrando sesión...','info');await sb.auth.signOut()
   currentUser=null;currentProfile=null;allScans=[]
   document.getElementById('app').style.display='none'
   document.getElementById('auth-screen').style.display='flex'
@@ -846,13 +854,16 @@ async function loadHistory(){
   grid.innerHTML=data.map(s=>{
     const t=new Date(s.created_at)
     const ds=t.toLocaleDateString('es-CO',{day:'2-digit',month:'short'})+' '+t.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})
-    const bars=CS.map((c,i)=>`<div class="hc-bar" style="height:${(s[c.col2]||0)/5*36}px;background:${c.col}88"></div>`).join('')
+    const bars=CS.map((c,i)=>`<div class="hc-bar" style="height:${(s[c.col2]||0)/5*40}px;background:${c.col}99"></div>`).join('')
     const cls=s.operative_state?.includes('LOBO')||s.operative_state?.includes('EJECUTABLE')?'g':s.operative_state?.includes('SOBREANA')?'a':'r'
     return`<div class="hist-card"><div class="hc-top"><div class="hc-state sr-s ${cls}">${s.operative_state||'–'}</div><div class="hc-time">${ds}</div></div><div class="hc-bars">${bars}</div><div class="hc-labels">${CS.map(c=>`<div class="hc-lbl">${c.nm.slice(0,3)}</div>`).join('')}</div>${s.ai_diagnosis?`<div class="hc-ai">${s.ai_diagnosis}</div>`:''}</div>`
   }).join('')
 }
 function showView(v){
-  ['scan','history','hunt','protocols'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'flex':'none')
+  ['scan','history','hunt','protocols'].forEach(x=>{
+    const el=document.getElementById('view-'+x)
+    if(el)el.style.display=x===v?'flex':'none'
+  })
   document.getElementById('nav-scan').className='nav'+(v==='scan'?' on':'')
   document.getElementById('nav-history').className='nav'+(v==='history'?' on':'')
   document.getElementById('nav-hunt').className='nav'+(v==='hunt'?' on':'')
@@ -861,7 +872,8 @@ function showView(v){
   document.getElementById('mnav-hunt').className='mnav-item'+(v==='hunt'?' on':'')
   document.getElementById('mnav-protocols').className='mnav-item'+(v==='protocols'?' on':'')
   document.getElementById('mnav-history').className='mnav-item'+(v==='history'?' on':'')
-  const dn = document.getElementById('dnav-'+v); if(dn){['scan','hunt','protocols','history'].forEach(x=>{const el=document.getElementById('dnav-'+x);if(el)el.className='drawer-nav'+(x===v?' on':'');})}
+  const dn=document.getElementById('dnav-'+v)
+  if(dn)['scan','hunt','protocols','history'].forEach(x=>{const el=document.getElementById('dnav-'+x);if(el)el.className='drawer-nav'+(x===v?' on':'')})
   const titles={scan:'SCAN',history:'HISTORY',hunt:'HUNT',protocols:'PROTOCOLS'}
   const subs={scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA',protocols:'Rutinas de activación por circuito'}
   document.getElementById('tb-view-title').textContent=titles[v]||v.toUpperCase()
@@ -879,17 +891,19 @@ function toast(msg,type='info'){
   document.getElementById('toast-container').appendChild(el)
   setTimeout(()=>el.remove(),3500)
 }
+
 const PROTOCOLS=[
   {id:'p1',circuit:'c1',circuitName:'C1 BASE',name:'PROTOCOLO TIERRA',icon:'🌱',col:'#e8302a',tipo:'fisica',desc:'Reactiva tu circuito de biosupervivencia. Cuando C1 está bajo, el sistema nervioso opera en modo amenaza. Este protocolo ancla el cuerpo en el presente.',leary:'Leary dice: el C1 es el primer circuito imprintado en la infancia. Su activador principal es la seguridad física y el contacto con el entorno material. Sin C1 sólido, los circuitos superiores no pueden operar correctamente.',actions:[{text:'Sal a caminar 10 minutos descalzo o en contacto con la tierra. Sin teléfono.',dur:'10 min'},{text:'Bebe un vaso de agua con sal marina. Conecta con lo físico básico.',dur:'2 min'},{text:'Escribe 3 cosas concretas que tienes hoy: techo, comida, cuerpo funcionando.',dur:'5 min'},{text:'Respiración 4-4-4: inhala 4s, retén 4s, exhala 4s. Repite 8 veces.',dur:'5 min'}],collection:'ORIGEN',collectionTag:'Lo fundamental',duration:'22 min'},
-  {id:'p2',circuit:'c2',circuitName:'C2 CONTROL',name:'PROTOCOLO ALPHA',icon:'👑',col:'#f5a623',tipo:'mental',desc:'Recupera el liderazgo interno. Cuando C2 está distorsionado, reaccionas en lugar de actuar. Este protocolo te devuelve al centro de tu territorio.',leary:'Leary dice: el C2 se activa en la infancia cuando el niño descubre que puede influir en su entorno. Su sombra es la dominancia por miedo o la sumisión. La luz es el liderazgo desde la seguridad interna.',actions:[{text:'Identifica una situación donde estás reaccionando. Escribe quién tiene el control real y por qué se lo cediste.',dur:'10 min'},{text:'Toma una decisión pequeña que llevas postergando. Ejecútala ahora.',dur:'5 min'},{text:'Postura de poder: 2 minutos de pie, espalda recta, expansivo. Sin justificación.',dur:'2 min'},{text:'Define 1 límite que necesitas establecer hoy. Escríbelo y comprométete.',dur:'8 min'}],collection:'ALPHA',collectionTag:'Liderazgo y posición',duration:'25 min'},
+  {id:'p2',circuit:'c2',circuitName:'C2 CONTROL',name:'PROTOCOLO ALPHA',icon:'👑',col:'#f5a623',tipo:'mental',desc:'Recupera el liderazgo interno. Cuando C2 está distorsionado, reaccionas en lugar de actuar. Este protocolo te devuelve al centro de tu territorio.',leary:'Leary dice: el C2 se activa en la infancia cuando el niño descubre que puede influir en su entorno. Su sombra es la dominancia por miedo o la sumisión. La luz es el liderazgo desde la seguridad interna.',actions:[{text:'Identifica una situación donde estás reaccionando. Escribe quién tiene el control y por qué se lo cediste.',dur:'10 min'},{text:'Toma una decisión pequeña que llevas postergando. Ejecútala ahora.',dur:'5 min'},{text:'Postura de poder: 2 minutos de pie, espalda recta, expansivo. Sin justificación.',dur:'2 min'},{text:'Define 1 límite que necesitas establecer hoy. Escríbelo y comprométete.',dur:'8 min'}],collection:'ALPHA',collectionTag:'Liderazgo y posición',duration:'25 min'},
   {id:'p3',circuit:'c3',circuitName:'C3 CLARITY',name:'PROTOCOLO CLARIDAD',icon:'🧠',col:'#22c55e',tipo:'mental',desc:'Desfragmenta la mente. Cuando C3 tiene ruido, el sobreanálisis bloquea la acción. Este protocolo ordena el sistema cognitivo y activa el pensamiento estratégico.',leary:'Leary dice: el C3 es el circuito del lenguaje y el pensamiento abstracto. Su sombra es la rigidez mental, el dogma y el análisis paralizante. Se activa con nuevos mapas mentales y resolución de problemas.',actions:[{text:'Brain dump: 10 minutos escribiendo todo lo que tienes en la cabeza sin filtro.',dur:'10 min'},{text:'Elige las 3 cosas más importantes del dump. Descarta el resto.',dur:'5 min'},{text:'Para cada una: ¿cuál es el siguiente paso físico concreto?',dur:'10 min'},{text:'Apaga todas las notificaciones 1 hora. Trabaja en una sola cosa.',dur:'60 min'}],collection:'ARQUITECTO',collectionTag:'Mente y estructura',duration:'85 min'},
-  {id:'p4',circuit:'c4',circuitName:'C4 SOCIAL',name:'PROTOCOLO TERRITORIO',icon:'🌐',col:'#3b82f6',tipo:'social',desc:'Realínea tu identidad social. Cuando C4 está distorsionado, actúas para agradar en lugar de pertenecer.',leary:'Leary dice: el C4 es el circuito de la moral cultural. Su sombra es la culpa y la dependencia social. Su luz es la integración — pertenecer sin perderte.',actions:[{text:'Escribe tus 5 valores no negociables. Los que realmente guían tus decisiones.',dur:'15 min'},{text:'Identifica una relación donde te comportas diferente a tus valores.',dur:'10 min'},{text:'Escribe algo que quieres decir y no has dicho por miedo al qué dirán.',dur:'5 min'},{text:'Conéctate con alguien de tu tribu real para dar valor.',dur:'15 min'}],collection:'TERRITORIO',collectionTag:'Identidad de manada',duration:'45 min'},
+  {id:'p4',circuit:'c4',circuitName:'C4 SOCIAL',name:'PROTOCOLO TERRITORIO',icon:'🌐',col:'#3b82f6',tipo:'social',desc:'Realínea tu identidad social. Cuando C4 está distorsionado, actúas para agradar en lugar de pertenecer.',leary:'Leary dice: el C4 es el circuito de la moral cultural. Su sombra es la culpa y la dependencia social. Su luz es la integración — pertenecer sin perderte.',actions:[{text:'Escribe tus 5 valores no negociables. Los que realmente guían tus decisiones.',dur:'15 min'},{text:'Identifica una relación donde te comportas diferente a tus valores.',dur:'10 min'},{text:'Escribe algo que quieres decir y no has dicho por miedo al qué dirán.',dur:'5 min'},{text:'Conéctate con alguien de tu tribu real para dar valor sin pedir nada.',dur:'15 min'}],collection:'TERRITORIO',collectionTag:'Identidad de manada',duration:'45 min'},
   {id:'p5',circuit:'c5',circuitName:'C5 BODY',name:'PROTOCOLO INSTINTO',icon:'♥',col:'#9b7fe8',tipo:'fisica',desc:'Reconecta con el cuerpo y el placer consciente. Cuando C5 está bajo, vives en la cabeza.',leary:'Leary dice: el C5 es el circuito hedonista. Su sombra es la adicción y la evasión. Su luz es el placer consciente, el disfrute pleno del cuerpo sin culpa.',actions:[{text:'Pon música que te mueva. Baila o mueve el cuerpo 5 minutos sin propósito.',dur:'5 min'},{text:'Come algo con atención total. Sin pantallas. Saborea cada bocado.',dur:'15 min'},{text:'Ducha con agua fría 30 segundos al final. Activa el sistema nervioso.',dur:'10 min'},{text:'Escribe una cosa que disfrutas sin justificación. Planifícala para hoy.',dur:'5 min'}],collection:'INSTINTO',collectionTag:'Conexión corporal',duration:'35 min'},
   {id:'p6',circuit:'c6',circuitName:'C6 FLEX',name:'PROTOCOLO MUTA',icon:'🔄',col:'#06b6d4',tipo:'mental',desc:'Reprograma una creencia limitante. El C6 es el circuito de la metamorfosis.',leary:'Leary dice: el C6 es el circuito neuro-eléctrico. Su función es hackear el propio sistema operativo. Sin él, repites los mismos patrones indefinidamente.',actions:[{text:'Identifica una creencia que te limita. Escríbela textualmente.',dur:'5 min'},{text:'Encuentra 3 evidencias de que esa creencia es falsa o incompleta.',dur:'15 min'},{text:'Escribe la creencia alternativa que quieres instalar.',dur:'10 min'},{text:'Lee algo fuera de tu área de confort por 20 minutos.',dur:'20 min'}],collection:'MUTA',collectionTag:'Adaptación y cambio',duration:'50 min'},
   {id:'p7',circuit:'c7',circuitName:'C7 PURPOSE',name:'PROTOCOLO LEGADO',icon:'🎯',col:'#ec4899',tipo:'estrategica',desc:'Clarifica tu misión. Cuando C7 está bajo, operas sin dirección.',leary:'Leary dice: el C7 es el circuito genético-arquetípico. Se activa con la conciencia de legado y la construcción a largo plazo.',actions:[{text:'Escribe en una oración para qué estás aquí. No lo que haces — para qué vives.',dur:'15 min'},{text:'Identifica la diferencia entre lo que haces hoy y esa misión.',dur:'10 min'},{text:'Define una acción que construya legado, no solo resultados inmediatos.',dur:'10 min'},{text:'Conecta con alguien a quien puedas transmitir algo de valor.',dur:'15 min'}],collection:'LEGADO',collectionTag:'Misión a largo plazo',duration:'50 min'},
   {id:'p8',circuit:'c8',circuitName:'C8 VISION',name:'PROTOCOLO INFINITO',icon:'∞',col:'#a78bfa',tipo:'estrategica',desc:'Expande la conciencia más allá del ego. Cuando C8 está apagado, operas solo desde la supervivencia.',leary:'Leary dice: el C8 es el circuito cuántico, no lineal. Se activa con meditación profunda o momentos de conexión con algo mayor.',actions:[{text:'Meditación silenciosa 10 minutos. Sin guía, sin música. Solo observar.',dur:'10 min'},{text:'Escribe algo que trasciende tu vida individual — una verdad universal.',dur:'15 min'},{text:'Sal a la naturaleza 20 minutos. Sin objetivo. Solo percibir.',dur:'20 min'},{text:'Pregúntate: si supieras que vas a morir en 10 años, ¿qué cambiarías hoy?',dur:'10 min'}],collection:'INFINITO',collectionTag:'Expansión cuántica',duration:'55 min'}
 ]
 let currentProtoFilter='all',expandedProto=null
+
 function getActiveProtocols(){
   if(!allScans||allScans.length===0)return[]
   const last=allScans[0]
@@ -909,22 +923,23 @@ function renderProtocols(){
     const card=document.createElement('div')
     card.className=`proto-card ${isActive?'active-proto':''} ${isExpanded?'expanded':''}`
     card.onclick=()=>toggleProto(p.id)
-    card.innerHTML=`<div class="proto-header"><div class="proto-icon" style="background:${p.col}18;border-color:${p.col}44;color:${p.col}">${p.icon}</div><div><div class="proto-name" style="color:${isActive?p.col:'var(--txt)'}">${p.name}</div><div class="proto-circuit">${p.circuitName} · ${p.tipo}</div></div></div><div class="proto-desc">${p.desc}</div><div class="proto-actions">${p.actions.map((a,i)=>`<div class="proto-action"><div class="proto-action-num" style="color:${p.col}">${i+1}</div><div style="flex:1">${a.text} <span style="color:var(--txt3);font-size:8px">· ${a.dur}</span></div></div>`).join('')}</div><div class="proto-footer"><div class="proto-collection">Colección: <span style="color:${p.col}">${p.collection}</span> · ${p.collectionTag}</div><div class="proto-duration">⏱ ${p.duration}</div></div><div class="proto-expand"><div class="proto-leary" style="border-color:${p.col}"><div style="font-size:7px;letter-spacing:1px;color:${p.col};text-transform:uppercase;margin-bottom:4px">Fundamento · Leary</div>${p.leary}</div></div>`
+    card.innerHTML=`<div class="proto-header"><div class="proto-icon" style="background:${p.col}15;border-color:${p.col}44;color:${p.col}">${p.icon}</div><div><div class="proto-name" style="color:${isActive?p.col:'var(--txt)'}">${p.name}</div><div class="proto-circuit">${p.circuitName} · ${p.tipo}</div></div></div><div class="proto-desc">${p.desc}</div><div class="proto-actions">${p.actions.map((a,i)=>`<div class="proto-action" style="border-left-color:${p.col}"><div class="proto-action-num" style="color:${p.col}">${i+1}</div><div style="flex:1">${a.text} <span style="color:var(--txt3);font-size:8px;font-weight:500">· ${a.dur}</span></div></div>`).join('')}</div><div class="proto-footer"><div class="proto-collection">Colección: <span style="color:${p.col}">${p.collection}</span> · ${p.collectionTag}</div><div class="proto-duration">⏱ ${p.duration}</div></div><div class="proto-expand"><div class="proto-leary" style="border-color:${p.col}"><div style="font-size:8px;letter-spacing:1px;color:${p.col};text-transform:uppercase;margin-bottom:5px;font-weight:700">Fundamento · Leary</div>${p.leary}</div></div>`
     grid.appendChild(card)
   })
   if(activeIds.length>0&&allScans.length>0){
     const tp=PROTOCOLS.find(p=>activeIds.includes(p.id))
-    if(tp){document.getElementById('proto-ai-rec').style.display='block';document.getElementById('proto-ai-text').textContent=`Tu circuito ${tp.circuitName} está bajo. Empieza por ${tp.name} — es la base.`}
+    if(tp){document.getElementById('proto-ai-rec').style.display='block';document.getElementById('proto-ai-text').textContent=`Tu circuito ${tp.circuitName} está bajo. Empieza por ${tp.name} — es la base que activa todos los demás.`}
   }
 }
 function toggleProto(id){expandedProto=expandedProto===id?null:id;renderProtocols()}
 function filterProtos(filter){
   currentProtoFilter=filter
-  document.querySelectorAll('.proto-filter').forEach(btn=>{btn.style.background='transparent';btn.style.borderColor='var(--b2)';btn.style.color='var(--txt2)'})
+  document.querySelectorAll('.proto-filter').forEach(btn=>{btn.style.background='transparent';btn.style.borderColor='var(--b)';btn.style.color='var(--txt3)'})
   const active=document.getElementById('pf-'+filter)
   if(active){active.style.background='rgba(232,48,42,.1)';active.style.borderColor='var(--red)';active.style.color='var(--red)'}
   renderProtocols()
 }
+
 let huntPlan=null,huntMissions=[],activeTimer=null,timerInterval=null
 async function generateHuntPlan(){
   if(!currentUser)return toast('Inicia sesión para usar HUNT','error')
@@ -960,9 +975,11 @@ function renderMissions(){
     const mins=Math.floor(m.timeLeft/60),secs=m.timeLeft%60,timeStr=`${mins}:${secs.toString().padStart(2,'0')}`
     const isActive=m.status==='active',isDone=m.status==='done'
     const isLocked=i>0&&huntMissions[i-1].status!=='done'&&huntMissions[i-1].status!=='active'&&!isDone
-    const card=document.createElement('div');card.className=`mission-card ${isActive?'active':''} ${isDone?'done':''} ${isLocked?'locked':''}`;card.id=`mission-${m.id}`
+    const card=document.createElement('div')
+    card.className=`mission-card ${isActive?'active':''} ${isDone?'done':''} ${isLocked?'locked':''}`
+    card.id=`mission-${m.id}`
     const pct=isDone?100:isActive?Math.round((1-m.timeLeft/(m.duracion_min*60))*100):0
-    card.innerHTML=`<div class="mission-header"><div class="mission-num" style="background:${isDone?'rgba(34,197,94,.15)':isActive?color+'22':'var(--bg3)'};border-color:${isDone?'var(--green)':isActive?color:'var(--b2)'};color:${isDone?'var(--green)':isActive?color:'var(--txt3)'}">${isDone?'✓':i+1}</div><div class="mission-info"><div class="mission-title" style="color:${isDone?'var(--green)':isActive?color:'var(--txt)'}">${m.titulo}</div><div class="mission-circuit">${icon} ${m.circuito} · ${m.tipo}</div></div><div class="mission-timer ${isActive?'running':''} ${isDone?'done':''}">${isDone?'✓':timeStr}</div></div><div class="mission-desc">${m.descripcion}</div><div class="mission-footer"><div class="mission-duration">⏱ ${m.duracion_min} min</div>${isDone?'<div style="font-size:9px;color:var(--green);font-weight:600">✓ Completada</div>':isActive?`<div style="display:flex;gap:6px"><button class="btn-mission btn-pause" onclick="pauseMission(${m.id})">⏸</button><button class="btn-mission btn-done" onclick="completeMission(${m.id})">✓ Hecha</button></div>`:`<button class="btn-mission btn-start" onclick="startMission(${m.id})" ${isLocked?'disabled':''}>▶ Iniciar</button>`}</div><div class="mission-progress-bar" id="mpbar-${m.id}" style="width:${pct}%;background:${isDone?'var(--green)':color}"></div>`
+    card.innerHTML=`<div class="mission-header"><div class="mission-num" style="background:${isDone?'rgba(34,197,94,.1)':isActive?color+'18':'var(--bg3)'};border-color:${isDone?'rgba(34,197,94,.4)':isActive?color:'var(--b2)'};color:${isDone?'var(--green)':isActive?color:'var(--txt3)'}">${isDone?'✓':i+1}</div><div class="mission-info"><div class="mission-title" style="color:${isDone?'var(--green)':isActive?color:'var(--txt)'}">${m.titulo}</div><div class="mission-circuit">${icon} ${m.circuito} · ${m.tipo}</div></div><div class="mission-timer ${isActive?'running':''} ${isDone?'done':''}">${isDone?'✓':timeStr}</div></div><div class="mission-desc">${m.descripcion}</div><div class="mission-footer"><div class="mission-duration">⏱ ${m.duracion_min} min</div>${isDone?'<div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:1px">✓ COMPLETADA</div>':isActive?`<div style="display:flex;gap:7px"><button class="btn-mission btn-pause" onclick="pauseMission(${m.id})">⏸ Pausa</button><button class="btn-mission btn-done" onclick="completeMission(${m.id})">✓ Hecha</button></div>`:`<button class="btn-mission btn-start" onclick="startMission(${m.id})" ${isLocked?'disabled':''}>▶ Iniciar</button>`}</div><div class="mission-progress-bar" id="mpbar-${m.id}" style="width:${pct}%;background:${isDone?'var(--green)':color}"></div>`
     container.appendChild(card)
   })
 }
@@ -993,16 +1010,17 @@ function completeMission(id){
   document.getElementById('hunt-progress-bar').style.width=`${done/3*100}%`
   if(done===3){
     setTimeout(()=>{document.getElementById('hunt-completed').style.display='block';document.getElementById('hunt-cierre').textContent=huntPlan.cierre;document.getElementById('hunt-missions').style.display='none'},500)
-    toast('🐺 Hunt completado!','success')
+    toast('🐺 Hunt completado! Wolves operate.','success')
   }
   renderMissions()
 }
 function updateTimerDisplay(id){
   const m=huntMissions.find(x=>x.id===id);if(!m)return
-  const mins=Math.floor(m.timeLeft/60),secs=m.timeLeft%60,timeStr=`${mins}:${secs.toString().padStart(2,'0')}`
-  const el=document.querySelector(`#mission-${id} .mission-timer`);if(el)el.textContent=timeStr
+  const mins=Math.floor(m.timeLeft/60),secs=m.timeLeft%60
+  const el=document.querySelector(`#mission-${id} .mission-timer`);if(el)el.textContent=`${mins}:${secs.toString().padStart(2,'0')}`
   const pbar=document.getElementById(`mpbar-${id}`);if(pbar)pbar.style.width=Math.round((1-m.timeLeft/(m.duracion_min*60))*100)+'%'
 }
+
 async function boot(){
   buildCircuits();updateResult();updateRadar()
   const{data:{session}}=await sb.auth.getSession()
@@ -1036,6 +1054,7 @@ async function boot(){
   })
 }
 boot()
+
 </script>
 </body>
 </html>
