@@ -238,6 +238,33 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .btn-pause{background:var(--bg3);color:var(--txt2);border:1px solid var(--b2)}
 .mission-progress-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--amber);transition:width 1s linear}
 
+
+/* ── PROTOCOLS VIEW ── */
+.proto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.proto-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.proto-card:hover{border-color:var(--b3);transform:translateY(-1px)}
+.proto-card.active-proto{border-color:var(--red);background:rgba(232,48,42,.04)}
+.proto-card.active-proto::before{content:'ACTIVO';position:absolute;top:10px;right:10px;font-family:'Bebas Neue';font-size:8px;letter-spacing:2px;color:var(--red);background:rgba(232,48,42,.15);padding:2px 6px;border-radius:2px}
+.proto-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.proto-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid}
+.proto-name{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;line-height:1}
+.proto-circuit{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-top:2px}
+.proto-desc{font-size:9px;color:var(--txt2);line-height:1.5;margin-bottom:10px}
+.proto-actions{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.proto-action{display:flex;align-items:flex-start;gap:7px;font-size:9px;color:var(--txt2);line-height:1.4;padding:5px 7px;background:var(--bg3);border-radius:2px}
+.proto-action-num{font-family:'Bebas Neue';font-size:12px;flex-shrink:0;line-height:1.2}
+.proto-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--b)}
+.proto-collection{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
+.proto-collection span{font-weight:600}
+.proto-duration{font-size:7px;color:var(--txt3);letter-spacing:1px}
+.proto-expand{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--b)}
+.proto-card.expanded .proto-expand{display:block}
+.proto-leary{font-size:8px;color:var(--txt2);line-height:1.5;font-style:italic;padding:8px;background:var(--bg3);border-radius:2px;border-left:2px solid}
+
+@media(max-width:768px){
+  .proto-grid{grid-template-columns:1fr}
+}
+
 /* ── BOTTOM NAV (mobile only) ── */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--b);z-index:200;align-items:center;justify-content:space-around;padding:0 8px}
 .mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;cursor:pointer;border-radius:4px;transition:all .15s;flex:1}
@@ -392,7 +419,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       <div class="nav on" id="nav-scan" onclick="showView('scan')"><div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div></div>
       <div class="nav" id="nav-history" onclick="loadHistory()"><div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div></div>
       <div class="nav" id="nav-hunt" onclick="showView('hunt')"><div><div class="nav-t">HUNT</div><div class="nav-s">Modo ejecución</div></div></div>
-      <div class="nav"><div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Próximamente</div></div></div>
+      <div class="nav" id="nav-protocols" onclick="showView('protocols')"><div><div class="nav-t">PROTOCOLS</div><div class="nav-s">Rutinas de activación</div></div></div>
       <div class="sb-bot">
         <div class="sbox">
           <div class="sbox-lbl">Estado Actual</div>
@@ -551,6 +578,30 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
             <button onclick="generateHuntPlan()" style="background:var(--red);border:none;color:#fff;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;margin-top:1rem">Nueva Caza →</button>
           </div>
         </div>
+      </div>
+
+      <!-- VIEW: PROTOCOLS -->
+      <div id="view-protocols" style="display:none;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px">PROTOCOLS</div>
+            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px">Rutinas de activación por circuito · Teoría de Timothy Leary</div>
+          </div>
+          <div id="proto-ai-rec" style="display:none;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:3px;padding:8px 12px;max-width:320px">
+            <div style="font-size:7px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin-bottom:3px">IA Recomienda</div>
+            <div style="font-size:9px;color:var(--txt2);line-height:1.5" id="proto-ai-text">–</div>
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="proto-filter on" id="pf-all" onclick="filterProtos('all')" style="background:rgba(232,48,42,.1);border:1px solid var(--red);color:var(--red);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">TODOS</button>
+          <button class="proto-filter" id="pf-active" onclick="filterProtos('active')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">ACTIVOS</button>
+          <button class="proto-filter" id="pf-fisica" onclick="filterProtos('fisica')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">FÍSICOS</button>
+          <button class="proto-filter" id="pf-mental" onclick="filterProtos('mental')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">MENTALES</button>
+        </div>
+
+        <div class="proto-grid" id="proto-grid"></div>
       </div>
 
       <!-- VIEW: HISTORY -->
@@ -944,17 +995,21 @@ function showView(v) {
   document.getElementById('view-scan').style.display=v==='scan'?'flex':'none'
   document.getElementById('view-history').style.display=v==='history'?'flex':'none'
   document.getElementById('view-hunt').style.display=v==='hunt'?'flex':'none'
+  document.getElementById('view-protocols').style.display=v==='protocols'?'flex':'none'
   // Desktop nav
   document.getElementById('nav-scan').className='nav'+(v==='scan'?' on':'')
   document.getElementById('nav-history').className='nav'+(v==='history'?' on':'')
+  document.getElementById('nav-hunt').className='nav'+(v==='hunt'?' on':'')
   // Mobile nav
   document.getElementById('mnav-scan').className='mnav-item'+(v==='scan'?' on':'')
   document.getElementById('mnav-history').className='mnav-item'+(v==='history'?' on':'')
   document.getElementById('mnav-hunt').className='mnav-item'+(v==='hunt'?' on':'')
-  const titles = {scan:'SCAN',history:'HISTORY',hunt:'HUNT'}
-  const subs = {scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA'}
+  document.getElementById('mnav-protocols').className='mnav-item'+(v==='protocols'?' on':'')
+  const titles = {scan:'SCAN',history:'HISTORY',hunt:'HUNT',protocols:'PROTOCOLS'}
+  const subs = {scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA',protocols:'Rutinas de activación por circuito'}
   document.getElementById('tb-view-title').textContent=titles[v]||v.toUpperCase()
   document.getElementById('tb-view-sub').textContent=subs[v]||''
+  if(v==='protocols') renderProtocols()
 }
 
 function switchAuthTab(t) {
@@ -970,6 +1025,220 @@ function toast(msg,type='info') {
   setTimeout(()=>el.remove(),3500)
 }
 
+
+
+// ── PROTOCOLS DATA ──
+const PROTOCOLS = [
+  {
+    id: 'p1', circuit: 'c1', circuitName: 'C1 BASE', name: 'PROTOCOLO TIERRA',
+    icon: '🌱', col: '#e8302a', tipo: 'fisica',
+    desc: 'Reactiva tu circuito de biosupervivencia. Cuando C1 está bajo, el sistema nervioso opera en modo amenaza. Este protocolo ancla el cuerpo en el presente.',
+    leary: 'Leary dice: el C1 es el primer circuito imprintado en la infancia. Su activador principal es la seguridad física y el contacto con el entorno material. Sin C1 sólido, los circuitos superiores no pueden operar correctamente.',
+    actions: [
+      { text: 'Sal a caminar 10 minutos descalzo o en contacto con la tierra. Sin teléfono.', dur: '10 min' },
+      { text: 'Bebe un vaso de agua con sal marina. Conecta con lo físico básico.', dur: '2 min' },
+      { text: 'Escribe 3 cosas concretas que tienes hoy: techo, comida, cuerpo funcionando.', dur: '5 min' },
+      { text: 'Respiración 4-4-4: inhala 4s, retén 4s, exhala 4s. Repite 8 veces.', dur: '5 min' },
+    ],
+    collection: 'ORIGEN', collectionTag: 'Lo fundamental',
+    duration: '22 min'
+  },
+  {
+    id: 'p2', circuit: 'c2', circuitName: 'C2 CONTROL', name: 'PROTOCOLO ALPHA',
+    icon: '👑', col: '#f5a623', tipo: 'mental',
+    desc: 'Recupera el liderazgo interno. Cuando C2 está distorsionado, reaccionas en lugar de actuar. Este protocolo te devuelve al centro de tu territorio.',
+    leary: 'Leary dice: el C2 se activa en la infancia cuando el niño descubre que puede influir en su entorno. Su sombra es la dominancia por miedo o la sumisión. La luz es el liderazgo desde la seguridad interna.',
+    actions: [
+      { text: 'Identifica una situación donde estás reaccionando. Escribe quién tiene el control real y por qué se lo cediste.', dur: '10 min' },
+      { text: 'Toma una decisión pequeña que llevas postergando. Ejecútala ahora.', dur: '5 min' },
+      { text: 'Postura de poder: 2 minutos de pie, espalda recta, expansivo. Sin justificación.', dur: '2 min' },
+      { text: 'Define 1 límite que necesitas establecer hoy. Escríbelo y comprométete.', dur: '8 min' },
+    ],
+    collection: 'ALPHA', collectionTag: 'Liderazgo y posición',
+    duration: '25 min'
+  },
+  {
+    id: 'p3', circuit: 'c3', circuitName: 'C3 CLARITY', name: 'PROTOCOLO CLARIDAD',
+    icon: '🧠', col: '#22c55e', tipo: 'mental',
+    desc: 'Desfragmenta la mente. Cuando C3 tiene ruido, el sobreanálisis bloquea la acción. Este protocolo ordena el sistema cognitivo y activa el pensamiento estratégico.',
+    leary: 'Leary dice: el C3 es el circuito del lenguaje y el pensamiento abstracto. Su sombra es la rigidez mental, el dogma y el análisis paralizante. Se activa con nuevos mapas mentales y resolución de problemas.',
+    actions: [
+      { text: 'Brain dump: 10 minutos escribiendo todo lo que tienes en la cabeza sin filtro. Vacía el buffer.', dur: '10 min' },
+      { text: 'Elige las 3 cosas más importantes del dump. Descarta el resto.', dur: '5 min' },
+      { text: 'Para cada una: ¿cuál es el siguiente paso físico concreto? Solo uno por ítem.', dur: '10 min' },
+      { text: 'Apaga todas las notificaciones 1 hora. Trabaja en una sola cosa.', dur: '60 min' },
+    ],
+    collection: 'ARQUITECTO', collectionTag: 'Mente y estructura',
+    duration: '85 min'
+  },
+  {
+    id: 'p4', circuit: 'c4', circuitName: 'C4 SOCIAL', name: 'PROTOCOLO TERRITORIO',
+    icon: '🌐', col: '#3b82f6', tipo: 'social',
+    desc: 'Realínea tu identidad social. Cuando C4 está distorsionado, actúas para agradar en lugar de pertenecer. Este protocolo te devuelve a tus valores reales.',
+    leary: 'Leary dice: el C4 es el circuito de la moral cultural, imprinted en la adolescencia. Su sombra es la culpa, la dependencia social y la hipocresía. Su luz es la integración — pertenecer sin perderte.',
+    actions: [
+      { text: 'Escribe tus 5 valores no negociables. No los que crees que deberías tener, los que realmente guían tus decisiones.', dur: '15 min' },
+      { text: 'Identifica una relación o ambiente donde te comportas diferente a tus valores. ¿Por qué?', dur: '10 min' },
+      { text: 'Escribe una cosa que quieres decir y no has dicho por miedo al qué dirán.', dur: '5 min' },
+      { text: 'Conéctate con alguien de tu tribu real — no para pedir, sino para dar valor.', dur: '15 min' },
+    ],
+    collection: 'TERRITORIO', collectionTag: 'Identidad de manada',
+    duration: '45 min'
+  },
+  {
+    id: 'p5', circuit: 'c5', circuitName: 'C5 BODY', name: 'PROTOCOLO INSTINTO',
+    icon: '♥', col: '#9b7fe8', tipo: 'fisica',
+    desc: 'Reconecta con el cuerpo y el placer consciente. Cuando C5 está bajo, vives en la cabeza. Este protocolo activa el circuito sensorial y restaura la presencia.',
+    leary: 'Leary dice: el C5 es el circuito hedonista, activado en la adolescencia. Su sombra es la adicción y la evasión. Su luz es el placer consciente, el disfrute pleno del cuerpo sin culpa.',
+    actions: [
+      { text: 'Pon música que te mueva. Baila o mueve el cuerpo 5 minutos sin propósito.', dur: '5 min' },
+      { text: 'Come algo con atención total. Sin pantallas. Saborea cada bocado.', dur: '15 min' },
+      { text: 'Ducha con agua fría 30 segundos al final. Activa el sistema nervioso.', dur: '10 min' },
+      { text: 'Escribe una cosa que disfrutas sin justificación. Planifícala para hoy.', dur: '5 min' },
+    ],
+    collection: 'INSTINTO', collectionTag: 'Conexión corporal',
+    duration: '35 min'
+  },
+  {
+    id: 'p6', circuit: 'c6', circuitName: 'C6 FLEX', name: 'PROTOCOLO MUTA',
+    icon: '🔄', col: '#06b6d4', tipo: 'mental',
+    desc: 'Reprograma una creencia limitante. El C6 es el circuito de la metamorfosis. Cuando está bajo, la rigidez mental te impide adaptarte a nuevas realidades.',
+    leary: 'Leary dice: el C6 es el circuito neuro-eléctrico, activado por crisis existenciales o expansión deliberada. Su función es hackear el propio sistema operativo. Sin él, repites los mismos patrones indefinidamente.',
+    actions: [
+      { text: 'Identifica una creencia que tienes sobre ti mismo que te limita. Escríbela textualmente.', dur: '5 min' },
+      { text: 'Encuentra 3 evidencias concretas de que esa creencia es falsa o incompleta.', dur: '15 min' },
+      { text: 'Escribe la creencia alternativa que quieres instalar. Hazla específica y verificable.', dur: '10 min' },
+      { text: 'Lee algo fuera de tu área de confort por 20 minutos. Expande el mapa.', dur: '20 min' },
+    ],
+    collection: 'MUTA', collectionTag: 'Adaptación y cambio',
+    duration: '50 min'
+  },
+  {
+    id: 'p7', circuit: 'c7', circuitName: 'C7 PURPOSE', name: 'PROTOCOLO LEGADO',
+    icon: '🎯', col: '#ec4899', tipo: 'estrategica',
+    desc: 'Clarifica tu misión. Cuando C7 está bajo, operas sin dirección. Este protocolo conecta tus acciones diarias con tu propósito genético más profundo.',
+    leary: 'Leary dice: el C7 es el circuito genético-arquetípico, que trasciende el ego individual. Se activa con la conciencia de legado, la paternidad simbólica y la construcción a largo plazo.',
+    actions: [
+      { text: 'Escribe en una oración para qué estás aquí. No lo que haces — para qué vives.', dur: '15 min' },
+      { text: 'Identifica la diferencia entre lo que haces hoy y esa misión. ¿Hay alineación?', dur: '10 min' },
+      { text: 'Define una acción esta semana que construya legado, no solo resultados inmediatos.', dur: '10 min' },
+      { text: 'Conecta con alguien a quien puedas transmitir algo de valor hoy.', dur: '15 min' },
+    ],
+    collection: 'LEGADO', collectionTag: 'Misión a largo plazo',
+    duration: '50 min'
+  },
+  {
+    id: 'p8', circuit: 'c8', circuitName: 'C8 VISION', name: 'PROTOCOLO INFINITO',
+    icon: '∞', col: '#a78bfa', tipo: 'estrategica',
+    desc: 'Expande la conciencia más allá del ego. Cuando C8 está apagado, operas solo desde la supervivencia. Este protocolo activa la percepción trascendente.',
+    leary: 'Leary dice: el C8 es el circuito cuántico, no lineal. Se activa con meditación profunda, estados alterados conscientes, o momentos de conexión con algo mayor. No puede forzarse — solo prepararse.',
+    actions: [
+      { text: 'Meditación silenciosa 10 minutos. Sin guía, sin música. Solo observar la mente.', dur: '10 min' },
+      { text: 'Escribe algo que trasciende tu vida individual — una idea, un patrón, una verdad universal que observas.', dur: '15 min' },
+      { text: 'Sal a la naturaleza 20 minutos. Sin objetivo. Solo percibir.', dur: '20 min' },
+      { text: 'Pregúntate: si supieras que vas a morir en 10 años, ¿qué cambiarías hoy?', dur: '10 min' },
+    ],
+    collection: 'INFINITO', collectionTag: 'Expansión cuántica',
+    duration: '55 min'
+  }
+]
+
+let currentProtoFilter = 'all'
+let expandedProto = null
+
+function getActiveProtocols() {
+  if (!allScans || allScans.length === 0) return []
+  const last = allScans[0]
+  const vals = {
+    c1: last.c1_base, c2: last.c2_control, c3: last.c3_clarity, c4: last.c4_social,
+    c5: last.c5_body, c6: last.c6_flex, c7: last.c7_purpose, c8: last.c8_vision
+  }
+  return PROTOCOLS.filter(p => vals[p.circuit] < 3)
+}
+
+function renderProtocols() {
+  const activeIds = getActiveProtocols().map(p => p.id)
+  let protos = PROTOCOLS
+
+  if (currentProtoFilter === 'active') protos = PROTOCOLS.filter(p => activeIds.includes(p.id))
+  else if (currentProtoFilter === 'fisica') protos = PROTOCOLS.filter(p => p.tipo === 'fisica')
+  else if (currentProtoFilter === 'mental') protos = PROTOCOLS.filter(p => p.tipo === 'mental')
+
+  const grid = document.getElementById('proto-grid')
+  grid.innerHTML = ''
+
+  if (protos.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No hay protocolos en esta categoría para tu estado actual.</div>'
+    return
+  }
+
+  protos.forEach(p => {
+    const isActive = activeIds.includes(p.id)
+    const isExpanded = expandedProto === p.id
+    const card = document.createElement('div')
+    card.className = `proto-card ${isActive ? 'active-proto' : ''} ${isExpanded ? 'expanded' : ''}`
+    card.onclick = () => toggleProto(p.id)
+
+    card.innerHTML = `
+      <div class="proto-header">
+        <div class="proto-icon" style="background:${p.col}18;border-color:${p.col}44;color:${p.col}">${p.icon}</div>
+        <div>
+          <div class="proto-name" style="color:${isActive ? p.col : 'var(--txt)'}">${p.name}</div>
+          <div class="proto-circuit">${p.circuitName} · ${p.tipo}</div>
+        </div>
+      </div>
+      <div class="proto-desc">${p.desc}</div>
+      <div class="proto-actions">
+        ${p.actions.map((a,i) => `
+          <div class="proto-action">
+            <div class="proto-action-num" style="color:${p.col}">${i+1}</div>
+            <div style="flex:1">${a.text} <span style="color:var(--txt3);font-size:8px">· ${a.dur}</span></div>
+          </div>`).join('')}
+      </div>
+      <div class="proto-footer">
+        <div class="proto-collection">Colección: <span style="color:${p.col}">${p.collection}</span> · ${p.collectionTag}</div>
+        <div class="proto-duration">⏱ ${p.duration}</div>
+      </div>
+      <div class="proto-expand">
+        <div class="proto-leary" style="border-color:${p.col}">
+          <div style="font-size:7px;letter-spacing:1px;color:${p.col};text-transform:uppercase;margin-bottom:4px">Fundamento · Leary</div>
+          ${p.leary}
+        </div>
+      </div>`
+
+    grid.appendChild(card)
+  })
+
+  // AI recommendation
+  if (activeIds.length > 0 && allScans.length > 0) {
+    const topProto = PROTOCOLS.find(p => activeIds.includes(p.id))
+    if (topProto) {
+      document.getElementById('proto-ai-rec').style.display = 'block'
+      document.getElementById('proto-ai-text').textContent = `Tu circuito ${topProto.circuitName} está bajo. Empieza por ${topProto.name} — es la base. Los demás circuitos dependen de que este esté activo.`
+    }
+  }
+}
+
+function toggleProto(id) {
+  expandedProto = expandedProto === id ? null : id
+  renderProtocols()
+}
+
+function filterProtos(filter) {
+  currentProtoFilter = filter
+  document.querySelectorAll('.proto-filter').forEach(btn => {
+    btn.style.background = 'transparent'
+    btn.style.borderColor = 'var(--b2)'
+    btn.style.color = 'var(--txt2)'
+  })
+  const active = document.getElementById('pf-' + filter)
+  if (active) {
+    active.style.background = 'rgba(232,48,42,.1)'
+    active.style.borderColor = 'var(--red)'
+    active.style.color = 'var(--red)'
+  }
+  renderProtocols()
+}
 
 // ── HUNT SYSTEM ──
 let huntPlan = null
