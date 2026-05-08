@@ -21,12 +21,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .loading-text{font-family:'Bebas Neue';font-size:12px;letter-spacing:4px;color:var(--txt3)}
 #toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:280px}
 .toast{background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:10px 14px;font-size:11px;letter-spacing:.5px;min-width:200px;animation:slideIn .2s ease}
-.toast.success{border-left:2px solid var(--green)}
-.toast.error{border-left:2px solid var(--red)}
-.toast.info{border-left:2px solid var(--amber)}
+.toast.success{border-left:2px solid var(--green)}.toast.error{border-left:2px solid var(--red)}.toast.info{border-left:2px solid var(--amber)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-/* ── AUTH ── */
 #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:2rem}
 .auth-wolf{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
 .auth-brand{font-family:'Bebas Neue';font-size:18px;letter-spacing:5px}
@@ -42,12 +38,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .field input{width:100%;background:var(--bg3);border:1px solid var(--b);color:var(--txt);padding:9px 12px;font-size:14px;border-radius:2px;outline:none;transition:border .2s;font-family:'Inter'}
 .field input:focus{border-color:var(--amber)}
 .btn-primary{width:100%;background:var(--amber);color:#000;border:none;padding:12px;font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all .2s;margin-top:.5rem}
-.btn-primary:hover{background:var(--amber2)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary:hover{background:var(--amber2)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
 .auth-sep{font-size:10px;color:var(--txt3);text-align:center;margin:1rem 0}
 .auth-disclaimer{font-size:9px;color:var(--txt3);text-align:center;margin-top:1rem;line-height:1.5}
-
-/* ── APP LAYOUT ── */
 #app{display:none;flex-direction:column;height:100vh}
 .topbar{height:56px;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
 .tb-div{width:1px;height:24px;background:var(--b2);margin:0 4px}
@@ -58,29 +51,55 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:6px 11px;font-size:8px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:5px;text-transform:uppercase;white-space:nowrap;transition:all .15s}
 .btn-ghost:hover{color:var(--txt);border-color:var(--b3)}
 .btn-runscan{background:var(--red);border:none;color:#fff;padding:7px 14px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;transition:all .15s}
-.btn-runscan:hover{background:var(--red2)}
-.btn-runscan:disabled{opacity:.5;cursor:not-allowed}
+.btn-runscan:hover{background:var(--red2)}.btn-runscan:disabled{opacity:.5;cursor:not-allowed}
 .user-chip{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--b2);border-radius:2px;cursor:pointer;position:relative}
 .user-chip:hover .user-menu{display:block}
 .user-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--b2);border-radius:3px;min-width:140px;z-index:100}
 .user-menu-item{padding:8px 12px;font-size:10px;letter-spacing:1px;color:var(--txt2);cursor:pointer;text-transform:uppercase;transition:all .15s}
-.user-menu-item:hover{background:var(--bg3);color:var(--txt)}
-.user-menu-item.danger:hover{color:var(--red)}
+.user-menu-item:hover{background:var(--bg3);color:var(--txt)}.user-menu-item.danger:hover{color:var(--red)}
 .u-av{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:10px;color:var(--amber)}
-.u-name{font-family:'Bebas Neue';font-size:12px;letter-spacing:1px;line-height:1}
-.u-sub{font-size:7px;color:var(--txt2)}
-.body-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
+.u-name{font-family:'Bebas Neue';font-size:12px;letter-spacing:1px;line-height:1}.u-sub{font-size:7px;color:var(--txt2)}
+/* AUDIO TOOLTIP — single global, no flicker */
+.audio-tooltip{position:fixed;background:var(--bg2);border:1px solid var(--b2);border-radius:4px;padding:12px 14px;width:230px;z-index:9999;font-size:9px;color:var(--txt2);line-height:1.5;box-shadow:0 8px 32px rgba(0,0,0,.85);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s}
+.audio-tooltip.show{opacity:1;visibility:visible}
+.audio-tooltip-title{font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--txt);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.audio-play-btn{background:var(--red);border:none;color:#fff;padding:6px 10px;font-family:'Bebas Neue';font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:2px;margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:4px;transition:background .15s}
+.audio-play-btn:hover{background:var(--red2)}
+.audio-close{cursor:pointer;color:var(--txt3);font-size:16px;line-height:1;padding:2px 6px}
+.audio-close:hover{color:var(--txt)}
 
-/* ── SIDEBAR (desktop) ── */
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:1px solid var(--b2);border-radius:3px;background:transparent;flex-shrink:0}
+.hamburger span{display:block;width:18px;height:2px;background:var(--txt2);border-radius:1px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0;transform:translateX(-4px)}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* MOBILE DRAWER */
+.mobile-drawer{display:none;position:fixed;inset:0;z-index:500}
+.mobile-drawer.open{display:block}
+.drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
+.drawer-panel{position:absolute;left:0;top:0;bottom:0;width:230px;background:var(--bg2);border-right:1px solid var(--b);padding:20px 14px;display:flex;flex-direction:column;gap:2px;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.mobile-drawer.open .drawer-panel{transform:translateX(0)}
+.drawer-brand{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
+.drawer-nav{display:flex;align-items:center;gap:10px;padding:12px 10px;border-radius:3px;cursor:pointer;font-size:11px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;transition:all .15s;border-left:2px solid transparent}
+.drawer-nav:hover{background:var(--bg3);color:var(--txt)}
+.drawer-nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
+.drawer-nav-icon{font-size:18px;flex-shrink:0}
+.drawer-nav-title{font-size:12px;font-family:'Bebas Neue';letter-spacing:1px;line-height:1}
+.drawer-nav-sub{font-size:7px;color:var(--txt3);margin-top:1px;letter-spacing:.3px;text-transform:none}
+.drawer-status{margin-top:auto;padding-top:14px;border-top:1px solid var(--b)}
+.drawer-logout{width:100%;background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:9px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s;margin-top:8px}
+.drawer-logout:hover{border-color:var(--red);color:var(--red)}
+
+.body-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
 .sidebar{width:155px;background:var(--bg2);border-right:1px solid var(--b);padding:12px 10px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
 .sb-brand{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b)}
 .sb-name{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.1}
 .sb-ver{font-size:6px;letter-spacing:2px;color:var(--txt3);margin-top:2px}
 .nav{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:2px;cursor:pointer;font-size:10px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;transition:all .15s;border-left:2px solid transparent}
-.nav:hover{background:var(--bg3);color:var(--txt)}
-.nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
-.nav-t{line-height:1;font-size:10px}
-.nav-s{font-size:6px;color:var(--txt3);letter-spacing:.3px;text-transform:none;margin-top:1px}
+.nav:hover{background:var(--bg3);color:var(--txt)}.nav.on{background:rgba(232,48,42,.1);color:var(--red);border-left-color:var(--red)}
+.nav-t{line-height:1;font-size:10px}.nav-s{font-size:6px;color:var(--txt3);letter-spacing:.3px;text-transform:none;margin-top:1px}
 .sb-bot{margin-top:auto}
 .sbox{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:9px;margin-bottom:7px}
 .sbox-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:7px}
@@ -98,16 +117,11 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .dots{display:flex;gap:3px;margin-top:5px}
 .dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:5px;color:var(--txt3)}
 .dot.on{background:var(--red);border-color:var(--red);color:#fff;font-size:6px}
-.dlbls{display:flex;gap:3px;margin-top:2px}
-.dlbl{width:14px;font-size:5px;color:var(--txt3);text-align:center}
+.dlbls{display:flex;gap:3px;margin-top:2px}.dlbl{width:14px;font-size:5px;color:var(--txt3);text-align:center}
 .sb-tag{font-size:6px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-top:8px;line-height:1.7}
-
-/* ── MAIN ── */
 .main{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
 #view-scan{display:flex;flex-direction:column;gap:10px}
 .top3{display:grid;grid-template-columns:1fr 240px 200px;gap:10px}
-
-/* ── CIRCUITS ── */
 .circuits-panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px;display:flex;flex-direction:column}
 .cp-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;flex-shrink:0}
 .cp-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px}
@@ -116,10 +130,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
 .cc{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:8px 9px}
 .cc-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.cc-ico{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;cursor:pointer;transition:all .2s;position:relative}
-.cc-ico:hover{transform:scale(1.15)}
-.cc-ico.playing{animation:iconPulse .6s ease-in-out infinite}
-@keyframes iconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.cc-ico{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;cursor:pointer;transition:box-shadow .2s,transform .15s}
+.cc-ico:hover{transform:scale(1.12)}
+.cc-ico.playing{box-shadow:0 0 0 2px currentColor}
 .cc-id{font-size:7px;letter-spacing:1px;font-weight:600;line-height:1}
 .cc-ds{font-size:6px;color:var(--txt2);margin-top:1px}
 .cc-v{font-family:'Bebas Neue';font-size:18px;min-width:14px;text-align:right;line-height:1}
@@ -129,16 +142,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
 .sl-nums{display:flex;justify-content:space-between;margin-top:2px}
 .sl-n{font-size:5px;color:var(--txt3);width:8px;text-align:center}
-
-/* Audio tooltip */
-.audio-tooltip{display:none;position:fixed;background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:10px 12px;width:220px;z-index:9999;font-size:9px;color:var(--txt2);line-height:1.5;text-align:left;box-shadow:0 4px 20px rgba(0,0,0,.8)}
-.audio-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--b2)}
-.audio-tooltip.show{display:block}
-.audio-tooltip-title{font-family:'Bebas Neue';font-size:12px;letter-spacing:1px;color:var(--txt);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
-.audio-play-btn{background:var(--red);border:none;color:#fff;padding:4px 8px;font-family:'Bebas Neue';font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:2px;margin-top:6px;width:100%;display:flex;align-items:center;justify-content:center;gap:4px}
-.audio-close{cursor:pointer;color:var(--txt3);font-size:14px;line-height:1}
-
-/* ── RESULT POSTER ── */
 .result-poster{background:#000;border:1px solid var(--b);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;position:relative}
 .wolf-section{position:relative;flex:0 0 195px;overflow:hidden;background:#050505}
 .wolf-section img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:brightness(.7) contrast(1.1)}
@@ -170,25 +173,21 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .ql-lbl{font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin:8px 0 5px}
 .ql{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .qlb{background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:6px 3px;text-align:center;cursor:pointer;transition:all .15s}
-.qlb:hover{border-color:var(--b2)}
-.qlb-i{font-size:11px;margin-bottom:2px}
+.qlb:hover{border-color:var(--b2)}.qlb-i{font-size:11px;margin-bottom:2px}
 .qlb-l{font-size:6px;letter-spacing:1px;color:var(--txt2);text-transform:uppercase;display:block}
 .bot-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .panel{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:11px}
 .pnl-title{font-size:9px;letter-spacing:2px;color:var(--txt);text-transform:uppercase;font-weight:600;margin-bottom:2px}
 .pnl-sub{font-size:7px;color:var(--txt2);margin-bottom:7px}
-.chart-area{height:90px}
-.chart-svg{width:100%;height:100%}
+.chart-area{height:90px}.chart-svg{width:100%;height:100%}
 .leg{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .leg-i{display:flex;align-items:center;gap:3px;font-size:6px;color:var(--txt2)}
 .leg-ln{width:9px;height:2px;border-radius:1px}
 .sch{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;padding-bottom:5px;border-bottom:1px solid var(--b);margin-bottom:3px}
 .sch-l{font-size:6px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
-.cvh{display:flex;gap:2px}
-.cvhi{width:15px;font-size:5px;color:var(--txt3);text-align:center}
+.cvh{display:flex;gap:2px}.cvhi{width:15px;font-size:5px;color:var(--txt3);text-align:center}
 .sr{display:grid;grid-template-columns:52px 90px 1fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--b)}
-.sr:last-child{border-bottom:none}
-.sr-t{color:var(--txt3);font-size:7px}
+.sr:last-child{border-bottom:none}.sr-t{color:var(--txt3);font-size:7px}
 .sr-s{font-family:'Bebas Neue';font-size:10px;letter-spacing:1px}
 .sr-s.r{color:var(--red)}.sr-s.a{color:var(--amber)}.sr-s.g{color:var(--green)}
 .sv-row{display:flex;gap:2px}
@@ -213,9 +212,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .hc-labels{display:flex;gap:3px;margin-top:4px}
 .hc-lbl{flex:1;font-size:5px;color:var(--txt3);text-align:center;text-transform:uppercase}
 .hc-ai{font-size:9px;color:var(--txt2);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--b);font-style:italic}
-
-
-/* ── HUNT VIEW ── */
 .mission-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;transition:all .2s;position:relative;overflow:hidden}
 .mission-card.active{border-color:var(--amber);background:rgba(245,166,35,.05)}
 .mission-card.done{border-color:var(--green);background:rgba(34,197,94,.05);opacity:.7}
@@ -229,17 +225,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .mission-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .mission-duration{font-size:8px;color:var(--txt3);letter-spacing:1px;display:flex;align-items:center;gap:4px}
 .mission-timer{font-family:'Bebas Neue';font-size:22px;color:var(--amber);letter-spacing:2px;min-width:60px;text-align:right}
-.mission-timer.running{color:var(--red)}
-.mission-timer.done{color:var(--green)}
+.mission-timer.running{color:var(--red)}.mission-timer.done{color:var(--green)}
 .btn-mission{border:none;padding:6px 14px;font-family:'Bebas Neue';font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s}
-.btn-start{background:var(--amber);color:#000}
-.btn-start:hover{background:var(--amber2)}
+.btn-start{background:var(--amber);color:#000}.btn-start:hover{background:var(--amber2)}
 .btn-done{background:var(--green);color:#000}
 .btn-pause{background:var(--bg3);color:var(--txt2);border:1px solid var(--b2)}
 .mission-progress-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--amber);transition:width 1s linear}
-
-
-/* ── PROTOCOLS VIEW ── */
 .proto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
 .proto-card{background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .proto-card:hover{border-color:var(--b3);transform:translateY(-1px)}
@@ -255,107 +246,65 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
 .proto-action-num{font-family:'Bebas Neue';font-size:12px;flex-shrink:0;line-height:1.2}
 .proto-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--b)}
 .proto-collection{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
-.proto-collection span{font-weight:600}
-.proto-duration{font-size:7px;color:var(--txt3);letter-spacing:1px}
+.proto-collection span{font-weight:600}.proto-duration{font-size:7px;color:var(--txt3);letter-spacing:1px}
 .proto-expand{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--b)}
 .proto-card.expanded .proto-expand{display:block}
 .proto-leary{font-size:8px;color:var(--txt2);line-height:1.5;font-style:italic;padding:8px;background:var(--bg3);border-radius:2px;border-left:2px solid}
-
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,.97);border-top:1px solid var(--b2);z-index:200;align-items:center;justify-content:space-around;padding:0 4px;backdrop-filter:blur(12px)}
+.mnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 8px;cursor:pointer;border-radius:8px;transition:all .2s;flex:1;min-width:0}
+.mnav-item:active{background:rgba(255,255,255,.05)}
+.mnav-item.on{background:rgba(232,48,42,.08)}
+.mnav-item.on .mnav-lbl{color:var(--red);font-weight:600}
+.mnav-item.on .mnav-icon{opacity:1}
+.mnav-icon{font-size:20px;opacity:.4;transition:all .2s;line-height:1}
+.mnav-lbl{font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .2s;white-space:nowrap}
 @media(max-width:768px){
-  .proto-grid{grid-template-columns:1fr}
-}
-
-/* ── BOTTOM NAV (mobile only) ── */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--b);z-index:200;align-items:center;justify-content:space-around;padding:0 8px}
-.mnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;cursor:pointer;border-radius:4px;transition:all .15s;flex:1}
-.mnav-item.on .mnav-icon{color:var(--red)}
-.mnav-item.on .mnav-lbl{color:var(--red)}
-.mnav-icon{font-size:18px;color:var(--txt3);transition:all .15s}
-.mnav-lbl{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:all .15s}
-
-/* ── MOBILE RESPONSIVE ── */
-@media(max-width:768px){
-  /* Hide desktop sidebar, show mobile nav */
-  .sidebar{display:none}
-  .mobile-nav{display:flex}
-
-  /* App takes full height minus bottom nav */
-  #app{height:100vh}
-  .body-wrap{padding-bottom:60px}
+  .sidebar{display:none}.mobile-nav{display:flex}.hamburger{display:flex}
+  #app{height:100vh}.body-wrap{padding-bottom:64px}
   .main{padding:12px 12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-
-  /* Topbar: simplified */
-  .topbar{padding:0 12px;gap:8px}
-  .tb-div{display:none}
-  .btn-ghost{display:none}
-  .tb-scan-sub{display:none}
-  .tb-scan-title{font-size:20px}
-  .btn-runscan{padding:6px 10px;font-size:11px}
-  .u-sub{display:none}
-
-  /* Top3: single column stack */
+  .topbar{padding:0 10px;gap:8px}
+  .tb-div{display:none}.btn-ghost{display:none}.tb-scan-sub{display:none}
+  .tb-scan-title{font-size:18px}.btn-runscan{padding:6px 10px;font-size:11px}.u-sub{display:none}
   .top3{grid-template-columns:1fr;gap:12px}
-
-  /* Circuits: single column on very small, 2 col on medium mobile */
   .cgrid{grid-template-columns:1fr}
-  .cc{padding:12px}
-  .cc-ico{width:28px;height:28px;font-size:13px}
-  .cc-id{font-size:9px}
+  .cc{padding:12px}.cc-ico{width:28px;height:28px;font-size:13px}.cc-id{font-size:9px}
   input[type=range]{height:4px}
   input[type=range]::-webkit-slider-thumb{width:18px;height:18px}
   input[type=range]::-moz-range-thumb{width:18px;height:18px}
   .sl-n{font-size:7px;width:10px}
-
-  /* Result poster: taller wolf image on mobile */
-  .wolf-section{flex:0 0 220px}
-  .poster-state{font-size:44px}
-
-  /* Right col full width */
+  .wolf-section{flex:0 0 220px}.poster-state{font-size:44px}
   .right-col{flex-direction:row;flex-wrap:wrap;gap:8px}
-  .neural-panel{flex:1;min-width:140px}
-  .insight-panel{flex:1;min-width:200px}
-
-  /* Bottom row: stack */
+  .neural-panel{flex:1;min-width:140px}.insight-panel{flex:1;min-width:200px}
   .bot-row{grid-template-columns:1fr;gap:12px}
-
-  /* History grid: single col */
-  .hist-grid{grid-template-columns:1fr}
-
-  /* Audio tooltip: show below on mobile */
-  .audio-tooltip{bottom:auto;top:calc(100% + 8px);transform:translateX(-50%)}
-  .audio-tooltip::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:var(--b2)}
-
-  /* Toast: full width on mobile */
-  #toast-container{left:12px;right:12px;max-width:none}
-  .toast{min-width:unset;width:100%}
+  .hist-grid{grid-template-columns:1fr}.proto-grid{grid-template-columns:1fr}
+  #toast-container{left:12px;right:12px;max-width:none}.toast{min-width:unset;width:100%}
 }
-
-@media(min-width:480px) and (max-width:768px){
-  .cgrid{grid-template-columns:1fr 1fr}
-}
+@media(min-width:480px) and (max-width:768px){.cgrid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
+<!-- GLOBAL AUDIO TOOLTIP — appended to body, never moves -->
+<div id="audio-tooltip-global" class="audio-tooltip">
+  <div class="audio-tooltip-title">
+    <span id="att-title">–</span>
+    <span class="audio-close" onclick="closeTooltip()">×</span>
+  </div>
+  <div id="att-desc" style="font-size:8px;line-height:1.5;color:var(--txt2)"></div>
+  <button class="audio-play-btn" id="att-play-btn" onclick="playCurrentAudio()">▶ Escuchar explicación</button>
+</div>
 
 <div id="loading-screen">
   <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:90px;height:90px;object-fit:contain;margin-bottom:5px" class="loading-wolf">
   <div class="loading-text">Inicializando Wolves OS...</div>
 </div>
 <div id="toast-container"></div>
-
-<!-- AUTH -->
 <div id="auth-screen" style="display:none">
   <div class="auth-wolf">
     <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:50px;height:50px;object-fit:contain">
-    <div>
-      <div class="auth-brand">WOLVES TERRITORY</div>
-      <div class="auth-brand-sub">Wolves OS · Sistema Operativo Interior</div>
-    </div>
+    <div><div class="auth-brand">WOLVES TERRITORY</div><div class="auth-brand-sub">Wolves OS · Sistema Operativo Interior</div></div>
   </div>
   <div class="auth-card">
-    <div style="text-align:center;margin-bottom:1.2rem">
-      <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:50px;height:50px;object-fit:contain">
-    </div>
+    <div style="text-align:center;margin-bottom:1.2rem"><img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:50px;height:50px;object-fit:contain"></div>
     <div class="auth-headline">Acceso al Sistema</div>
     <div class="auth-sub">Tu diagnóstico operativo te espera</div>
     <div class="auth-tabs">
@@ -378,11 +327,49 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
     <div class="auth-disclaimer">Tu diagnóstico queda guardado de forma privada. Solo tú puedes verlo.</div>
   </div>
 </div>
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer-panel">
+    <div class="drawer-brand">
+      <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:34px;height:34px;object-fit:contain">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;line-height:1.1">WOLVES<br>TERRITORY</div>
+        <div style="font-size:6px;letter-spacing:2px;color:var(--txt3);margin-top:2px">WOLVES OS v2.0</div>
+      </div>
+    </div>
+    <div class="drawer-nav on" id="dnav-scan" onclick="showView('scan');closeDrawer()">
+      <div class="drawer-nav-icon">📡</div>
+      <div><div class="drawer-nav-title">SCAN</div><div class="drawer-nav-sub">Estado actual</div></div>
+    </div>
+    <div class="drawer-nav" id="dnav-hunt" onclick="showView('hunt');closeDrawer()">
+      <div class="drawer-nav-icon">🎯</div>
+      <div><div class="drawer-nav-title">HUNT</div><div class="drawer-nav-sub">Modo ejecución</div></div>
+    </div>
+    <div class="drawer-nav" id="dnav-protocols" onclick="showView('protocols');closeDrawer()">
+      <div class="drawer-nav-icon">⚡</div>
+      <div><div class="drawer-nav-title">PROTOCOLS</div><div class="drawer-nav-sub">Rutinas de activación</div></div>
+    </div>
+    <div class="drawer-nav" id="dnav-history" onclick="loadHistory();closeDrawer()">
+      <div class="drawer-nav-icon">📊</div>
+      <div><div class="drawer-nav-title">HISTORY</div><div class="drawer-nav-sub">Historial & insights</div></div>
+    </div>
+    <div class="drawer-status">
+      <div style="background:var(--bg3);border:1px solid var(--b);border-radius:2px;padding:10px;text-align:center;margin-bottom:8px">
+        <div style="font-size:6px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px">Estado Actual</div>
+        <div style="font-family:'Bebas Neue';font-size:24px;color:var(--red)" id="drawer-state">–</div>
+        <div style="font-size:8px;color:var(--txt2);margin-top:2px" id="drawer-state-lbl">Sin scan hoy</div>
+      </div>
+      <div style="font-size:6px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;text-align:center;line-height:1.7;margin-bottom:8px">WOLVES DON'T HOPE.<br>WOLVES OPERATE.</div>
+      <button class="drawer-logout" onclick="doLogout();closeDrawer()">⏻ Cerrar Sesión</button>
+    </div>
+  </div>
+</div>
 
-<!-- APP -->
 <div id="app">
   <div class="topbar">
-    <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">
+    <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+    <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:32px;height:32px;object-fit:contain;flex-shrink:0">
     <div style="flex-shrink:0">
       <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:4px">WOLVES TERRITORY</div>
       <div style="font-size:7px;letter-spacing:3px;color:var(--txt3)">WOLVES OS</div>
@@ -407,14 +394,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       </div>
     </div>
   </div>
-
   <div class="body-wrap">
-    <!-- SIDEBAR desktop -->
     <div class="sidebar">
       <div class="sb-brand">
-        <img src="https://i.imgur.com/V5dtDxa.jpeg" alt="Wolves Territory" style="width:36px;height:36px;object-fit:contain;margin-bottom:5px">
-        <div class="sb-name">WOLVES<br>TERRITORY</div>
-        <div class="sb-ver">Wolves OS v2.0</div>
+        <img src="https://i.imgur.com/V5dtDxa.jpeg" style="width:36px;height:36px;object-fit:contain;margin-bottom:5px">
+        <div class="sb-name">WOLVES<br>TERRITORY</div><div class="sb-ver">Wolves OS v2.0</div>
       </div>
       <div class="nav on" id="nav-scan" onclick="showView('scan')"><div><div class="nav-t">SCAN</div><div class="nav-s">Estado actual</div></div></div>
       <div class="nav" id="nav-history" onclick="loadHistory()"><div><div class="nav-t">HISTORY</div><div class="nav-s">Historial & insights</div></div></div>
@@ -430,16 +414,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
         <div class="racha-box">
           <div class="r-lbl">Racha</div>
           <div style="display:flex;align-items:baseline;gap:3px"><div class="r-n">🔥 <span id="streak-num">0</span></div><div class="r-d">días</div></div>
-          <div class="dots" id="dots"></div>
-          <div class="dlbls" id="dlbls"></div>
+          <div class="dots" id="dots"></div><div class="dlbls" id="dlbls"></div>
         </div>
       </div>
       <div class="sb-tag">WOLVES DON'T HOPE.<br>WOLVES OPERATE.</div>
     </div>
-
-    <!-- MAIN CONTENT -->
     <div class="main">
-      <!-- VIEW: SCAN -->
       <div id="view-scan">
         <div class="top3">
           <div class="circuits-panel">
@@ -449,7 +429,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
             </div>
             <div class="cgrid" id="cgrid"></div>
           </div>
-
           <div class="result-poster" style="position:relative">
             <div style="font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.28);text-transform:uppercase;padding:9px 11px 0">2. Resultado — Tu diagnóstico operativo</div>
             <div class="wolf-section">
@@ -473,11 +452,9 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
               <div class="saving-sub">IA generando tu diagnóstico</div>
             </div>
           </div>
-
           <div class="right-col">
             <div class="neural-panel">
-              <div class="np-title">Mapa Neuronal</div>
-              <div class="np-sub">Tu red de circuitos actual</div>
+              <div class="np-title">Mapa Neuronal</div><div class="np-sub">Tu red de circuitos actual</div>
               <div id="radar-wrap" style="display:flex;justify-content:center"></div>
             </div>
             <div class="insight-panel">
@@ -491,23 +468,20 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
               <div class="ql-lbl">Acceso Rápido</div>
               <div class="ql">
                 <div class="qlb" onclick="showView('scan')"><div class="qlb-i">📡</div><span class="qlb-l">Scan</span></div>
-                <div class="qlb"><div class="qlb-i">⚡</div><span class="qlb-l">Protocols</span></div>
+                <div class="qlb" onclick="showView('protocols')"><div class="qlb-i">⚡</div><span class="qlb-l">Protocols</span></div>
                 <div class="qlb" onclick="loadHistory()"><div class="qlb-i">📊</div><span class="qlb-l">History</span></div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="bot-row">
           <div class="panel">
-            <div class="pnl-title">Tendencia — Últimos 7 Días</div>
-            <div class="pnl-sub">Evolución por circuito</div>
+            <div class="pnl-title">Tendencia — Últimos 7 Días</div><div class="pnl-sub">Evolución por circuito</div>
             <div class="chart-area"><svg class="chart-svg" id="trend-svg" viewBox="0 0 340 88" preserveAspectRatio="none"></svg></div>
             <div class="leg" id="leg"></div>
           </div>
           <div class="panel">
-            <div class="pnl-title">Últimos Scans</div>
-            <div class="pnl-sub">Historial reciente</div>
+            <div class="pnl-title">Últimos Scans</div><div class="pnl-sub">Historial reciente</div>
             <div class="sch">
               <div class="sch-l">Hora</div><div class="sch-l">Estado</div>
               <div class="cvh"><div class="cvhi">C1</div><div class="cvhi">C2</div><div class="cvhi">C3</div><div class="cvhi">C4</div><div class="cvhi">C5</div><div class="cvhi">C6</div><div class="cvhi">C7</div><div class="cvhi">C8</div></div>
@@ -517,38 +491,25 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
           </div>
         </div>
       </div>
-
-
-      <!-- VIEW: HUNT -->
       <div id="view-hunt" style="display:none;flex-direction:column;gap:14px">
-        <!-- HUNT HEADER -->
-        <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px" id="hunt-title">HUNT MODE</div>
-            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px" id="hunt-sub">Plan de acción personalizado · Basado en tu último scan</div>
+            <div style="font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:2px">Plan de acción personalizado · Basado en tu último scan</div>
           </div>
-          <button onclick="generateHuntPlan()" id="hunt-gen-btn" style="background:var(--red);border:none;color:#fff;padding:8px 16px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;transition:all .2s">
-            🎯 Generar Plan
-          </button>
+          <button onclick="generateHuntPlan()" id="hunt-gen-btn" style="background:var(--red);border:none;color:#fff;padding:8px 16px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px">🎯 Generar Plan</button>
         </div>
-
-        <!-- NO SCAN WARNING -->
         <div id="hunt-no-scan" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
           <div style="font-size:32px;margin-bottom:8px">📡</div>
           <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;margin-bottom:6px">Primero haz tu Scan</div>
           <div style="font-size:10px;color:var(--txt2);margin-bottom:1rem">HUNT necesita tu diagnóstico del día para generar el plan correcto.</div>
           <button onclick="showView('scan')" style="background:var(--amber);border:none;color:#000;padding:8px 20px;font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;cursor:pointer;border-radius:2px">Ir al Scan →</button>
         </div>
-
-        <!-- HUNT LOADING -->
         <div id="hunt-loading" style="display:none;background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:2rem;text-align:center">
           <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:var(--amber);animation:pulse 1s ease-in-out infinite;margin-bottom:8px">Analizando circuitos...</div>
           <div style="font-size:8px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase">IA construyendo tu plan de caza</div>
         </div>
-
-        <!-- HUNT PLAN -->
         <div id="hunt-plan" style="display:none;flex-direction:column;gap:12px">
-          <!-- Estado actual -->
           <div style="background:var(--bg2);border:1px solid var(--b);border-radius:3px;padding:12px;display:flex;align-items:center;gap:12px">
             <div style="flex:1">
               <div style="font-size:7px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:3px">Operando desde</div>
@@ -561,16 +522,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
               <div style="font-size:7px;color:var(--txt3);letter-spacing:1px">misiones</div>
             </div>
           </div>
-
-          <!-- Barra de progreso -->
           <div style="background:var(--bg3);border-radius:2px;height:3px;overflow:hidden">
             <div id="hunt-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .5s ease;border-radius:2px"></div>
           </div>
-
-          <!-- Misiones -->
           <div id="hunt-missions" style="display:flex;flex-direction:column;gap:8px"></div>
-
-          <!-- Completado -->
           <div id="hunt-completed" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(34,197,94,.05));border:1px solid rgba(34,197,94,.3);border-radius:3px;padding:1.5rem;text-align:center">
             <div style="font-size:32px;margin-bottom:8px">🐺</div>
             <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--green);margin-bottom:6px">HUNT COMPLETADO</div>
@@ -579,8 +534,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
           </div>
         </div>
       </div>
-
-      <!-- VIEW: PROTOCOLS -->
       <div id="view-protocols" style="display:none;flex-direction:column;gap:14px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <div>
@@ -592,19 +545,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
             <div style="font-size:9px;color:var(--txt2);line-height:1.5" id="proto-ai-text">–</div>
           </div>
         </div>
-
-        <!-- Filter tabs -->
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="proto-filter on" id="pf-all" onclick="filterProtos('all')" style="background:rgba(232,48,42,.1);border:1px solid var(--red);color:var(--red);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">TODOS</button>
           <button class="proto-filter" id="pf-active" onclick="filterProtos('active')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">ACTIVOS</button>
           <button class="proto-filter" id="pf-fisica" onclick="filterProtos('fisica')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">FÍSICOS</button>
           <button class="proto-filter" id="pf-mental" onclick="filterProtos('mental')" style="background:transparent;border:1px solid var(--b2);color:var(--txt2);padding:5px 12px;font-family:'Bebas Neue';font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s">MENTALES</button>
         </div>
-
         <div class="proto-grid" id="proto-grid"></div>
       </div>
-
-      <!-- VIEW: HISTORY -->
       <div id="view-history" style="display:none;flex-direction:column;gap:10px">
         <div>
           <div class="hist-header">HISTORIAL</div>
@@ -614,230 +562,172 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;cur
       </div>
     </div>
   </div>
-
-  <!-- MOBILE BOTTOM NAV -->
   <div class="mobile-nav">
-    <div class="mnav-item on" id="mnav-scan" onclick="showView('scan')">
-      <div class="mnav-icon">📡</div>
-      <div class="mnav-lbl">Scan</div>
-    </div>
-    <div class="mnav-item" id="mnav-history" onclick="loadHistory()">
-      <div class="mnav-icon">📊</div>
-      <div class="mnav-lbl">History</div>
-    </div>
-    <div class="mnav-item" id="mnav-hunt" onclick="showView('hunt')">
-      <div class="mnav-icon">🎯</div>
-      <div class="mnav-lbl">Hunt</div>
-    </div>
-    <div class="mnav-item" id="mnav-profile" onclick="doLogout()">
-      <div class="mnav-icon">👤</div>
-      <div class="mnav-lbl">Perfil</div>
-    </div>
+    <div class="mnav-item on" id="mnav-scan" onclick="showView('scan')"><div class="mnav-icon">📡</div><div class="mnav-lbl">Scan</div></div>
+    <div class="mnav-item" id="mnav-hunt" onclick="showView('hunt')"><div class="mnav-icon">🎯</div><div class="mnav-lbl">Hunt</div></div>
+    <div class="mnav-item" id="mnav-protocols" onclick="showView('protocols')"><div class="mnav-icon">⚡</div><div class="mnav-lbl">Protocols</div></div>
+    <div class="mnav-item" id="mnav-history" onclick="loadHistory()"><div class="mnav-icon">📊</div><div class="mnav-lbl">History</div></div>
+    <div class="mnav-item" id="mnav-menu" onclick="toggleDrawer()"><div class="mnav-icon">☰</div><div class="mnav-lbl">Menú</div></div>
   </div>
 </div>
-
 <script>
 const { createClient } = supabase
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-// ── CIRCUIT DATA ──
 const CS = [
-  {id:'c1',nm:'BASE',ds:'Estabilidad vs riesgo',lo:'Inestable',hi:'Sólido',col:'#e8302a',ico:'🛡️',col2:'c1_base',
-   audioDesc:'El Circuito 1 es tu base de biosupervivencia. Evalúa qué tan seguro y estable te sientes en lo fundamental: tu cuerpo, tu dinero, tu espacio físico. Si está bajo, todo lo demás falla. Califica con honestidad: 1 es inestabilidad total, 5 es solidez completa.',
-   audioFile:'audio/c1-base.mp3'},
-  {id:'c2',nm:'CONTROL',ds:'Liderar vs reaccionar',lo:'Reacciono',hi:'Lidero',col:'#f5a623',ico:'👑',col2:'c2_control',
-   audioDesc:'El Circuito 2 es tu poder emocional y territorial. ¿Estás tomando posición o reaccionando a lo que otros hacen? 1 significa que reaccionas a todo. 5 significa que lideras desde adentro sin depender del entorno.',
-   audioFile:'audio/c2-control.mp3'},
-  {id:'c3',nm:'CLARITY',ds:'Enfoque vs ruido mental',lo:'Ruido',hi:'Claro',col:'#22c55e',ico:'🧠',col2:'c3_clarity',
-   audioDesc:'El Circuito 3 es tu mente simbólica y racional. ¿Estás pensando con claridad o hay ruido y sobreanálisis? 1 es caos mental, pensamiento circular. 5 es claridad total: ves el sistema, diseñas soluciones.',
-   audioFile:'audio/c3-clarity.mp3'},
-  {id:'c4',nm:'SOCIAL',ds:'Alineado vs aprobación',lo:'Aprobación',hi:'Alineado',col:'#3b82f6',ico:'👥',col2:'c4_social',
-   audioDesc:'El Circuito 4 es tu identidad social y moral. ¿Actúas desde tus valores o buscas aprobación externa? 1 significa que vives para agradar. 5 significa que perteneces sin perderte.',
-   audioFile:'audio/c4-social.mp3'},
-  {id:'c5',nm:'BODY',ds:'Conexión vs desconexión',lo:'Desconectado',hi:'Conectado',col:'#9b7fe8',ico:'♥',col2:'c5_body',
-   audioDesc:'El Circuito 5 es tu conexión sensorial y corporal. ¿Estás presente en tu cuerpo o desconectado? 1 es evasión total del placer y la sensación. 5 es presencia plena, disfrute consciente de la vida física.',
-   audioFile:'audio/c5-body.mp3'},
-  {id:'c6',nm:'FLEX',ds:'Adaptable vs rígido',lo:'Rígido',hi:'Adaptable',col:'#06b6d4',ico:'∞',col2:'c6_flex',
-   audioDesc:'El Circuito 6 es tu capacidad de reprogramación y adaptación mental. ¿Puedes cambiar creencias que ya no sirven? 1 es rigidez total, miedo al cambio. 5 es flexibilidad mental, apertura a nuevos modelos de realidad.',
-   audioFile:'audio/c6-flex.mp3'},
-  {id:'c7',nm:'PURPOSE',ds:'Dirección vs vacío',lo:'Vacío',hi:'Con dirección',col:'#ec4899',ico:'◎',col2:'c7_purpose',
-   audioDesc:'El Circuito 7 es tu propósito genético y arquetípico. ¿Tienes claro para qué estás aquí? 1 es vacío existencial, sin dirección. 5 es sentido de misión claro, construyendo legado.',
-   audioFile:'audio/c7-purpose.mp3'},
-  {id:'c8',nm:'VISION',ds:'Expansión vs apagado',lo:'Apagado',hi:'Expansión',col:'#a78bfa',ico:'∗',col2:'c8_vision',
-   audioDesc:'El Circuito 8 es tu conciencia expandida. ¿Estás conectado con algo más grande que el ego? 1 es desconexión total, modo supervivencia. 5 es expansión cuántica, visión trascendente.',
-   audioFile:'audio/c8-vision.mp3'},
+  {id:'c1',nm:'BASE',ds:'Estabilidad vs riesgo',lo:'Inestable',hi:'Sólido',col:'#e8302a',ico:'🛡️',col2:'c1_base',audioDesc:'El Circuito 1 es tu base de biosupervivencia. Evalúa qué tan seguro y estable te sientes en lo fundamental: tu cuerpo, tu dinero, tu espacio físico. Si está bajo, todo lo demás falla. Califica con honestidad: 1 es inestabilidad total, 5 es solidez completa.',audioFile:'audio/c1-base.mp3'},
+  {id:'c2',nm:'CONTROL',ds:'Liderar vs reaccionar',lo:'Reacciono',hi:'Lidero',col:'#f5a623',ico:'👑',col2:'c2_control',audioDesc:'El Circuito 2 es tu poder emocional y territorial. ¿Estás tomando posición o reaccionando a lo que otros hacen? 1 significa que reaccionas a todo. 5 significa que lideras desde adentro sin depender del entorno.',audioFile:'audio/c2-control.mp3'},
+  {id:'c3',nm:'CLARITY',ds:'Enfoque vs ruido mental',lo:'Ruido',hi:'Claro',col:'#22c55e',ico:'🧠',col2:'c3_clarity',audioDesc:'El Circuito 3 es tu mente simbólica y racional. ¿Estás pensando con claridad o hay ruido y sobreanálisis? 1 es caos mental, pensamiento circular. 5 es claridad total: ves el sistema, diseñas soluciones.',audioFile:'audio/c3-clarity.mp3'},
+  {id:'c4',nm:'SOCIAL',ds:'Alineado vs aprobación',lo:'Aprobación',hi:'Alineado',col:'#3b82f6',ico:'👥',col2:'c4_social',audioDesc:'El Circuito 4 es tu identidad social y moral. ¿Actúas desde tus valores o buscas aprobación externa? 1 significa que vives para agradar. 5 significa que perteneces sin perderte.',audioFile:'audio/c4-social.mp3'},
+  {id:'c5',nm:'BODY',ds:'Conexión vs desconexión',lo:'Desconectado',hi:'Conectado',col:'#9b7fe8',ico:'♥',col2:'c5_body',audioDesc:'El Circuito 5 es tu conexión sensorial y corporal. ¿Estás presente en tu cuerpo o desconectado? 1 es evasión total del placer y la sensación. 5 es presencia plena, disfrute consciente de la vida física.',audioFile:'audio/c5-body.mp3'},
+  {id:'c6',nm:'FLEX',ds:'Adaptable vs rígido',lo:'Rígido',hi:'Adaptable',col:'#06b6d4',ico:'∞',col2:'c6_flex',audioDesc:'El Circuito 6 es tu capacidad de reprogramación y adaptación mental. ¿Puedes cambiar creencias que ya no sirven? 1 es rigidez total, miedo al cambio. 5 es flexibilidad mental, apertura a nuevos modelos de realidad.',audioFile:'audio/c6-flex.mp3'},
+  {id:'c7',nm:'PURPOSE',ds:'Dirección vs vacío',lo:'Vacío',hi:'Con dirección',col:'#ec4899',ico:'◎',col2:'c7_purpose',audioDesc:'El Circuito 7 es tu propósito genético y arquetípico. ¿Tienes claro para qué estás aquí? 1 es vacío existencial, sin dirección. 5 es sentido de misión claro, construyendo legado.',audioFile:'audio/c7-purpose.mp3'},
+  {id:'c8',nm:'VISION',ds:'Expansión vs apagado',lo:'Apagado',hi:'Expansión',col:'#a78bfa',ico:'∗',col2:'c8_vision',audioDesc:'El Circuito 8 es tu conciencia expandida. ¿Estás conectado con algo más grande que el ego? 1 es desconexión total, modo supervivencia. 5 es expansión cuántica, visión trascendente.',audioFile:'audio/c8-vision.mp3'},
 ]
+let V={c1:3,c2:3,c3:3,c4:3,c5:3,c6:3,c7:3,c8:3}
+let currentUser=null,currentProfile=null,allScans=[]
+// ── AUDIO SYSTEM — single global tooltip, zero flicker ──
+let currentAudio = null
+let currentAudioCid = null
 
-let V = {c1:3,c2:3,c3:3,c4:3,c5:3,c6:3,c7:3,c8:3}
-let currentUser = null, currentProfile = null, allScans = []
-let currentAudio = null, activeTooltip = null
-
-// ── STATE ENGINE ──
-function getState(v) {
-  if (v.c1 < 3) return {st:'INESTABLE.',cv:'C1 bajo — base frágil',cd:'Tu seguridad está comprometida. Estabiliza antes de ejecutar.',a1:'Elimina decisiones no urgentes hoy.',a2:'Busca un espacio de calma ahora.',col:'#ef4444',dom:'c1',cls:'r',ins:'Tu base (C1) es el cimiento. Sin ella, todo lo demás falla.'}
-  if (v.c2>=4&&v.c4>=4) return {st:'REACCIÓN.',cv:'C2 alto + C4 alto',cd:'Dependencia del entorno. Necesitas recuperar el control interno.',a1:'Elimina estímulos externos (5 min).',a2:'Define 1 decisión y ejecútala ahora.',col:'#f5a623',dom:'c2',cls:'r',ins:'Sueles entrar en sobreanálisis cuando tu base está baja. Trabaja primero en tu base.'}
-  if (v.c3>=4&&v.c1<3) return {st:'SOBREANÁLISIS.',cv:'C3 alto + C1 bajo',cd:'Bloqueo mental por base inestable. Primero la seguridad.',a1:'Para de pensar. Actúa en lo físico.',a2:'Define tu mínimo viable del día.',col:'#f5a623',dom:'c3',cls:'a',ins:'Pensar demasiado es evitar actuar. Tu C1 bajo es la raíz real del bloqueo.'}
-  if (v.c7>=4&&v.c8>=4) return {st:'PROPÓSITO.',cv:'C7 + C8 activados',cd:'Modo expansión y legado activo. Estás en tu frecuencia más alta.',a1:'Documenta tu visión de hoy.',a2:'Conecta con alguien de tu misión.',col:'#9b7fe8',dom:'c7',cls:'g',ins:'Raro y valioso. Estás en modo construcción de legado. No desperdicies esta ventana.'}
-  const avg = Object.values(v).reduce((a,b)=>a+b)/8
-  if (avg>=4) return {st:'ESTADO LOBO.',cv:'Todos los circuitos en alto',cd:'Modo élite activo. Aprovecha esta ventana para ejecutar.',a1:'Ataca tu objetivo principal ahora.',a2:'Registra este estado para replicarlo.',col:'#22c55e',dom:'c1',cls:'g',ins:'Peak state activado. Úsalo para decisiones importantes.'}
-  if (v.c1>=3&&v.c2>=3) return {st:'EJECUTABLE.',cv:'Base + Control activos',cd:'Estás listo para operar. Toma posición.',a1:'Inicia la tarea más importante.',a2:'Apaga distracciones 90 minutos.',col:'#22c55e',dom:'c2',cls:'g',ins:'Tienes lo esencial encendido. Es suficiente para operar bien.'}
-  return {st:'EN PROCESO.',cv:'Circuitos en calibración',cd:'Identifica el circuito más bajo y trabájalo primero.',a1:'Haz el check-in de todos los circuitos.',a2:'Define 1 acción para el circuito más bajo.',col:'#f5a623',dom:'c3',cls:'a',ins:'Un circuito bajo arrastra a todos los demás. Enfócate ahí primero.'}
-}
-
-// ── AUDIO SYSTEM ──
 function toggleCircuitAudio(cid, icoEl) {
-  const c = CS.find(x => x.id === cid)
-  
-  // Close any open tooltip
-  if (activeTooltip && activeTooltip !== icoEl) {
-    const prev = document.getElementById('tooltip-' + activeTooltip.dataset.cid)
-    if (prev) prev.classList.remove('show')
-    activeTooltip.classList.remove('playing')
-  }
-
-  const tooltipId = 'tooltip-' + cid
-  let tooltip = document.getElementById(tooltipId)
-
-  if (!tooltip) {
-    tooltip = document.createElement('div')
-    tooltip.className = 'audio-tooltip'
-    tooltip.id = tooltipId
-    tooltip.innerHTML = `
-      <div class="audio-tooltip-title">
-        <span>${c.ico} C${CS.indexOf(c)+1} ${c.nm}</span>
-        <span class="audio-close" onclick="closeTooltip('${cid}')">×</span>
-      </div>
-      <div style="font-size:8px;line-height:1.5;color:var(--txt2)">${c.audioDesc}</div>
-      <button class="audio-play-btn" id="play-btn-${cid}" onclick="playCircuitAudio('${cid}')">
-        ▶ Escuchar explicación
-      </button>`
-    icoEl.style.position = 'relative'
-    icoEl.appendChild(tooltip)
-  }
-
+  const tooltip = document.getElementById('audio-tooltip-global')
   const isOpen = tooltip.classList.contains('show')
-  if (isOpen) {
-    tooltip.classList.remove('show')
-    icoEl.classList.remove('playing')
-    activeTooltip = null
- } else {
-    // Calcular posición real en pantalla
-    const rect = icoEl.getBoundingClientRect()
-    const tw = 220
-    let left = rect.left + rect.width/2 - tw/2
-    let top = rect.top - 170
-    // No salir por izquierda
-    if (left < 8) left = 8
-    // No salir por derecha
-    if (left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8
-    // Si no cabe arriba, abrir abajo
-    if (top < 60) top = rect.bottom + 8
-    tooltip.style.position = 'fixed'
-    tooltip.style.top = top + 'px'
-    tooltip.style.left = left + 'px'
-    tooltip.style.width = tw + 'px'
-    tooltip.style.zIndex = '9999'
-    tooltip.classList.add('show')
-    icoEl.classList.add('playing')
-    icoEl.dataset.cid = cid
-    activeTooltip = icoEl
-  }
-}
+  const isSame = currentAudioCid === cid
 
-function closeTooltip(cid) {
-  const tooltip = document.getElementById('tooltip-' + cid)
-  if (tooltip) tooltip.classList.remove('show')
-  if (currentAudio) { currentAudio.pause(); currentAudio = null }
-  if (activeTooltip) { activeTooltip.classList.remove('playing'); activeTooltip = null }
-}
+  if (isOpen && isSame) { closeTooltip(); return }
 
-function playCircuitAudio(cid) {
+  stopAudio()
+  document.querySelectorAll('.cc-ico.playing').forEach(el => el.classList.remove('playing'))
+  icoEl.classList.add('playing')
+  currentAudioCid = cid
+
   const c = CS.find(x => x.id === cid)
-  const btn = document.getElementById('play-btn-' + cid)
+  document.getElementById('att-title').textContent = c.ico + ' C' + (CS.indexOf(c)+1) + ' ' + c.nm
+  document.getElementById('att-desc').textContent = c.audioDesc
+  document.getElementById('att-play-btn').textContent = '▶ Escuchar explicación'
 
-  // Stop previous audio
+  // Smart positioning — never cut off
+  const rect = icoEl.getBoundingClientRect()
+  const tw = 230, th = 165, mg = 10
+
+  let left = rect.left + rect.width / 2 - tw / 2
+  left = Math.max(mg, Math.min(left, window.innerWidth - tw - mg))
+
+  // Prefer above; if not enough space, open below
+  let top
+  if (rect.top - th - mg > 56) {
+    top = rect.top - th - mg
+  } else {
+    top = rect.bottom + mg
+  }
+  // Never overlap bottom nav or go offscreen
+  const maxTop = window.innerHeight - th - 70
+  top = Math.max(56, Math.min(top, maxTop))
+
+  tooltip.style.left = left + 'px'
+  tooltip.style.top = top + 'px'
+  tooltip.classList.add('show')
+}
+
+function closeTooltip() {
+  document.getElementById('audio-tooltip-global').classList.remove('show')
+  document.querySelectorAll('.cc-ico.playing').forEach(el => el.classList.remove('playing'))
+  stopAudio()
+  currentAudioCid = null
+}
+
+function stopAudio() {
   if (currentAudio) { currentAudio.pause(); currentAudio = null }
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+}
 
-  // Try MP3 file first
+function playCurrentAudio() {
+  if (!currentAudioCid) return
+  const c = CS.find(x => x.id === currentAudioCid)
+  const btn = document.getElementById('att-play-btn')
+  stopAudio()
   const audio = new Audio(c.audioFile)
   audio.oncanplay = () => {
-    currentAudio = audio
-    audio.play()
-    if (btn) btn.textContent = '⏸ Reproduciendo...'
-    audio.onended = () => { if (btn) btn.innerHTML = '▶ Escuchar explicación'; currentAudio = null }
-    audio.onerror = () => fallbackTTS(c, btn)
+    currentAudio = audio; audio.play()
+    btn.textContent = '⏸ Reproduciendo...'
+    audio.onended = () => { btn.textContent = '▶ Escuchar explicación'; currentAudio = null }
   }
-  audio.onerror = () => fallbackTTS(c, btn)
+  audio.onerror = () => {
+    if ('speechSynthesis' in window) {
+      const u = new SpeechSynthesisUtterance(c.audioDesc)
+      u.lang = 'es-ES'; u.rate = 0.9
+      btn.textContent = '⏸ Reproduciendo...'
+      u.onend = () => { btn.textContent = '▶ Escuchar explicación' }
+      window.speechSynthesis.speak(u)
+    }
+  }
   audio.load()
 }
 
-function fallbackTTS(c, btn) {
-  // Fallback to browser TTS if no MP3
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel()
-    const utter = new SpeechSynthesisUtterance(c.audioDesc)
-    utter.lang = 'es-ES'
-    utter.rate = 0.9
-    if (btn) btn.textContent = '⏸ Reproduciendo...'
-    utter.onend = () => { if (btn) btn.innerHTML = '▶ Escuchar explicación' }
-    window.speechSynthesis.speak(utter)
+// Close on outside click
+document.addEventListener('click', e => {
+  const tip = document.getElementById('audio-tooltip-global')
+  if (tip.classList.contains('show') && !tip.contains(e.target) && !e.target.classList.contains('cc-ico')) {
+    closeTooltip()
   }
+})
+
+// ── HAMBURGER / DRAWER ──
+function toggleDrawer() {
+  const d = document.getElementById('mobile-drawer')
+  const b = document.getElementById('hamburger-btn')
+  if (d.classList.contains('open')) { d.classList.remove('open'); b.classList.remove('open') }
+  else { d.classList.add('open'); b.classList.add('open') }
+}
+function closeDrawer() {
+  document.getElementById('mobile-drawer').classList.remove('open')
+  document.getElementById('hamburger-btn').classList.remove('open')
 }
 
-// ── CIRCUIT BUILDER ──
-function buildCircuits() {
-  const g = document.getElementById('cgrid'); g.innerHTML = ''
-  CS.forEach((c,i) => {
-    const v = V[c.id], pct = Math.round((v-1)/4*100)
-    const d = document.createElement('div'); d.className = 'cc'
-    d.innerHTML = `
-      <div class="cc-top">
-        <div class="cc-ico" style="border-color:${c.col}44;color:${c.col}" onclick="toggleCircuitAudio('${c.id}',this)" title="Toca para escuchar la explicación">${c.ico}</div>
-        <div style="flex:1;min-width:0">
-          <div class="cc-id" style="color:${c.col}">C${i+1} ${c.nm}</div>
-          <div class="cc-ds">${c.ds}</div>
-        </div>
-        <div class="cc-v" id="v-${c.id}" style="color:${c.col}">${v}</div>
-      </div>
-      <div class="sl-top"><span>${c.lo}</span><span>${c.hi}</span></div>
-      <input type="range" min="1" max="5" step="1" value="${v}"
-        style="background:linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)"
-        oninput="slide('${c.id}',this)">
-      <div class="sl-nums"><div class="sl-n">1</div><div class="sl-n">2</div><div class="sl-n">3</div><div class="sl-n">4</div><div class="sl-n">5</div></div>`
+function getState(v){
+  if(v.c1<3)return{st:'INESTABLE.',cv:'C1 bajo — base frágil',cd:'Tu seguridad está comprometida. Estabiliza antes de ejecutar.',a1:'Elimina decisiones no urgentes hoy.',a2:'Busca un espacio de calma ahora.',col:'#ef4444',dom:'c1',cls:'r',ins:'Tu base (C1) es el cimiento. Sin ella, todo lo demás falla.'}
+  if(v.c2>=4&&v.c4>=4)return{st:'REACCIÓN.',cv:'C2 alto + C4 alto',cd:'Dependencia del entorno. Necesitas recuperar el control interno.',a1:'Elimina estímulos externos (5 min).',a2:'Define 1 decisión y ejecútala ahora.',col:'#f5a623',dom:'c2',cls:'r',ins:'Sueles entrar en sobreanálisis cuando tu base está baja. Trabaja primero en tu base.'}
+  if(v.c3>=4&&v.c1<3)return{st:'SOBREANÁLISIS.',cv:'C3 alto + C1 bajo',cd:'Bloqueo mental por base inestable. Primero la seguridad.',a1:'Para de pensar. Actúa en lo físico.',a2:'Define tu mínimo viable del día.',col:'#f5a623',dom:'c3',cls:'a',ins:'Pensar demasiado es evitar actuar. Tu C1 bajo es la raíz real del bloqueo.'}
+  if(v.c7>=4&&v.c8>=4)return{st:'PROPÓSITO.',cv:'C7 + C8 activados',cd:'Modo expansión y legado activo. Estás en tu frecuencia más alta.',a1:'Documenta tu visión de hoy.',a2:'Conecta con alguien de tu misión.',col:'#9b7fe8',dom:'c7',cls:'g',ins:'Raro y valioso. Estás en modo construcción de legado. No desperdicies esta ventana.'}
+  const avg=Object.values(v).reduce((a,b)=>a+b)/8
+  if(avg>=4)return{st:'ESTADO LOBO.',cv:'Todos los circuitos en alto',cd:'Modo élite activo. Aprovecha esta ventana para ejecutar.',a1:'Ataca tu objetivo principal ahora.',a2:'Registra este estado para replicarlo.',col:'#22c55e',dom:'c1',cls:'g',ins:'Peak state activado. Úsalo para decisiones importantes.'}
+  if(v.c1>=3&&v.c2>=3)return{st:'EJECUTABLE.',cv:'Base + Control activos',cd:'Estás listo para operar. Toma posición.',a1:'Inicia la tarea más importante.',a2:'Apaga distracciones 90 minutos.',col:'#22c55e',dom:'c2',cls:'g',ins:'Tienes lo esencial encendido. Es suficiente para operar bien.'}
+  return{st:'EN PROCESO.',cv:'Circuitos en calibración',cd:'Identifica el circuito más bajo y trabájalo primero.',a1:'Haz el check-in de todos los circuitos.',a2:'Define 1 acción para el circuito más bajo.',col:'#f5a623',dom:'c3',cls:'a',ins:'Un circuito bajo arrastra a todos los demás. Enfócate ahí primero.'}
+}
+function buildCircuits(){
+  const g=document.getElementById('cgrid');g.innerHTML=''
+  CS.forEach((c,i)=>{
+    const v=V[c.id],pct=Math.round((v-1)/4*100)
+    const d=document.createElement('div');d.className='cc'
+    d.innerHTML=`<div class="cc-top"><div class="cc-ico" style="border-color:${c.col}44;color:${c.col}" onclick="toggleCircuitAudio('${c.id}',this)" title="Toca para escuchar">${c.ico}</div><div style="flex:1;min-width:0"><div class="cc-id" style="color:${c.col}">C${i+1} ${c.nm}</div><div class="cc-ds">${c.ds}</div></div><div class="cc-v" id="v-${c.id}" style="color:${c.col}">${v}</div></div><div class="sl-top"><span>${c.lo}</span><span>${c.hi}</span></div><input type="range" min="1" max="5" step="1" value="${v}" style="background:linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)" oninput="slide('${c.id}',this)"><div class="sl-nums"><div class="sl-n">1</div><div class="sl-n">2</div><div class="sl-n">3</div><div class="sl-n">4</div><div class="sl-n">5</div></div>`
     g.appendChild(d)
   })
 }
-
-function slide(id, el) {
-  const v = parseInt(el.value); V[id] = v
-  const c = CS.find(x => x.id === id)
-  const pct = Math.round((v-1)/4*100)
-  el.style.background = `linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)`
-  document.getElementById('v-'+id).textContent = v
-  updateResult(); updateRadar()
+function slide(id,el){
+  const v=parseInt(el.value);V[id]=v
+  const c=CS.find(x=>x.id===id)
+  const pct=Math.round((v-1)/4*100)
+  el.style.background=`linear-gradient(90deg,${c.col} ${pct}%,#1f1f1f ${pct}%)`
+  document.getElementById('v-'+id).textContent=v
+  updateResult();updateRadar()
 }
-
-function updateResult() {
-  const s = getState(V)
-  document.getElementById('p-state').textContent = s.st
-  document.getElementById('p-state').style.color = s.col
-  document.getElementById('p-cause').textContent = s.cv
-  document.getElementById('p-cause').style.color = s.col
-  document.getElementById('p-desc').textContent = s.cd
-  document.getElementById('p-a1').textContent = s.a1
-  document.getElementById('p-a2').textContent = s.a2
-  document.getElementById('insight-txt').textContent = s.ins
-  document.getElementById('p-link').style.color = s.col
-  const hb = document.getElementById('hunt-btn')
-  hb.style.background = s.col
-  hb.style.color = (s.col==='#22c55e'||s.col==='#f5a623') ? '#000' : '#fff'
-  const idx = CS.findIndex(c => c.id === s.dom)
-  document.getElementById('sb-c').textContent = 'C'+(idx+1)
-  document.getElementById('sb-c').style.color = s.col
-  document.getElementById('sb-st').textContent = s.st.replace('.','')
+function updateResult(){
+  const s=getState(V)
+  document.getElementById('p-state').textContent=s.st;document.getElementById('p-state').style.color=s.col
+  document.getElementById('p-cause').textContent=s.cv;document.getElementById('p-cause').style.color=s.col
+  document.getElementById('p-desc').textContent=s.cd
+  document.getElementById('p-a1').textContent=s.a1;document.getElementById('p-a2').textContent=s.a2
+  document.getElementById('insight-txt').textContent=s.ins
+  document.getElementById('p-link').style.color=s.col
+  const hb=document.getElementById('hunt-btn')
+  hb.style.background=s.col;hb.style.color=(s.col==='#22c55e'||s.col==='#f5a623')?'#000':'#fff'
+  const idx=CS.findIndex(c=>c.id===s.dom)
+  document.getElementById('sb-c').textContent='C'+(idx+1);document.getElementById('sb-c').style.color=s.col
+  document.getElementById('sb-st').textContent=s.st.replace('.','')
+  const ds=document.getElementById('drawer-state');if(ds){ds.textContent='C'+(idx+1);ds.style.color=s.col}
+  const dsl=document.getElementById('drawer-state-lbl');if(dsl)dsl.textContent=s.st.replace('.','')
 }
-
-function buildRadar(vals, sz) {
+function buildRadar(vals,sz){
   const cx=sz/2,cy=sz/2,r=sz/2-14,keys=CS.map(c=>c.id),n=keys.length
   const pt=(i,val)=>{const a=(i/n)*Math.PI*2-Math.PI/2,rv=(val/5)*r;return[+(cx+rv*Math.cos(a)).toFixed(1),+(cy+rv*Math.sin(a)).toFixed(1)]}
   const ptL=i=>{const a=(i/n)*Math.PI*2-Math.PI/2;return[+(cx+(r+12)*Math.cos(a)).toFixed(1),+(cy+(r+12)*Math.sin(a)).toFixed(1)]}
@@ -850,15 +740,13 @@ function buildRadar(vals, sz) {
   return svg+'</svg>'
 }
 function updateRadar(){document.getElementById('radar-wrap').innerHTML=buildRadar(V,155)}
-
-function buildDots(scans) {
+function buildDots(scans){
   const days=['L','M','M','J','V','S','D'],today=new Date()
   const done=days.map((_,i)=>{const d=new Date(today);d.setDate(today.getDate()-(6-i));const ds=d.toISOString().split('T')[0];return scans.some(s=>s.created_at&&s.created_at.startsWith(ds))?1:0})
   document.getElementById('dots').innerHTML=days.map((d,i)=>`<div class="dot ${done[i]?'on':''}">${done[i]?'✓':''}</div>`).join('')
   document.getElementById('dlbls').innerHTML=days.map(d=>`<div class="dlbl">${d}</div>`).join('')
 }
-
-function buildTrendFromScans(scans) {
+function buildTrendFromScans(scans){
   const svg=document.getElementById('trend-svg')
   if(!scans||scans.length===0){svg.innerHTML='';document.getElementById('leg').innerHTML='';return}
   const W=340,H=84,pL=18,pR=6,pT=5,pB=16,today=new Date()
@@ -882,8 +770,7 @@ function buildTrendFromScans(scans) {
   svg.innerHTML=out
   document.getElementById('leg').innerHTML=CS.map((c,i)=>`<div class="leg-i"><div class="leg-ln" style="background:${c.col}"></div>C${i+1} ${c.nm}</div>`).join('')
 }
-
-function renderRecentScans(scans) {
+function renderRecentScans(scans){
   const el=document.getElementById('recent-scans')
   if(!scans||!scans.length){el.innerHTML='<div class="empty-state">Sin scans aún.<br>Haz tu primer diagnóstico.</div>';return}
   el.innerHTML=scans.slice(0,4).map(s=>{
@@ -892,104 +779,64 @@ function renderRecentScans(scans) {
     return`<div class="sr"><div class="sr-t">${ts}</div><div class="sr-s ${cls}">${s.operative_state||'–'}</div><div class="sv-row">${CS.map(c=>`<div class="sv">${s[c.col2]||'–'}</div>`).join('')}</div></div>`
   }).join('')
 }
-
-// ── AUTH ──
-async function doLogin() {
-  const email=document.getElementById('login-email').value.trim()
-  const pass=document.getElementById('login-pass').value
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-pass').value
   if(!email||!pass)return toast('Completa todos los campos','error')
-  const btn=document.getElementById('btn-login')
-  btn.disabled=true;btn.textContent='Ingresando...'
+  const btn=document.getElementById('btn-login');btn.disabled=true;btn.textContent='Ingresando...'
   const{error}=await sb.auth.signInWithPassword({email,password:pass})
   btn.disabled=false;btn.textContent='Ingresar al Sistema'
   if(error)toast(error.message,'error')
 }
-
-async function doRegister() {
-  const username=document.getElementById('reg-user').value.trim()
-  const email=document.getElementById('reg-email').value.trim()
-  const pass=document.getElementById('reg-pass').value
+async function doRegister(){
+  const username=document.getElementById('reg-user').value.trim(),email=document.getElementById('reg-email').value.trim(),pass=document.getElementById('reg-pass').value
   if(!username||!email||!pass)return toast('Completa todos los campos','error')
   if(pass.length<8)return toast('La contraseña debe tener mínimo 8 caracteres','error')
-  const btn=document.getElementById('btn-reg')
-  btn.disabled=true;btn.textContent='Creando cuenta...'
+  const btn=document.getElementById('btn-reg');btn.disabled=true;btn.textContent='Creando cuenta...'
   const{error}=await sb.auth.signUp({email,password:pass,options:{data:{username}}})
   btn.disabled=false;btn.textContent='Crear Cuenta y Escanear'
   if(error)toast(error.message,'error')
   else toast('Cuenta creada. Revisa tu correo si no entras automáticamente.','success')
 }
-
-async function doLogout() {
+async function doLogout(){
   toast('Cerrando sesión...','info')
   await sb.auth.signOut()
   currentUser=null;currentProfile=null;allScans=[]
   document.getElementById('app').style.display='none'
   document.getElementById('auth-screen').style.display='flex'
 }
-
-// ── AI DIAGNOSIS ──
-async function generateAIDiagnosis(vals, state) {
-  try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 8000)
-    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
-      body: JSON.stringify({vals, state:{st:state.st.replace('.',''),dom:state.dom}}),
-      signal: controller.signal
-    })
-    clearTimeout(timeout)
-    if (!res.ok) return null
-    const d = await res.json()
-    return d.diagnosis || null
-  } catch(e) { return null }
+async function generateAIDiagnosis(vals,state){
+  try{
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),8000)
+    const res=await fetch(SUPABASE_URL+'/functions/v1/diagnose',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({vals,state:{st:state.st.replace('.',''),dom:state.dom}}),signal:controller.signal})
+    clearTimeout(timeout);if(!res.ok)return null
+    const d=await res.json();return d.diagnosis||null
+  }catch(e){return null}
 }
-
-async function saveScan() {
-  if (!currentUser) return toast('Inicia sesión para guardar', 'error')
-  const s = getState(V)
-  const overlay = document.getElementById('saving-overlay')
-  const savingText = document.getElementById('saving-text')
-  const btnRun = document.getElementById('btn-runscan')
-  overlay.classList.add('show')
-  savingText.textContent = 'Analizando circuitos...'
-  btnRun.disabled = true
-
-  const aiDiagnosis = await generateAIDiagnosis(V, s)
-  savingText.textContent = 'Guardando scan...'
-
-  const{data,error}=await sb.from('scans').insert({
-    user_id:currentUser.id,
-    c1_base:V.c1,c2_control:V.c2,c3_clarity:V.c3,c4_social:V.c4,
-    c5_body:V.c5,c6_flex:V.c6,c7_purpose:V.c7,c8_vision:V.c8,
-    dominant_circuit:s.dom,operative_state:s.st.replace('.',''),
-    state_color:s.col,ai_diagnosis:aiDiagnosis,
-  }).select()
-
-  overlay.classList.remove('show')
-  btnRun.disabled = false
+async function saveScan(){
+  if(!currentUser)return toast('Inicia sesión para guardar','error')
+  const s=getState(V)
+  const overlay=document.getElementById('saving-overlay'),savingText=document.getElementById('saving-text'),btnRun=document.getElementById('btn-runscan')
+  overlay.classList.add('show');savingText.textContent='Analizando circuitos...';btnRun.disabled=true
+  const aiDiagnosis=await generateAIDiagnosis(V,s)
+  savingText.textContent='Guardando scan...'
+  const{data,error}=await sb.from('scans').insert({user_id:currentUser.id,c1_base:V.c1,c2_control:V.c2,c3_clarity:V.c3,c4_social:V.c4,c5_body:V.c5,c6_flex:V.c6,c7_purpose:V.c7,c8_vision:V.c8,dominant_circuit:s.dom,operative_state:s.st.replace('.',''),state_color:s.col,ai_diagnosis:aiDiagnosis}).select()
+  overlay.classList.remove('show');btnRun.disabled=false
   if(error){toast('Error al guardar: '+error.message,'error');return}
-
-  const msg = aiDiagnosis ? '✓ Scan guardado · Diagnóstico IA generado' : '✓ Scan guardado correctamente'
-  toast(msg,'success')
+  toast(aiDiagnosis?'✓ Scan guardado · Diagnóstico IA generado':'✓ Scan guardado correctamente','success')
   if(aiDiagnosis){document.getElementById('insight-txt').textContent=aiDiagnosis;document.getElementById('insight-txt').style.color='var(--txt)'}
-  allScans.unshift(data[0])
-  renderRecentScans(allScans);buildTrendFromScans(allScans);buildDots(allScans)
+  allScans.unshift(data[0]);renderRecentScans(allScans);buildTrendFromScans(allScans);buildDots(allScans)
   await updateStreak()
 }
-
-async function loadUserScans() {
+async function loadUserScans(){
   if(!currentUser)return
   const{data,error}=await sb.from('scans').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50)
   if(!error&&data){allScans=data;renderRecentScans(data);buildTrendFromScans(data);buildDots(data)}
 }
-
-async function updateStreak() {
+async function updateStreak(){
   const{data}=await sb.rpc('get_streak',{p_user_id:currentUser.id})
   if(data!==null)document.getElementById('streak-num').textContent=data
 }
-
-async function loadHistory() {
+async function loadHistory(){
   showView('history')
   const{data,error}=await sb.from('scans').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false})
   if(error){toast('Error al cargar historial','error');return}
@@ -999,478 +846,164 @@ async function loadHistory() {
   grid.innerHTML=data.map(s=>{
     const t=new Date(s.created_at)
     const ds=t.toLocaleDateString('es-CO',{day:'2-digit',month:'short'})+' '+t.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})
-    const vals=CS.map(c=>s[c.col2]||0)
-    const bars=vals.map((v,i)=>`<div class="hc-bar" style="height:${v/5*36}px;background:${CS[i].col}88"></div>`).join('')
+    const bars=CS.map((c,i)=>`<div class="hc-bar" style="height:${(s[c.col2]||0)/5*36}px;background:${c.col}88"></div>`).join('')
     const cls=s.operative_state?.includes('LOBO')||s.operative_state?.includes('EJECUTABLE')?'g':s.operative_state?.includes('SOBREANA')?'a':'r'
     return`<div class="hist-card"><div class="hc-top"><div class="hc-state sr-s ${cls}">${s.operative_state||'–'}</div><div class="hc-time">${ds}</div></div><div class="hc-bars">${bars}</div><div class="hc-labels">${CS.map(c=>`<div class="hc-lbl">${c.nm.slice(0,3)}</div>`).join('')}</div>${s.ai_diagnosis?`<div class="hc-ai">${s.ai_diagnosis}</div>`:''}</div>`
   }).join('')
 }
-
-// ── NAVIGATION ──
-function showView(v) {
-  document.getElementById('view-scan').style.display=v==='scan'?'flex':'none'
-  document.getElementById('view-history').style.display=v==='history'?'flex':'none'
-  document.getElementById('view-hunt').style.display=v==='hunt'?'flex':'none'
-  document.getElementById('view-protocols').style.display=v==='protocols'?'flex':'none'
-  // Desktop nav
+function showView(v){
+  ['scan','history','hunt','protocols'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'flex':'none')
   document.getElementById('nav-scan').className='nav'+(v==='scan'?' on':'')
   document.getElementById('nav-history').className='nav'+(v==='history'?' on':'')
   document.getElementById('nav-hunt').className='nav'+(v==='hunt'?' on':'')
-  // Mobile nav
+  document.getElementById('nav-protocols').className='nav'+(v==='protocols'?' on':'')
   document.getElementById('mnav-scan').className='mnav-item'+(v==='scan'?' on':'')
-  document.getElementById('mnav-history').className='mnav-item'+(v==='history'?' on':'')
   document.getElementById('mnav-hunt').className='mnav-item'+(v==='hunt'?' on':'')
   document.getElementById('mnav-protocols').className='mnav-item'+(v==='protocols'?' on':'')
-  const titles = {scan:'SCAN',history:'HISTORY',hunt:'HUNT',protocols:'PROTOCOLS'}
-  const subs = {scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA',protocols:'Rutinas de activación por circuito'}
+  document.getElementById('mnav-history').className='mnav-item'+(v==='history'?' on':'')
+  const dn = document.getElementById('dnav-'+v); if(dn){['scan','hunt','protocols','history'].forEach(x=>{const el=document.getElementById('dnav-'+x);if(el)el.className='drawer-nav'+(x===v?' on':'');})}
+  const titles={scan:'SCAN',history:'HISTORY',hunt:'HUNT',protocols:'PROTOCOLS'}
+  const subs={scan:'Evalúa tu estado operativo actual',history:'Tu historial de diagnósticos',hunt:'Plan de acción personalizado · IA',protocols:'Rutinas de activación por circuito'}
   document.getElementById('tb-view-title').textContent=titles[v]||v.toUpperCase()
   document.getElementById('tb-view-sub').textContent=subs[v]||''
-  if(v==='protocols') renderProtocols()
+  if(v==='protocols')renderProtocols()
 }
-
-function switchAuthTab(t) {
+function switchAuthTab(t){
   document.getElementById('tab-login').className='auth-tab'+(t==='login'?' active':'')
   document.getElementById('tab-reg').className='auth-tab'+(t==='reg'?' active':'')
   document.getElementById('form-login').style.display=t==='login'?'block':'none'
   document.getElementById('form-reg').style.display=t==='reg'?'block':'none'
 }
-
-function toast(msg,type='info') {
+function toast(msg,type='info'){
   const el=document.createElement('div');el.className=`toast ${type}`;el.textContent=msg
   document.getElementById('toast-container').appendChild(el)
   setTimeout(()=>el.remove(),3500)
 }
-
-
-
-// ── PROTOCOLS DATA ──
-const PROTOCOLS = [
-  {
-    id: 'p1', circuit: 'c1', circuitName: 'C1 BASE', name: 'PROTOCOLO TIERRA',
-    icon: '🌱', col: '#e8302a', tipo: 'fisica',
-    desc: 'Reactiva tu circuito de biosupervivencia. Cuando C1 está bajo, el sistema nervioso opera en modo amenaza. Este protocolo ancla el cuerpo en el presente.',
-    leary: 'Leary dice: el C1 es el primer circuito imprintado en la infancia. Su activador principal es la seguridad física y el contacto con el entorno material. Sin C1 sólido, los circuitos superiores no pueden operar correctamente.',
-    actions: [
-      { text: 'Sal a caminar 10 minutos descalzo o en contacto con la tierra. Sin teléfono.', dur: '10 min' },
-      { text: 'Bebe un vaso de agua con sal marina. Conecta con lo físico básico.', dur: '2 min' },
-      { text: 'Escribe 3 cosas concretas que tienes hoy: techo, comida, cuerpo funcionando.', dur: '5 min' },
-      { text: 'Respiración 4-4-4: inhala 4s, retén 4s, exhala 4s. Repite 8 veces.', dur: '5 min' },
-    ],
-    collection: 'ORIGEN', collectionTag: 'Lo fundamental',
-    duration: '22 min'
-  },
-  {
-    id: 'p2', circuit: 'c2', circuitName: 'C2 CONTROL', name: 'PROTOCOLO ALPHA',
-    icon: '👑', col: '#f5a623', tipo: 'mental',
-    desc: 'Recupera el liderazgo interno. Cuando C2 está distorsionado, reaccionas en lugar de actuar. Este protocolo te devuelve al centro de tu territorio.',
-    leary: 'Leary dice: el C2 se activa en la infancia cuando el niño descubre que puede influir en su entorno. Su sombra es la dominancia por miedo o la sumisión. La luz es el liderazgo desde la seguridad interna.',
-    actions: [
-      { text: 'Identifica una situación donde estás reaccionando. Escribe quién tiene el control real y por qué se lo cediste.', dur: '10 min' },
-      { text: 'Toma una decisión pequeña que llevas postergando. Ejecútala ahora.', dur: '5 min' },
-      { text: 'Postura de poder: 2 minutos de pie, espalda recta, expansivo. Sin justificación.', dur: '2 min' },
-      { text: 'Define 1 límite que necesitas establecer hoy. Escríbelo y comprométete.', dur: '8 min' },
-    ],
-    collection: 'ALPHA', collectionTag: 'Liderazgo y posición',
-    duration: '25 min'
-  },
-  {
-    id: 'p3', circuit: 'c3', circuitName: 'C3 CLARITY', name: 'PROTOCOLO CLARIDAD',
-    icon: '🧠', col: '#22c55e', tipo: 'mental',
-    desc: 'Desfragmenta la mente. Cuando C3 tiene ruido, el sobreanálisis bloquea la acción. Este protocolo ordena el sistema cognitivo y activa el pensamiento estratégico.',
-    leary: 'Leary dice: el C3 es el circuito del lenguaje y el pensamiento abstracto. Su sombra es la rigidez mental, el dogma y el análisis paralizante. Se activa con nuevos mapas mentales y resolución de problemas.',
-    actions: [
-      { text: 'Brain dump: 10 minutos escribiendo todo lo que tienes en la cabeza sin filtro. Vacía el buffer.', dur: '10 min' },
-      { text: 'Elige las 3 cosas más importantes del dump. Descarta el resto.', dur: '5 min' },
-      { text: 'Para cada una: ¿cuál es el siguiente paso físico concreto? Solo uno por ítem.', dur: '10 min' },
-      { text: 'Apaga todas las notificaciones 1 hora. Trabaja en una sola cosa.', dur: '60 min' },
-    ],
-    collection: 'ARQUITECTO', collectionTag: 'Mente y estructura',
-    duration: '85 min'
-  },
-  {
-    id: 'p4', circuit: 'c4', circuitName: 'C4 SOCIAL', name: 'PROTOCOLO TERRITORIO',
-    icon: '🌐', col: '#3b82f6', tipo: 'social',
-    desc: 'Realínea tu identidad social. Cuando C4 está distorsionado, actúas para agradar en lugar de pertenecer. Este protocolo te devuelve a tus valores reales.',
-    leary: 'Leary dice: el C4 es el circuito de la moral cultural, imprinted en la adolescencia. Su sombra es la culpa, la dependencia social y la hipocresía. Su luz es la integración — pertenecer sin perderte.',
-    actions: [
-      { text: 'Escribe tus 5 valores no negociables. No los que crees que deberías tener, los que realmente guían tus decisiones.', dur: '15 min' },
-      { text: 'Identifica una relación o ambiente donde te comportas diferente a tus valores. ¿Por qué?', dur: '10 min' },
-      { text: 'Escribe una cosa que quieres decir y no has dicho por miedo al qué dirán.', dur: '5 min' },
-      { text: 'Conéctate con alguien de tu tribu real — no para pedir, sino para dar valor.', dur: '15 min' },
-    ],
-    collection: 'TERRITORIO', collectionTag: 'Identidad de manada',
-    duration: '45 min'
-  },
-  {
-    id: 'p5', circuit: 'c5', circuitName: 'C5 BODY', name: 'PROTOCOLO INSTINTO',
-    icon: '♥', col: '#9b7fe8', tipo: 'fisica',
-    desc: 'Reconecta con el cuerpo y el placer consciente. Cuando C5 está bajo, vives en la cabeza. Este protocolo activa el circuito sensorial y restaura la presencia.',
-    leary: 'Leary dice: el C5 es el circuito hedonista, activado en la adolescencia. Su sombra es la adicción y la evasión. Su luz es el placer consciente, el disfrute pleno del cuerpo sin culpa.',
-    actions: [
-      { text: 'Pon música que te mueva. Baila o mueve el cuerpo 5 minutos sin propósito.', dur: '5 min' },
-      { text: 'Come algo con atención total. Sin pantallas. Saborea cada bocado.', dur: '15 min' },
-      { text: 'Ducha con agua fría 30 segundos al final. Activa el sistema nervioso.', dur: '10 min' },
-      { text: 'Escribe una cosa que disfrutas sin justificación. Planifícala para hoy.', dur: '5 min' },
-    ],
-    collection: 'INSTINTO', collectionTag: 'Conexión corporal',
-    duration: '35 min'
-  },
-  {
-    id: 'p6', circuit: 'c6', circuitName: 'C6 FLEX', name: 'PROTOCOLO MUTA',
-    icon: '🔄', col: '#06b6d4', tipo: 'mental',
-    desc: 'Reprograma una creencia limitante. El C6 es el circuito de la metamorfosis. Cuando está bajo, la rigidez mental te impide adaptarte a nuevas realidades.',
-    leary: 'Leary dice: el C6 es el circuito neuro-eléctrico, activado por crisis existenciales o expansión deliberada. Su función es hackear el propio sistema operativo. Sin él, repites los mismos patrones indefinidamente.',
-    actions: [
-      { text: 'Identifica una creencia que tienes sobre ti mismo que te limita. Escríbela textualmente.', dur: '5 min' },
-      { text: 'Encuentra 3 evidencias concretas de que esa creencia es falsa o incompleta.', dur: '15 min' },
-      { text: 'Escribe la creencia alternativa que quieres instalar. Hazla específica y verificable.', dur: '10 min' },
-      { text: 'Lee algo fuera de tu área de confort por 20 minutos. Expande el mapa.', dur: '20 min' },
-    ],
-    collection: 'MUTA', collectionTag: 'Adaptación y cambio',
-    duration: '50 min'
-  },
-  {
-    id: 'p7', circuit: 'c7', circuitName: 'C7 PURPOSE', name: 'PROTOCOLO LEGADO',
-    icon: '🎯', col: '#ec4899', tipo: 'estrategica',
-    desc: 'Clarifica tu misión. Cuando C7 está bajo, operas sin dirección. Este protocolo conecta tus acciones diarias con tu propósito genético más profundo.',
-    leary: 'Leary dice: el C7 es el circuito genético-arquetípico, que trasciende el ego individual. Se activa con la conciencia de legado, la paternidad simbólica y la construcción a largo plazo.',
-    actions: [
-      { text: 'Escribe en una oración para qué estás aquí. No lo que haces — para qué vives.', dur: '15 min' },
-      { text: 'Identifica la diferencia entre lo que haces hoy y esa misión. ¿Hay alineación?', dur: '10 min' },
-      { text: 'Define una acción esta semana que construya legado, no solo resultados inmediatos.', dur: '10 min' },
-      { text: 'Conecta con alguien a quien puedas transmitir algo de valor hoy.', dur: '15 min' },
-    ],
-    collection: 'LEGADO', collectionTag: 'Misión a largo plazo',
-    duration: '50 min'
-  },
-  {
-    id: 'p8', circuit: 'c8', circuitName: 'C8 VISION', name: 'PROTOCOLO INFINITO',
-    icon: '∞', col: '#a78bfa', tipo: 'estrategica',
-    desc: 'Expande la conciencia más allá del ego. Cuando C8 está apagado, operas solo desde la supervivencia. Este protocolo activa la percepción trascendente.',
-    leary: 'Leary dice: el C8 es el circuito cuántico, no lineal. Se activa con meditación profunda, estados alterados conscientes, o momentos de conexión con algo mayor. No puede forzarse — solo prepararse.',
-    actions: [
-      { text: 'Meditación silenciosa 10 minutos. Sin guía, sin música. Solo observar la mente.', dur: '10 min' },
-      { text: 'Escribe algo que trasciende tu vida individual — una idea, un patrón, una verdad universal que observas.', dur: '15 min' },
-      { text: 'Sal a la naturaleza 20 minutos. Sin objetivo. Solo percibir.', dur: '20 min' },
-      { text: 'Pregúntate: si supieras que vas a morir en 10 años, ¿qué cambiarías hoy?', dur: '10 min' },
-    ],
-    collection: 'INFINITO', collectionTag: 'Expansión cuántica',
-    duration: '55 min'
-  }
+const PROTOCOLS=[
+  {id:'p1',circuit:'c1',circuitName:'C1 BASE',name:'PROTOCOLO TIERRA',icon:'🌱',col:'#e8302a',tipo:'fisica',desc:'Reactiva tu circuito de biosupervivencia. Cuando C1 está bajo, el sistema nervioso opera en modo amenaza. Este protocolo ancla el cuerpo en el presente.',leary:'Leary dice: el C1 es el primer circuito imprintado en la infancia. Su activador principal es la seguridad física y el contacto con el entorno material. Sin C1 sólido, los circuitos superiores no pueden operar correctamente.',actions:[{text:'Sal a caminar 10 minutos descalzo o en contacto con la tierra. Sin teléfono.',dur:'10 min'},{text:'Bebe un vaso de agua con sal marina. Conecta con lo físico básico.',dur:'2 min'},{text:'Escribe 3 cosas concretas que tienes hoy: techo, comida, cuerpo funcionando.',dur:'5 min'},{text:'Respiración 4-4-4: inhala 4s, retén 4s, exhala 4s. Repite 8 veces.',dur:'5 min'}],collection:'ORIGEN',collectionTag:'Lo fundamental',duration:'22 min'},
+  {id:'p2',circuit:'c2',circuitName:'C2 CONTROL',name:'PROTOCOLO ALPHA',icon:'👑',col:'#f5a623',tipo:'mental',desc:'Recupera el liderazgo interno. Cuando C2 está distorsionado, reaccionas en lugar de actuar. Este protocolo te devuelve al centro de tu territorio.',leary:'Leary dice: el C2 se activa en la infancia cuando el niño descubre que puede influir en su entorno. Su sombra es la dominancia por miedo o la sumisión. La luz es el liderazgo desde la seguridad interna.',actions:[{text:'Identifica una situación donde estás reaccionando. Escribe quién tiene el control real y por qué se lo cediste.',dur:'10 min'},{text:'Toma una decisión pequeña que llevas postergando. Ejecútala ahora.',dur:'5 min'},{text:'Postura de poder: 2 minutos de pie, espalda recta, expansivo. Sin justificación.',dur:'2 min'},{text:'Define 1 límite que necesitas establecer hoy. Escríbelo y comprométete.',dur:'8 min'}],collection:'ALPHA',collectionTag:'Liderazgo y posición',duration:'25 min'},
+  {id:'p3',circuit:'c3',circuitName:'C3 CLARITY',name:'PROTOCOLO CLARIDAD',icon:'🧠',col:'#22c55e',tipo:'mental',desc:'Desfragmenta la mente. Cuando C3 tiene ruido, el sobreanálisis bloquea la acción. Este protocolo ordena el sistema cognitivo y activa el pensamiento estratégico.',leary:'Leary dice: el C3 es el circuito del lenguaje y el pensamiento abstracto. Su sombra es la rigidez mental, el dogma y el análisis paralizante. Se activa con nuevos mapas mentales y resolución de problemas.',actions:[{text:'Brain dump: 10 minutos escribiendo todo lo que tienes en la cabeza sin filtro.',dur:'10 min'},{text:'Elige las 3 cosas más importantes del dump. Descarta el resto.',dur:'5 min'},{text:'Para cada una: ¿cuál es el siguiente paso físico concreto?',dur:'10 min'},{text:'Apaga todas las notificaciones 1 hora. Trabaja en una sola cosa.',dur:'60 min'}],collection:'ARQUITECTO',collectionTag:'Mente y estructura',duration:'85 min'},
+  {id:'p4',circuit:'c4',circuitName:'C4 SOCIAL',name:'PROTOCOLO TERRITORIO',icon:'🌐',col:'#3b82f6',tipo:'social',desc:'Realínea tu identidad social. Cuando C4 está distorsionado, actúas para agradar en lugar de pertenecer.',leary:'Leary dice: el C4 es el circuito de la moral cultural. Su sombra es la culpa y la dependencia social. Su luz es la integración — pertenecer sin perderte.',actions:[{text:'Escribe tus 5 valores no negociables. Los que realmente guían tus decisiones.',dur:'15 min'},{text:'Identifica una relación donde te comportas diferente a tus valores.',dur:'10 min'},{text:'Escribe algo que quieres decir y no has dicho por miedo al qué dirán.',dur:'5 min'},{text:'Conéctate con alguien de tu tribu real para dar valor.',dur:'15 min'}],collection:'TERRITORIO',collectionTag:'Identidad de manada',duration:'45 min'},
+  {id:'p5',circuit:'c5',circuitName:'C5 BODY',name:'PROTOCOLO INSTINTO',icon:'♥',col:'#9b7fe8',tipo:'fisica',desc:'Reconecta con el cuerpo y el placer consciente. Cuando C5 está bajo, vives en la cabeza.',leary:'Leary dice: el C5 es el circuito hedonista. Su sombra es la adicción y la evasión. Su luz es el placer consciente, el disfrute pleno del cuerpo sin culpa.',actions:[{text:'Pon música que te mueva. Baila o mueve el cuerpo 5 minutos sin propósito.',dur:'5 min'},{text:'Come algo con atención total. Sin pantallas. Saborea cada bocado.',dur:'15 min'},{text:'Ducha con agua fría 30 segundos al final. Activa el sistema nervioso.',dur:'10 min'},{text:'Escribe una cosa que disfrutas sin justificación. Planifícala para hoy.',dur:'5 min'}],collection:'INSTINTO',collectionTag:'Conexión corporal',duration:'35 min'},
+  {id:'p6',circuit:'c6',circuitName:'C6 FLEX',name:'PROTOCOLO MUTA',icon:'🔄',col:'#06b6d4',tipo:'mental',desc:'Reprograma una creencia limitante. El C6 es el circuito de la metamorfosis.',leary:'Leary dice: el C6 es el circuito neuro-eléctrico. Su función es hackear el propio sistema operativo. Sin él, repites los mismos patrones indefinidamente.',actions:[{text:'Identifica una creencia que te limita. Escríbela textualmente.',dur:'5 min'},{text:'Encuentra 3 evidencias de que esa creencia es falsa o incompleta.',dur:'15 min'},{text:'Escribe la creencia alternativa que quieres instalar.',dur:'10 min'},{text:'Lee algo fuera de tu área de confort por 20 minutos.',dur:'20 min'}],collection:'MUTA',collectionTag:'Adaptación y cambio',duration:'50 min'},
+  {id:'p7',circuit:'c7',circuitName:'C7 PURPOSE',name:'PROTOCOLO LEGADO',icon:'🎯',col:'#ec4899',tipo:'estrategica',desc:'Clarifica tu misión. Cuando C7 está bajo, operas sin dirección.',leary:'Leary dice: el C7 es el circuito genético-arquetípico. Se activa con la conciencia de legado y la construcción a largo plazo.',actions:[{text:'Escribe en una oración para qué estás aquí. No lo que haces — para qué vives.',dur:'15 min'},{text:'Identifica la diferencia entre lo que haces hoy y esa misión.',dur:'10 min'},{text:'Define una acción que construya legado, no solo resultados inmediatos.',dur:'10 min'},{text:'Conecta con alguien a quien puedas transmitir algo de valor.',dur:'15 min'}],collection:'LEGADO',collectionTag:'Misión a largo plazo',duration:'50 min'},
+  {id:'p8',circuit:'c8',circuitName:'C8 VISION',name:'PROTOCOLO INFINITO',icon:'∞',col:'#a78bfa',tipo:'estrategica',desc:'Expande la conciencia más allá del ego. Cuando C8 está apagado, operas solo desde la supervivencia.',leary:'Leary dice: el C8 es el circuito cuántico, no lineal. Se activa con meditación profunda o momentos de conexión con algo mayor.',actions:[{text:'Meditación silenciosa 10 minutos. Sin guía, sin música. Solo observar.',dur:'10 min'},{text:'Escribe algo que trasciende tu vida individual — una verdad universal.',dur:'15 min'},{text:'Sal a la naturaleza 20 minutos. Sin objetivo. Solo percibir.',dur:'20 min'},{text:'Pregúntate: si supieras que vas a morir en 10 años, ¿qué cambiarías hoy?',dur:'10 min'}],collection:'INFINITO',collectionTag:'Expansión cuántica',duration:'55 min'}
 ]
-
-let currentProtoFilter = 'all'
-let expandedProto = null
-
-function getActiveProtocols() {
-  if (!allScans || allScans.length === 0) return []
-  const last = allScans[0]
-  const vals = {
-    c1: last.c1_base, c2: last.c2_control, c3: last.c3_clarity, c4: last.c4_social,
-    c5: last.c5_body, c6: last.c6_flex, c7: last.c7_purpose, c8: last.c8_vision
-  }
-  return PROTOCOLS.filter(p => vals[p.circuit] < 3)
+let currentProtoFilter='all',expandedProto=null
+function getActiveProtocols(){
+  if(!allScans||allScans.length===0)return[]
+  const last=allScans[0]
+  const vals={c1:last.c1_base,c2:last.c2_control,c3:last.c3_clarity,c4:last.c4_social,c5:last.c5_body,c6:last.c6_flex,c7:last.c7_purpose,c8:last.c8_vision}
+  return PROTOCOLS.filter(p=>vals[p.circuit]<3)
 }
-
-function renderProtocols() {
-  const activeIds = getActiveProtocols().map(p => p.id)
-  let protos = PROTOCOLS
-
-  if (currentProtoFilter === 'active') protos = PROTOCOLS.filter(p => activeIds.includes(p.id))
-  else if (currentProtoFilter === 'fisica') protos = PROTOCOLS.filter(p => p.tipo === 'fisica')
-  else if (currentProtoFilter === 'mental') protos = PROTOCOLS.filter(p => p.tipo === 'mental')
-
-  const grid = document.getElementById('proto-grid')
-  grid.innerHTML = ''
-
-  if (protos.length === 0) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No hay protocolos en esta categoría para tu estado actual.</div>'
-    return
-  }
-
-  protos.forEach(p => {
-    const isActive = activeIds.includes(p.id)
-    const isExpanded = expandedProto === p.id
-    const card = document.createElement('div')
-    card.className = `proto-card ${isActive ? 'active-proto' : ''} ${isExpanded ? 'expanded' : ''}`
-    card.onclick = () => toggleProto(p.id)
-
-    card.innerHTML = `
-      <div class="proto-header">
-        <div class="proto-icon" style="background:${p.col}18;border-color:${p.col}44;color:${p.col}">${p.icon}</div>
-        <div>
-          <div class="proto-name" style="color:${isActive ? p.col : 'var(--txt)'}">${p.name}</div>
-          <div class="proto-circuit">${p.circuitName} · ${p.tipo}</div>
-        </div>
-      </div>
-      <div class="proto-desc">${p.desc}</div>
-      <div class="proto-actions">
-        ${p.actions.map((a,i) => `
-          <div class="proto-action">
-            <div class="proto-action-num" style="color:${p.col}">${i+1}</div>
-            <div style="flex:1">${a.text} <span style="color:var(--txt3);font-size:8px">· ${a.dur}</span></div>
-          </div>`).join('')}
-      </div>
-      <div class="proto-footer">
-        <div class="proto-collection">Colección: <span style="color:${p.col}">${p.collection}</span> · ${p.collectionTag}</div>
-        <div class="proto-duration">⏱ ${p.duration}</div>
-      </div>
-      <div class="proto-expand">
-        <div class="proto-leary" style="border-color:${p.col}">
-          <div style="font-size:7px;letter-spacing:1px;color:${p.col};text-transform:uppercase;margin-bottom:4px">Fundamento · Leary</div>
-          ${p.leary}
-        </div>
-      </div>`
-
+function renderProtocols(){
+  const activeIds=getActiveProtocols().map(p=>p.id)
+  let protos=PROTOCOLS
+  if(currentProtoFilter==='active')protos=PROTOCOLS.filter(p=>activeIds.includes(p.id))
+  else if(currentProtoFilter==='fisica')protos=PROTOCOLS.filter(p=>p.tipo==='fisica')
+  else if(currentProtoFilter==='mental')protos=PROTOCOLS.filter(p=>p.tipo==='mental')
+  const grid=document.getElementById('proto-grid');grid.innerHTML=''
+  if(!protos.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">No hay protocolos en esta categoría.</div>';return}
+  protos.forEach(p=>{
+    const isActive=activeIds.includes(p.id),isExpanded=expandedProto===p.id
+    const card=document.createElement('div')
+    card.className=`proto-card ${isActive?'active-proto':''} ${isExpanded?'expanded':''}`
+    card.onclick=()=>toggleProto(p.id)
+    card.innerHTML=`<div class="proto-header"><div class="proto-icon" style="background:${p.col}18;border-color:${p.col}44;color:${p.col}">${p.icon}</div><div><div class="proto-name" style="color:${isActive?p.col:'var(--txt)'}">${p.name}</div><div class="proto-circuit">${p.circuitName} · ${p.tipo}</div></div></div><div class="proto-desc">${p.desc}</div><div class="proto-actions">${p.actions.map((a,i)=>`<div class="proto-action"><div class="proto-action-num" style="color:${p.col}">${i+1}</div><div style="flex:1">${a.text} <span style="color:var(--txt3);font-size:8px">· ${a.dur}</span></div></div>`).join('')}</div><div class="proto-footer"><div class="proto-collection">Colección: <span style="color:${p.col}">${p.collection}</span> · ${p.collectionTag}</div><div class="proto-duration">⏱ ${p.duration}</div></div><div class="proto-expand"><div class="proto-leary" style="border-color:${p.col}"><div style="font-size:7px;letter-spacing:1px;color:${p.col};text-transform:uppercase;margin-bottom:4px">Fundamento · Leary</div>${p.leary}</div></div>`
     grid.appendChild(card)
   })
-
-  // AI recommendation
-  if (activeIds.length > 0 && allScans.length > 0) {
-    const topProto = PROTOCOLS.find(p => activeIds.includes(p.id))
-    if (topProto) {
-      document.getElementById('proto-ai-rec').style.display = 'block'
-      document.getElementById('proto-ai-text').textContent = `Tu circuito ${topProto.circuitName} está bajo. Empieza por ${topProto.name} — es la base. Los demás circuitos dependen de que este esté activo.`
-    }
+  if(activeIds.length>0&&allScans.length>0){
+    const tp=PROTOCOLS.find(p=>activeIds.includes(p.id))
+    if(tp){document.getElementById('proto-ai-rec').style.display='block';document.getElementById('proto-ai-text').textContent=`Tu circuito ${tp.circuitName} está bajo. Empieza por ${tp.name} — es la base.`}
   }
 }
-
-function toggleProto(id) {
-  expandedProto = expandedProto === id ? null : id
+function toggleProto(id){expandedProto=expandedProto===id?null:id;renderProtocols()}
+function filterProtos(filter){
+  currentProtoFilter=filter
+  document.querySelectorAll('.proto-filter').forEach(btn=>{btn.style.background='transparent';btn.style.borderColor='var(--b2)';btn.style.color='var(--txt2)'})
+  const active=document.getElementById('pf-'+filter)
+  if(active){active.style.background='rgba(232,48,42,.1)';active.style.borderColor='var(--red)';active.style.color='var(--red)'}
   renderProtocols()
 }
-
-function filterProtos(filter) {
-  currentProtoFilter = filter
-  document.querySelectorAll('.proto-filter').forEach(btn => {
-    btn.style.background = 'transparent'
-    btn.style.borderColor = 'var(--b2)'
-    btn.style.color = 'var(--txt2)'
-  })
-  const active = document.getElementById('pf-' + filter)
-  if (active) {
-    active.style.background = 'rgba(232,48,42,.1)'
-    active.style.borderColor = 'var(--red)'
-    active.style.color = 'var(--red)'
-  }
-  renderProtocols()
+let huntPlan=null,huntMissions=[],activeTimer=null,timerInterval=null
+async function generateHuntPlan(){
+  if(!currentUser)return toast('Inicia sesión para usar HUNT','error')
+  if(!allScans||allScans.length===0){document.getElementById('hunt-no-scan').style.display='block';document.getElementById('hunt-plan').style.display='none';document.getElementById('hunt-loading').style.display='none';return}
+  const lastScan=allScans[0]
+  const scanVals={c1:lastScan.c1_base,c2:lastScan.c2_control,c3:lastScan.c3_clarity,c4:lastScan.c4_social,c5:lastScan.c5_body,c6:lastScan.c6_flex,c7:lastScan.c7_purpose,c8:lastScan.c8_vision}
+  const scanState={st:lastScan.operative_state||'EN PROCESO',dom:lastScan.dominant_circuit||'c1'}
+  document.getElementById('hunt-no-scan').style.display='none';document.getElementById('hunt-plan').style.display='none';document.getElementById('hunt-loading').style.display='block';document.getElementById('hunt-gen-btn').disabled=true
+  const fallback={mision_title:'MODO CAZA ACTIVO',contexto:'Tres misiones para elevar tus circuitos más bajos.',misiones:[{id:1,titulo:'Estabilizar Base',descripcion:'5 minutos de respiración profunda. Pies en el piso, sin pantallas.',circuito:'C1',duracion_min:5,tipo:'fisica'},{id:2,titulo:'Tomar Posición',descripcion:'Define 1 decisión pendiente y ejecuta el primer paso ahora.',circuito:'C2',duracion_min:25,tipo:'mental'},{id:3,titulo:'Diseñar el Sistema',descripcion:'Escribe las 3 prioridades de esta semana con fecha límite.',circuito:'C3',duracion_min:20,tipo:'estrategica'}],cierre:"Wolves don't hope. Wolves operate. Misión cumplida."}
+  try{
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000)
+    const res=await fetch(SUPABASE_URL+'/functions/v1/diagnose',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({type:'hunt',vals:scanVals,state:scanState}),signal:controller.signal})
+    clearTimeout(timeout);const data=await res.json();huntPlan=data.plan||fallback
+  }catch(e){toast('Usando plan base.','info');huntPlan=fallback}
+  document.getElementById('hunt-loading').style.display='none';document.getElementById('hunt-gen-btn').disabled=false
+  renderHuntPlan(scanState)
 }
-
-// ── HUNT SYSTEM ──
-let huntPlan = null
-let huntMissions = []
-let activeTimer = null
-let timerInterval = null
-
-async function generateHuntPlan() {
-  if (!currentUser) return toast('Inicia sesión para usar HUNT', 'error')
-  if (!allScans || allScans.length === 0) {
-    document.getElementById('hunt-no-scan').style.display = 'block'
-    document.getElementById('hunt-plan').style.display = 'none'
-    document.getElementById('hunt-loading').style.display = 'none'
-    return
-  }
-
-  // Get last scan values
-  const lastScan = allScans[0]
-  const scanVals = {
-    c1: lastScan.c1_base, c2: lastScan.c2_control, c3: lastScan.c3_clarity,
-    c4: lastScan.c4_social, c5: lastScan.c5_body, c6: lastScan.c6_flex,
-    c7: lastScan.c7_purpose, c8: lastScan.c8_vision
-  }
-  const scanState = { st: lastScan.operative_state || 'EN PROCESO', dom: lastScan.dominant_circuit || 'c1' }
-
-  document.getElementById('hunt-no-scan').style.display = 'none'
-  document.getElementById('hunt-plan').style.display = 'none'
-  document.getElementById('hunt-loading').style.display = 'block'
-  document.getElementById('hunt-gen-btn').disabled = true
-
-  try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 12000)
-    const res = await fetch(SUPABASE_URL + '/functions/v1/diagnose', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-      body: JSON.stringify({ type: 'hunt', vals: scanVals, state: scanState }),
-      signal: controller.signal
-    })
-    clearTimeout(timeout)
-    const data = await res.json()
-    huntPlan = data.plan
-
-    if (!huntPlan) {
-      // Fallback plan if AI fails
-      huntPlan = {
-        mision_title: 'MODO CAZA ACTIVO',
-        contexto: 'Tres misiones para elevar tus circuitos más bajos.',
-        misiones: [
-          { id:1, titulo:'Estabilizar Base', descripcion:'5 minutos de respiración profunda. Pies en el piso, sin pantallas.', circuito:'C1', duracion_min:5, tipo:'fisica' },
-          { id:2, titulo:'Tomar Posición', descripcion:'Define 1 decisión pendiente y ejecuta el primer paso ahora.', circuito:'C2', duracion_min:25, tipo:'mental' },
-          { id:3, titulo:'Diseñar el Sistema', descripcion:'Escribe las 3 prioridades de esta semana con fecha límite.', circuito:'C3', duracion_min:20, tipo:'estrategica' }
-        ],
-        cierre: "Wolves don't hope. Wolves operate. Misión cumplida."
-      }
-    }
-
-    renderHuntPlan(scanState)
-  } catch(e) {
-    toast('Error generando plan. Usando plan base.', 'info')
-    huntPlan = {
-      mision_title: 'PLAN BASE',
-      contexto: 'Ejecuta desde donde estás.',
-      misiones: [
-        { id:1, titulo:'Anclar el Cuerpo', descripcion:'Sal 10 minutos. Camina. Sin teléfono.', circuito:'C1', duracion_min:10, tipo:'fisica' },
-        { id:2, titulo:'Una Decisión', descripcion:'Decide algo que llevas posponiendo. Ahora.', circuito:'C2', duracion_min:15, tipo:'mental' },
-        { id:3, titulo:'Enfoque Total', descripcion:'Trabaja 25 minutos en tu tarea más importante sin interrupciones.', circuito:'C3', duracion_min:25, tipo:'estrategica' }
-      ],
-      cierre: 'Completaste la caza. El lobo ejecuta.'
-    }
-    renderHuntPlan(scanState)
-  }
-
-  document.getElementById('hunt-loading').style.display = 'none'
-  document.getElementById('hunt-gen-btn').disabled = false
-}
-
-function renderHuntPlan(scanState) {
-  const s = getState(V)
-  huntMissions = huntPlan.misiones.map(m => ({ ...m, status: 'pending', timeLeft: m.duracion_min * 60, started: false }))
-
-  document.getElementById('hunt-title').textContent = huntPlan.mision_title
-  document.getElementById('hunt-state-label').textContent = scanState.st + '.'
-  document.getElementById('hunt-state-label').style.color = s.col
-  document.getElementById('hunt-contexto').textContent = huntPlan.contexto
-  document.getElementById('hunt-progress-label').textContent = '0/3'
-  document.getElementById('hunt-progress-bar').style.width = '0%'
-  document.getElementById('hunt-completed').style.display = 'none'
-  document.getElementById('hunt-plan').style.display = 'flex'
-
+function renderHuntPlan(scanState){
+  const s=getState(V);huntMissions=huntPlan.misiones.map(m=>({...m,status:'pending',timeLeft:m.duracion_min*60}))
+  document.getElementById('hunt-title').textContent=huntPlan.mision_title
+  document.getElementById('hunt-state-label').textContent=scanState.st+'.';document.getElementById('hunt-state-label').style.color=s.col
+  document.getElementById('hunt-contexto').textContent=huntPlan.contexto
+  document.getElementById('hunt-progress-label').textContent='0/3';document.getElementById('hunt-progress-bar').style.width='0%'
+  document.getElementById('hunt-completed').style.display='none';document.getElementById('hunt-plan').style.display='flex'
   renderMissions()
 }
-
-const TIPO_COLORS = { fisica: '#e8302a', mental: '#f5a623', estrategica: '#22c55e' }
-const TIPO_ICONS = { fisica: '💪', mental: '🧠', estrategica: '🎯' }
-
-function renderMissions() {
-  const container = document.getElementById('hunt-missions')
-  container.innerHTML = ''
-  const completedCount = huntMissions.filter(m => m.status === 'done').length
-
-  huntMissions.forEach((m, i) => {
-    const color = TIPO_COLORS[m.tipo] || 'var(--amber)'
-    const icon = TIPO_ICONS[m.tipo] || '⚡'
-    const mins = Math.floor(m.timeLeft / 60)
-    const secs = m.timeLeft % 60
-    const timeStr = `${mins}:${secs.toString().padStart(2,'0')}`
-    const isActive = m.status === 'active'
-    const isDone = m.status === 'done'
-    const isLocked = i > 0 && huntMissions[i-1].status !== 'done' && huntMissions[i-1].status !== 'active' && !isDone
-
-    const card = document.createElement('div')
-    card.className = `mission-card ${isActive?'active':''} ${isDone?'done':''} ${isLocked?'locked':''}`
-    card.id = `mission-${m.id}`
-
-    const progressPct = isDone ? 100 : isActive ? Math.round((1 - m.timeLeft/(m.duracion_min*60))*100) : 0
-
-    card.innerHTML = `
-      <div class="mission-header">
-        <div class="mission-num" style="background:${isDone?'rgba(34,197,94,.15)':isActive?color+'22':'var(--bg3)'};border-color:${isDone?'var(--green)':isActive?color:'var(--b2)'};color:${isDone?'var(--green)':isActive?color:'var(--txt3)'}">
-          ${isDone ? '✓' : i+1}
-        </div>
-        <div class="mission-info">
-          <div class="mission-title" style="color:${isDone?'var(--green)':isActive?color:'var(--txt)'}">${m.titulo}</div>
-          <div class="mission-circuit">${icon} ${m.circuito} · ${m.tipo}</div>
-        </div>
-        <div class="mission-timer ${isActive?'running':''} ${isDone?'done':''}">${isDone?'✓':timeStr}</div>
-      </div>
-      <div class="mission-desc">${m.descripcion}</div>
-      <div class="mission-footer">
-        <div class="mission-duration">⏱ ${m.duracion_min} min estimados</div>
-        ${isDone ? '<div style="font-size:9px;color:var(--green);font-weight:600">✓ Completada</div>' :
-          isActive ? `<div style="display:flex;gap:6px">
-            <button class="btn-mission btn-pause" onclick="pauseMission(${m.id})">⏸ Pausa</button>
-            <button class="btn-mission btn-done" onclick="completeMission(${m.id})">✓ Hecha</button>
-          </div>` :
-          `<button class="btn-mission btn-start" onclick="startMission(${m.id})" ${isLocked?'disabled':''}>▶ Iniciar</button>`
-        }
-      </div>
-      <div class="mission-progress-bar" id="mpbar-${m.id}" style="width:${progressPct}%;background:${isDone?'var(--green)':color}"></div>`
-
+const TIPO_COLORS={fisica:'#e8302a',mental:'#f5a623',estrategica:'#22c55e'}
+const TIPO_ICONS={fisica:'💪',mental:'🧠',estrategica:'🎯'}
+function renderMissions(){
+  const container=document.getElementById('hunt-missions');container.innerHTML=''
+  huntMissions.forEach((m,i)=>{
+    const color=TIPO_COLORS[m.tipo]||'var(--amber)',icon=TIPO_ICONS[m.tipo]||'⚡'
+    const mins=Math.floor(m.timeLeft/60),secs=m.timeLeft%60,timeStr=`${mins}:${secs.toString().padStart(2,'0')}`
+    const isActive=m.status==='active',isDone=m.status==='done'
+    const isLocked=i>0&&huntMissions[i-1].status!=='done'&&huntMissions[i-1].status!=='active'&&!isDone
+    const card=document.createElement('div');card.className=`mission-card ${isActive?'active':''} ${isDone?'done':''} ${isLocked?'locked':''}`;card.id=`mission-${m.id}`
+    const pct=isDone?100:isActive?Math.round((1-m.timeLeft/(m.duracion_min*60))*100):0
+    card.innerHTML=`<div class="mission-header"><div class="mission-num" style="background:${isDone?'rgba(34,197,94,.15)':isActive?color+'22':'var(--bg3)'};border-color:${isDone?'var(--green)':isActive?color:'var(--b2)'};color:${isDone?'var(--green)':isActive?color:'var(--txt3)'}">${isDone?'✓':i+1}</div><div class="mission-info"><div class="mission-title" style="color:${isDone?'var(--green)':isActive?color:'var(--txt)'}">${m.titulo}</div><div class="mission-circuit">${icon} ${m.circuito} · ${m.tipo}</div></div><div class="mission-timer ${isActive?'running':''} ${isDone?'done':''}">${isDone?'✓':timeStr}</div></div><div class="mission-desc">${m.descripcion}</div><div class="mission-footer"><div class="mission-duration">⏱ ${m.duracion_min} min</div>${isDone?'<div style="font-size:9px;color:var(--green);font-weight:600">✓ Completada</div>':isActive?`<div style="display:flex;gap:6px"><button class="btn-mission btn-pause" onclick="pauseMission(${m.id})">⏸</button><button class="btn-mission btn-done" onclick="completeMission(${m.id})">✓ Hecha</button></div>`:`<button class="btn-mission btn-start" onclick="startMission(${m.id})" ${isLocked?'disabled':''}>▶ Iniciar</button>`}</div><div class="mission-progress-bar" id="mpbar-${m.id}" style="width:${pct}%;background:${isDone?'var(--green)':color}"></div>`
     container.appendChild(card)
   })
 }
-
-function startMission(id) {
-  if (activeTimer !== null) {
-    pauseMission(activeTimer)
+function startMission(id){
+  if(activeTimer!==null)pauseMission(activeTimer)
+  const m=huntMissions.find(x=>x.id===id);if(!m)return
+  m.status='active';activeTimer=id
+  timerInterval=setInterval(()=>{
+    const mission=huntMissions.find(x=>x.id===id)
+    if(!mission||mission.status!=='active'){clearInterval(timerInterval);return}
+    mission.timeLeft=Math.max(0,mission.timeLeft-1);updateTimerDisplay(id)
+    if(mission.timeLeft===0){clearInterval(timerInterval);toast(`⏰ Tiempo misión ${id} completado`,'info')}
+  },1000)
+  renderMissions()
+}
+function pauseMission(id){
+  const m=huntMissions.find(x=>x.id===id);if(!m)return
+  m.status='pending';activeTimer=null
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null}
+  renderMissions()
+}
+function completeMission(id){
+  const m=huntMissions.find(x=>x.id===id);if(!m)return
+  m.status='done';activeTimer=null
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null}
+  const done=huntMissions.filter(x=>x.status==='done').length
+  document.getElementById('hunt-progress-label').textContent=`${done}/3`
+  document.getElementById('hunt-progress-bar').style.width=`${done/3*100}%`
+  if(done===3){
+    setTimeout(()=>{document.getElementById('hunt-completed').style.display='block';document.getElementById('hunt-cierre').textContent=huntPlan.cierre;document.getElementById('hunt-missions').style.display='none'},500)
+    toast('🐺 Hunt completado!','success')
   }
-  const m = huntMissions.find(x => x.id === id)
-  if (!m) return
-  m.status = 'active'
-  m.started = true
-  activeTimer = id
-
-  timerInterval = setInterval(() => {
-    const mission = huntMissions.find(x => x.id === id)
-    if (!mission || mission.status !== 'active') { clearInterval(timerInterval); return }
-    mission.timeLeft = Math.max(0, mission.timeLeft - 1)
-    updateTimerDisplay(id)
-    if (mission.timeLeft === 0) {
-      clearInterval(timerInterval)
-      toast(`⏰ Tiempo de misión ${id} completado`, 'info')
-    }
-  }, 1000)
-
   renderMissions()
 }
-
-function pauseMission(id) {
-  const m = huntMissions.find(x => x.id === id)
-  if (!m) return
-  m.status = 'pending'
-  activeTimer = null
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
-  renderMissions()
+function updateTimerDisplay(id){
+  const m=huntMissions.find(x=>x.id===id);if(!m)return
+  const mins=Math.floor(m.timeLeft/60),secs=m.timeLeft%60,timeStr=`${mins}:${secs.toString().padStart(2,'0')}`
+  const el=document.querySelector(`#mission-${id} .mission-timer`);if(el)el.textContent=timeStr
+  const pbar=document.getElementById(`mpbar-${id}`);if(pbar)pbar.style.width=Math.round((1-m.timeLeft/(m.duracion_min*60))*100)+'%'
 }
-
-function completeMission(id) {
-  const m = huntMissions.find(x => x.id === id)
-  if (!m) return
-  m.status = 'done'
-  activeTimer = null
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null }
-
-  const completedCount = huntMissions.filter(x => x.status === 'done').length
-  document.getElementById('hunt-progress-label').textContent = `${completedCount}/3`
-  document.getElementById('hunt-progress-bar').style.width = `${(completedCount/3)*100}%`
-
-  if (completedCount === 3) {
-    setTimeout(() => {
-      document.getElementById('hunt-completed').style.display = 'block'
-      document.getElementById('hunt-cierre').textContent = huntPlan.cierre
-      document.getElementById('hunt-missions').style.display = 'none'
-    }, 500)
-    toast('🐺 ¡Hunt completado! Wolves operate.', 'success')
-  }
-
-  renderMissions()
-}
-
-function updateTimerDisplay(id) {
-  const m = huntMissions.find(x => x.id === id)
-  if (!m) return
-  const mins = Math.floor(m.timeLeft / 60)
-  const secs = m.timeLeft % 60
-  const timeStr = `${mins}:${secs.toString().padStart(2,'0')}`
-  const timerEl = document.querySelector(`#mission-${id} .mission-timer`)
-  if (timerEl) timerEl.textContent = timeStr
-  const pct = Math.round((1 - m.timeLeft/(m.duracion_min*60))*100)
-  const pbar = document.getElementById(`mpbar-${id}`)
-  if (pbar) pbar.style.width = pct + '%'
-}
-
-// ── BOOT ──
-async function boot() {
+async function boot(){
   buildCircuits();updateResult();updateRadar()
   const{data:{session}}=await sb.auth.getSession()
   if(session){
@@ -1483,9 +1016,7 @@ async function boot() {
     document.getElementById('user-av').textContent=initials
     document.getElementById('user-name').textContent=(profile?.username||'ALPHA').toUpperCase()
     await loadUserScans();await updateStreak()
-  } else {
-    document.getElementById('auth-screen').style.display='flex'
-  }
+  }else{document.getElementById('auth-screen').style.display='flex'}
   document.getElementById('loading-screen').classList.add('hidden')
   sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){
@@ -1498,7 +1029,7 @@ async function boot() {
       document.getElementById('user-av').textContent=initials
       document.getElementById('user-name').textContent=(profile?.username||'ALPHA').toUpperCase()
       await loadUserScans();await updateStreak()
-    } else if(event==='SIGNED_OUT'){
+    }else if(event==='SIGNED_OUT'){
       document.getElementById('app').style.display='none'
       document.getElementById('auth-screen').style.display='flex'
     }
