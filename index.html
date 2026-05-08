@@ -720,7 +720,23 @@ function toggleCircuitAudio(cid, icoEl) {
     tooltip.classList.remove('show')
     icoEl.classList.remove('playing')
     activeTooltip = null
-  } else {
+ } else {
+    // Calcular posición real en pantalla
+    const rect = icoEl.getBoundingClientRect()
+    const tw = 220
+    let left = rect.left + rect.width/2 - tw/2
+    let top = rect.top - 170
+    // No salir por izquierda
+    if (left < 8) left = 8
+    // No salir por derecha
+    if (left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8
+    // Si no cabe arriba, abrir abajo
+    if (top < 60) top = rect.bottom + 8
+    tooltip.style.position = 'fixed'
+    tooltip.style.top = top + 'px'
+    tooltip.style.left = left + 'px'
+    tooltip.style.width = tw + 'px'
+    tooltip.style.zIndex = '9999'
     tooltip.classList.add('show')
     icoEl.classList.add('playing')
     icoEl.dataset.cid = cid
